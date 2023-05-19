@@ -1,0 +1,157 @@
+﻿@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<div class="card border-left-primary shadow  py-2">
+    <div class="card-body m-0">
+        <div class="col">
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Type de soins : </span>
+                <RadzenDropDown TValue="string" Name="typeDropBox" @bind-Value="@type_soins_selected" Class="form-control" Data=@type_soins Change="@((args) => OnChange(args))"
+                                Placeholder="Veuillez choisir le type de soins ici" style="border-radius:0" />
+
+            </div>
+
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Demande : </span>
+                <RadzenDropDown Name="demandeDropBox" TValue="Demande" Class="form-control" Data=@demandes Change="@((args) => OnChanging(args))"
+                                TextProperty="demande" Placeholder="Veuillez choisir le type de soins ici" style="border-radius:0" />
+
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <RadzenTextArea Name="commentRadzen" @bind-Value="@demande_sup" class="w-100" style="height: 50px" Placeholder="Demande supplémentaire" />
+            </div>
+            <RadzenCheckBox @bind-Value="@urgence" TValue="bool" Placeholder="Urgence" Name="urgRadzen" /> <label for="urgRadzen" class="mt-1">Urgence</label>
+            <RadzenButton Click="@(()=>SaveInfoSoins())" class="float-right ml-4" Text="Enregistrer soins" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = null!;
+    IEnumerable<string> type_soins = new string[] { "Siture", "Pansement", "TDR", "Surveillance", "Aerosol", "Urgences", "Injection", "Referes", "Autres" };
+    string? soins_selected, type_soins_selected, demande_sup;
+    bool urgence;
+    Demande demande = new();
+    Demande demandeChoisi = new();
+    List<Demande> demandes = new List<Demande>();
+
+    private async Task SaveInfoSoins()
+    {
+        await sessionStorage.SetItemAsync("TypeSoins", type_soins_selected);
+        await sessionStorage.SetItemAsync("Demande", soins_selected);
+        await sessionStorage.SetItemAsync("Resultat", "En attente");
+        await sessionStorage.SetItemAsync("Etat", "Encours");
+        await sessionStorage.SetItemAsync("DemandeSup", demande_sup);
+        await ModalInstance.CloseAsync(ModalResult.Ok(true));
+    }
+
+    class Demande
+    {
+        public int id { get; set; }
+        public string demande { get; set; }
+    }
+
+    public void OnChanging(Object value)
+    {
+        Demande dem = (Demande)value;
+        soins_selected = dem.demande;
+        OnChange(soins_selected);
+        StateHasChanged();
+    }
+    public void OnChange(Object value)
+    {
+        string type = (string)value;
+        if (type == "Siture")
+        {
+            demandes = new List<Demande>();
+            Demande dSiture = new();
+            dSiture.id = 1;
+            dSiture.demande = "Siture";
+            demandes.Add(dSiture);
+        }
+        else if (type == "Pansement")
+        {
+            demandes = new List<Demande>();
+            Demande dPansement = new();
+            dPansement.id = 1;
+            dPansement.demande = "Pansement";
+            demandes.Add(dPansement);
+        }
+        else if (type == "TDR")
+        {
+            demandes = new List<Demande>();
+            Demande dHIV = new();
+            Demande dPalu = new();
+            dHIV.id = 1;
+            dHIV.demande = "HIV";
+            dPalu.id = 2;
+            dPalu.demande = "Paludisme";
+            demandes.Add(dHIV);
+            demandes.Add(dPalu);
+        }
+        else if (type == "Surveillance")
+        {
+            demandes = new List<Demande>();
+            Demande dTemp = new();
+            Demande dTA = new();
+            Demande dFC = new();
+            Demande dSPO2 = new();
+            Demande dAutres = new();
+            dTemp.id = 1;
+            dTemp.demande = "T°";
+            dTA.id = 2;
+            dTA.demande = "TA";
+            dFC.id = 3;
+            dFC.demande = "FC";
+            dSPO2.id = 4;
+            dSPO2.demande = "SPO2";
+            dAutres.id = 5;
+            dAutres.demande = "Autres";
+            demandes.Add(dTemp);
+            demandes.Add(dTA);
+            demandes.Add(dFC);
+            demandes.Add(dSPO2);
+            demandes.Add(dAutres);
+        }
+        else if (type == "Aerosol")
+        {
+            demandes = new List<Demande>();
+            Demande humide = new();
+            Demande salbutamol = new();
+            Demande autres = new();
+            humide.id = 1;
+            humide.demande = "Humide";
+            salbutamol.id = 2;
+            salbutamol.demande = "Salbutamol";
+            autres.id = 3;
+            autres.demande = "Autres";
+            demandes.Add(humide);
+            demandes.Add(salbutamol);
+            demandes.Add(autres);
+        }
+        else if (type == "Injection")
+        {
+            demandes = new List<Demande>();
+            Demande im = new();
+            Demande sc = new();
+            Demande ivd = new();
+            Demande ivdl = new();
+            Demande ivdr = new();
+            im.id = 1;
+            im.demande = "IM";
+            sc.id = 2;
+            sc.demande = "S.C";
+            ivd.id = 3;
+            ivd.demande = "IVD";
+            ivdl.id = 4;
+            ivdl.demande = "IVDL";
+            ivdr.id = 5;
+            ivdr.demande = "IVDR";
+            demandes.Add(im);
+            demandes.Add(sc);
+            demandes.Add(ivd);
+            demandes.Add(ivdl);
+            demandes.Add(ivdr);
+        }
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,111 @@
+﻿@page "/login"
+@layout LoginLayout
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Data
+@using LYRA.Models.Administration
+@using Radzen
+@using Radzen.Blazor
+@using LYRA.Models
+@using BC = BCrypt.Net.BCrypt
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject ILoginControl LogCtrl
+@inject IToastService toastService
+
+<RadzenTabs class="col-md-4 mt-5">
+	<Tabs>
+		<RadzenTabsItem Text="AUTHNETIFICATION">
+			<EditForm Model="@utilisateur" OnValidSubmit="@HandleValidSubmitLogin">
+				<hr />
+				<DataAnnotationsValidator />
+				<RadzenLabel Text="PLATEFORME DE TRAVAIL POUR OSIET" class="mt-2 mb-4" />
+
+				<!-- Email input -->
+				<div class="form-outline mb-4">
+					<RadzenTextBox Placeholder="E-mail" Class="w-100" @bind-Value="@utilisateur.Email" />
+					<ValidationMessage For="@(() => utilisateur.Email)" />
+				</div>
+
+				<!-- Password input -->
+				<div class="form-outline mb-4">
+					<RadzenPassword Placeholder="Mot de passe" Class="w-100" @bind-Value="utilisateur.Passwordhash" />
+					@*<ValidationMessage For="@(() => utilisateur.Passwordhash)" />*@
+				</div>
+
+				<!-- 2 column grid layout -->
+				<div class="row mb-6">
+					<div class="float-md-end mb-3 col-12">
+						<RadzenLabel Text="souviens-moi " Component="loginCheck" Style="margin-right: 8px; vertical-align: middle;" />
+						<RadzenCheckBox Name="remember_me" TValue="bool?" />
+					</div>
+				</div>
+
+				<!-- Submit button -->
+				<RadzenButton Text="Se connecter" class="w-100 mb-3" ButtonType="Radzen.ButtonType.Submit" ButtonStyle="Radzen.ButtonStyle.Info" />
+
+				<!-- Register buttons -->
+				<div class="text-center">
+					<p>inscrivez-vous ici. <a href="#!">S'enregistrer</a></p>
+				</div>
+			</EditForm>
+		</RadzenTabsItem>
+	</Tabs>
+</RadzenTabs>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="5" />
+
+@code {
+	Utilisateur utilisateur = new();
+	private ToastParameters? _toastParameters;
+	List<Utilisateur> utilisateurs = new();
+
+	protected override async void OnInitialized()
+	{
+		var EmailAdress = await localStorage.GetItemAsync<string>("emailAddress");
+		if (EmailAdress != null)
+		{
+			NavigationManager.NavigateTo("/main_page");
+		}
+		else
+		{
+			//editContext = new EditContext(utilisateur);
+		}
+	}
+
+	private async Task<bool> HandleValidSubmitLogin()
+	{
+		Utilisateur? userLogin;
+		userLogin = await LogCtrl.VerificationUtilisateur(utilisateur.Email, utilisateur.Passwordhash);
+		if (userLogin != null)
+		{
+			List<Urole> uroles = await LogCtrl.GetRoleUserAuthentified(userLogin);
+			List<string> roles = new();
+			foreach (var item in uroles)
+			{
+				roles.Add(item.Rolename.Trim());
+			}
+			await localStorage.SetItemAsync("emailAddress", utilisateur.Email);
+			await localStorage.SetItemAsync("loginNom", userLogin.Nom);
+			await localStorage.SetItemAsync("loginPrenom", userLogin.Prenom);
+			await localStorage.SetItemAsync("roles", roles);
+			((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(userLogin, roles);
+
+			NavigationManager.NavigateTo("/main_page");
+			return await Task.FromResult(true);
+		}
+		else
+		{
+			_toastParameters = new ToastParameters();
+			_toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+			_toastParameters.Add(nameof(MyToast.Level), "Error");
+			_toastParameters.Add(nameof(MyToast.Message), "Email ou mot de passe incorrect.");
+			toastService.ShowToast<MyToast>(_toastParameters);
+			return await Task.FromResult(false);
+		}
+		
+	}
+
+}

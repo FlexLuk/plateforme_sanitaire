@@ -1,0 +1,565 @@
+﻿@page "/laboratoire_medecin/{idConsultation}"
+@layout MedecinLayout
+
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Models.Examens
+@using LYRA.Models.Pharmacie
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Shared.Laboratoire
+@using Radzen
+@using Radzen.Blazor
+@using LYRA.Shared.Medecin
+@inject NavigationManager Go
+@inject IToastService toastService
+@inject ISoinsService soinsService
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject IMedecinService medecinService
+@inject IExamenService examenService
+@inject IParametreService parametreService
+@inject IUtilisateurService uService
+@inject Radzen.NotificationService notificationService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Laboratoire, Admin")]
+
+<RadzenNotification />
+<div class="">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Création laboratoire pour le patiant</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 m-0">
+                    <div class="card border-left-primary shadow p-0 py-2">
+                        <div class="card-body p-0">
+                            <h4 class="pl-2">PATIANT</h4>
+                            <table class="table table-sm table-bordered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">N° OSIET</th>
+                                        <td style="font-weight:bold">
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@numOsiet</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">NOM COMPLET</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@Nom</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">ETABLISSEMENT</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@Etablissement</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CARACTERISTIQUE</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@fichiste.Categorie</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">AGE</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@age</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card border-left-primary shadow  py-2">
+                        <div class="card-body m-0">
+                            <div class="col">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Type de test : </span>
+                                    <RadzenDropDown TValue="string" Name="typeDropBox" @bind-Value="@type_test_selected" Class="form-control" Data=@type_tests Change="@((args) => OnChange(args))"
+                                                    Placeholder="Veuillez choisir le type de test ici" style="border-radius:0" />
+
+                                </div>
+
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Test : </span>
+                                    <RadzenDropDown Name="demandeDropBox" TValue="Demande" Class="form-control" Data=@demandes Change="@((args) => OnChanging(args))"
+                                                    TextProperty="demande" Placeholder="Veuillez choisir le test ici" style="border-radius:0" />
+
+                                </div>
+                                <div class="input-group input-group-sm mb-3">
+                                    <RadzenTextArea Name="commentRadzen" @bind-Value="@commentaire" class="w-100" style="height: 50px" Placeholder="Commentaire" />
+                                </div>
+
+                                <RadzenButton Click="@(()=>saveLabo())" class="float-right ml-4" Text="Enregistrer soins" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" />
+                                <RadzenButton Click="@(()=>Go_Back())" class="float-right" Text="Consultation" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-2 mb-4">
+        <div class="card-header">
+            Liste soins du patiant
+        </div>
+        <div class="ard-body" style="border-radius: 0">
+            @if (labos.Count == 0)
+            {
+                <Loading />
+            }
+            else
+            {
+                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                        AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@labos"
+                        TItem="Laboratoire" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                        SelectionMode="DataGridSelectionMode.Single">
+                    <Columns>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Date" Sortable=false Filterable=false Title="Date">
+                            <Template Context=data>
+                                <span>@data.Date.ToString("dd MMMM yyyy")</span>
+                            </Template>
+                        </RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Statut" Title="Statut">
+                            <Template Context="data">
+                                @if (data.Statut == "En cours")
+                                {
+                                    <span class="bg-warning p-2">@data.Statut</span>
+                                }
+                                else
+                                {
+                                    <span class="bg-info">@data.Statut</span>
+                                }
+                            </Template>
+                        </RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Prescripteur" Title="Prescripteur"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="TypeTest" Title="Type de test"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Test" Title="Test"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Resultat" Title="Resultat"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="Laboratoire" Property="Commentaire" Title="Commentaires"></RadzenGridColumn>
+                    </Columns>
+                </RadzenGrid>
+            }
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [Parameter]
+    public string idConsultation { get; set; } = null!;
+    string? demande, numOsiet, Nom, Etablissement, categorie, type, test_selected, type_test_selected, commentaire;
+
+    IEnumerable<string> type_tests = new string[] { "BANDELETTE URINAIRE", "PARASITOLOGIE", "BACTERIOLOGIE", "HEMATOLOGIE", "SEROLOGIE", "BIOCHIMIE", "AUTRES" };
+    IEnumerable<string>? type_;
+
+    RadzenDropDown<Demande>? demandeDropBox;
+    RadzenDropDown<string>? typeDropBox;
+    RadzenTextArea? commentRadzen;
+
+    Fichiste fichiste = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    Medecin entityMedecin = new();
+    Consultation consultation = new();
+    Demande demandeChoisi = new();
+    List<Demande> demandes = new List<Demande>();
+    List<AvoirLaboratoire> avLabos = new List<AvoirLaboratoire>();
+    List<Laboratoire> labos = new List<Laboratoire>();
+    AvoirLaboratoire avoirLaboratoire = new();
+    Laboratoire laboratoire = new();
+    int age;
+    Utilisateur utilisateur = new();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    private ToastParameters? _toastParameters;
+    NotificationMessage notification = new();
+
+    protected async override void OnInitialized()
+    {
+        await getUserActif();
+
+        consultation = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+        fichiste = await fichisteservice.getFichisteById(consultation.Fichisteid);
+        entityMedecin = await medecinService.GetMedecinByIdUtilisateur(utilisateur.Utilisateurid);
+
+        if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        else if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        avLabos = await examenService.GetAllAvoirLaboratoireNonTerminer();
+        labos = await examenService.GetAllLaboratoireByFichiste(fichiste.Fichisteid);
+        StateHasChanged();
+    }
+
+    public void OnChange(Object value)
+    {
+        string type = (string)value;
+        demandes = null!;
+        demandes = demandes = new List<Demande>();
+        if (type == "BANDELETTE URINAIRE")
+        {
+            Demande dSiture1 = new();
+            dSiture1.id = 1;
+            dSiture1.demande = "Albumines";
+            demandes.Add(dSiture1);
+            Demande dSiture2 = new();
+            dSiture2.id = 2;
+            dSiture2.demande = "Sucre";
+            demandes.Add(dSiture2);
+            Demande dSiture3 = new();
+            dSiture3.id = 3;
+            dSiture3.demande = "Acetones";
+            demandes.Add(dSiture3);
+            Demande dSiture4 = new();
+            dSiture4.id = 4;
+            dSiture4.demande = "Test de grossesse";
+            demandes.Add(dSiture4);
+        }
+        else if (type == "PARASITOLOGIE")
+        {
+            Demande dPansement = new();
+            dPansement.id = 1;
+            dPansement.demande = "FM/GE";
+            demandes.Add(dPansement);
+            Demande dPansement1 = new();
+            dPansement1.id = 2;
+            dPansement1.demande = "SELLE KOP";
+            demandes.Add(dPansement1);
+        }
+        else if (type == "BACTERIOLOGIE")
+        {
+            Demande d1 = new(), d2 = new(), d3 = new();
+            d1.id = 1;
+            d1.demande = "FROTTIS CERVICO-VAGINAL";
+            d2.id = 2;
+            d2.demande = "ECBU";
+            d3.id = 3;
+            d3.demande = "FROTTIS URETRALE";
+            demandes.Add(d1);
+            demandes.Add(d2);
+            demandes.Add(d3);
+        }
+        else if (type == "HEMATOLOGIE")
+        {
+            demandes = new List<Demande>();
+            Demande d1 = new();
+            Demande d2 = new();
+            Demande d3 = new();
+            Demande d4 = new();
+            Demande d5 = new();
+            d1.id = 1;
+            d1.demande = "GLOBULE BLANC";
+            d2.id = 2;
+            d2.demande = "GLOBULE ROUGE";
+            d3.id = 3;
+            d3.demande = "HEMOGLOBINE";
+            d4.id = 4;
+            d4.demande = "PLAQUETTE";
+            d5.id = 5;
+            d5.demande = "VSH";
+            demandes.Add(d1);
+            demandes.Add(d2);
+            demandes.Add(d3);
+            demandes.Add(d4);
+            demandes.Add(d5);
+        }
+        else if (type == "SEROLOGIE")
+        {
+            Demande d1 = new(), d2 = new(), d3 = new(), d4 = new(), d5 = new(), d6 = new(), d7 = new(), d8 = new();
+            d1.id = 1;
+            d1.demande = "ASLO";
+            d2.id = 2;
+            d2.demande = "BILHARZIENNE";
+            d3.id = 3;
+            d3.demande = "CRP";
+            d4.id = 4;
+            d4.demande = "CYSTICERCOSE";
+            d5.id = 5;
+            d5.demande = "HEPATITE B";
+            d6.id = 6;
+            d6.demande = "SDW";
+            d7.id = 7;
+            d7.demande = "TOXOPLASMOSE";
+            d8.id = 8;
+            d8.demande = "TPHA";
+            demandes.Add(d1);
+            demandes.Add(d2);
+            demandes.Add(d3);
+            demandes.Add(d4);
+            demandes.Add(d5);
+            demandes.Add(d6);
+            demandes.Add(d7);
+            demandes.Add(d8);
+        }
+        else if (type == "BIOCHIMIE")
+        {
+            Demande d1 = new(), d2 = new(), d3 = new(), d4 = new(), d5 = new(), d6 = new(), d7 = new(), d8 = new();
+            Demande d9 = new(), d10 = new(), d11 = new(), d12 = new(), d13 = new();
+            d1.id = 1;
+            d1.demande = "Acide Urique";
+            d2.id = 2;
+            d2.demande = "ALAT/GPT";
+            d3.id = 3;
+            d3.demande = "AMYLASEMIE";
+            d4.id = 4;
+            d4.demande = "ASAT/GT";
+            d5.id = 5;
+            d5.demande = "Azotémie";
+            d6.id = 6;
+            d6.demande = "Calcémie";
+            d7.id = 7;
+            d7.demande = "Chloride";
+            d8.id = 8;
+            d8.demande = "Cholesterolemie";
+            d9.id = 9;
+            d9.demande = "Créatinémie";
+            d10.id = 10;
+            d10.demande = "Magnésemie";
+            d11.id = 11;
+            d11.demande = "Potassium";
+            d12.id = 12;
+            d12.demande = "Sodium";
+            d13.id = 13;
+            d13.demande = "Glycémie";
+            demandes.Add(d1);
+            demandes.Add(d2);
+            demandes.Add(d3);
+            demandes.Add(d4);
+            demandes.Add(d5);
+            demandes.Add(d6);
+            demandes.Add(d7);
+            demandes.Add(d8);
+            demandes.Add(d9);
+            demandes.Add(d10);
+            demandes.Add(d11);
+            demandes.Add(d12);
+            demandes.Add(d13);
+        }
+        else if (type == "AUTRES")
+        {
+            Demande d1 = new();
+            Demande d2 = new();
+            d1.id = 1;
+            d1.demande = "GROUPAGES";
+            d2.id = 2;
+            d2.demande = "Triglyceridemie";
+            demandes.Add(d1);
+            demandes.Add(d2);
+        }
+        StateHasChanged();
+    }
+
+    public void OnChanging(Object value)
+    {
+        Demande dem = (Demande)value;
+        test_selected = dem.demande;
+        StateHasChanged();
+    }
+
+    public async Task getUserActif()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+    }
+
+    class Demande
+    {
+        public int id { get; set; }
+        public string demande { get; set; } = null!;
+    }
+
+    public void Go_Back()
+    {
+        Go.NavigateTo("/docteurPatiant/" + idConsultation);
+    }
+
+    public async Task<bool> CheckAvoirLaboratoire(long idFichiste)
+    {
+        return await examenService.CheckAvoirLaboByFichiste(idFichiste);
+    }
+
+    public async Task<bool> CreateAvoirLAboratoire(AvoirLaboratoire avoirLabo)
+    {
+        return await examenService.CreateAvoirLaboratoire(avoirLabo);
+    }
+
+    public async Task saveLabo()
+    {
+        bool avoirExist = false, avoirCreated = false;
+        avoirExist = await CheckAvoirLaboratoire(fichiste.Fichisteid);
+        if (avoirExist == true)
+        {
+            bool result = await CreateLaboratoire();
+            if (result == true)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Information.",
+                        Detail = "Enregistrement réussi.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error.",
+                        Detail = "Erreur d'enregistrement, veuillez réessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+        }
+        else if (avoirExist == false)
+        {
+            avoirLaboratoire.Statut = "En cours";
+            avoirLaboratoire.Date = DateTime.Now;
+            avoirLaboratoire.FichisteId = fichiste.Fichisteid;
+            avoirCreated = await CreateAvoirLAboratoire(avoirLaboratoire);
+            if (avoirCreated == true)
+            {
+                bool result = await CreateLaboratoire();
+                if (result == true)
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Success,
+                            Summary = "Information.",
+                            Detail = "Enregistrement réussi.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                }
+                else
+                {
+                    notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error.",
+                        Detail = "Erreur d'enregistrement, veuillez réessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+                }
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error.",
+                        Detail = "Erreur d'enregistrement, veuillez réessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+
+        }
+        labos = await examenService.GetAllLaboratoireByFichiste(fichiste.Fichisteid);
+        StateHasChanged();
+    }
+
+    public async Task<bool> CreateLaboratoire()
+    {
+        bool result = false;
+        laboratoire.Prescripteur = entityMedecin.NomMedecin + " " + entityMedecin.PrenomMedecin;
+        laboratoire.MedecinId = entityMedecin.Medecinid;
+        laboratoire.Date = DateTime.Now;
+        laboratoire.Statut = "En cours";
+        laboratoire.Commentaire = commentaire;
+        laboratoire.FichisteId = fichiste.Fichisteid;
+        laboratoire.TypeTest = type_test_selected;
+        laboratoire.Test = test_selected;
+        result = await examenService.CreateLaboratoire(laboratoire);
+        return result;
+
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille.Numeroosiet != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer.Numemployeur != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                categorie = fichiste.Categorie;
+                if (famille.Datenaissance != null)
+                {
+                    int dateNaissance = famille.Datenaissance.Value.Year;
+                    int currentDate = DateTime.Now.Year;
+                    age = currentDate - dateNaissance;
+                }
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer.Numemployeur != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            categorie = fichiste.Categorie;
+            if (employer.Datenaissance != null)
+            {
+                int dateNaissance = employer.Datenaissance.Value.Year;
+                int currentDate = DateTime.Now.Year;
+                age = currentDate - dateNaissance;
+            }
+        }
+    }
+}

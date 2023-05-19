@@ -1,0 +1,156 @@
+﻿@page "/rapport_soins"
+@layout SoinsLayout
+@using LYRA.Shared.Soins
+@using LYRA.Models
+@using LYRA.Models.Pharmacie
+@using LYRA.Controllers.SoinsController
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@inject ISoinsService soinsService
+@inject IFichisteService fichisteService
+@inject IAffiliationService affiliationService
+@inject IAdhesionService adhesionService
+@inject NavigationManager Go
+@attribute [Authorize(Roles = "Admin, Soins")]
+<PageTitle>Rapport Soins</PageTitle>
+
+<RadzenCard>
+    <h6>LISTE TOUS LES SOINS</h6>
+    <hr class="mt-0 mb-2" />
+    @if (loaded == false)
+    {
+        <Loading />
+    }
+    else
+    {
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                    AllowPaging="true" AllowSorting="true" Responsive="true" Data="@listSoinsModel" PageSize="10"
+                    TItem="SoinsModel" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                    FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page" EmptyText="Aucune information"
+                    SelectionMode="DataGridSelectionMode.Single" class="mt-0" ShowPagingSummary>
+            <Columns>
+                <RadzenDataGridColumn TItem="SoinsModel" Property="Fichisteid" Title="Fichiste ID" Filterable=false Sortable=false Width="90px"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SoinsModel" Property="NomPatient" Title="Nom" Width="240px"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SoinsModel" Property="NomEntreprise" Title="Etablissement"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SoinsModel" Property="Daty" Title="Date"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SoinsModel" Title="N° OSIET" Filterable=false Sortable=false Width="90px">
+                    <Template Context="data">
+                        <h4><RadzenBadge Text="@data.NumOSIET" BadgeStyle="BadgeStyle.Light" /></h4>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SoinsModel" Filterable=false Sortable=false Width="90px">
+                    <Template Context="data">
+                        <div class="row" style="margin: 0">
+                            <div class="col d-flex justify-content-center" style="padding: 0">
+                                <RadzenButton Click="@(()=>Soigner(data.Fichisteid))" Size="ButtonSize.Small" Text="Soigner"/>
+                            </div>
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+</RadzenCard>
+
+@code {
+    Soins soins = new();
+    List<Soins> listSoins = new List<Soins>();
+    RadzenGrid<SoinsModel> grid;
+    bool loaded = false;
+    SoinsModel soinsModel = new();
+    List<SoinsModel> listSoinsModel = new List<SoinsModel>();
+
+    protected async override void OnInitialized()
+    {
+        await LoadSoins();
+        loaded = true;
+        StateHasChanged();
+
+    }
+
+    public async Task LoadSoins()
+    {
+        listSoins = await soinsService.GetSoinsAll();
+        if (listSoins.Count() > 0)
+        {
+            foreach (var item in listSoins)
+            {
+                SoinsModel sM = new();
+                sM.Daty = item.Date;
+                sM.Fichisteid = item.Fichisteid.GetValueOrDefault();
+                sM.Soinid = item.Soinsid;
+                Fichiste fiche = await fichisteService.getFichisteById(item.Fichisteid.GetValueOrDefault());
+                sM.NumOSIET = await getNumOSIET(Convert.ToInt32(fiche.Affiliationid), fiche.Categorie);
+                sM.NomPatient = await getNomPatiant(Convert.ToInt32(fiche.Affiliationid), fiche.Categorie);
+                sM.NomEntreprise = await getNomEmployeur(Convert.ToInt32(fiche.Affiliationid), fiche.Categorie);
+                listSoinsModel.Add(sM);
+            }
+        }
+    }
+
+    public async Task<string> getNomPatiant(int idPatient, string categorie)
+    {
+        var nom = "";
+        if (categorie == "Famille")
+        {
+            Famille fam = new();
+            fam = await affiliationService.GetFamilleById(idPatient);
+            nom = fam.Nom + " " + fam.Prenom;
+        }
+        else if (categorie == "Travailleur")
+        {
+            Employer emp = new();
+            emp = await affiliationService.GetEmployerById(idPatient);
+            nom = emp.Nom + " " + emp.Prenom;
+        }
+        return nom;
+    }
+
+    public async Task<string> getNumOSIET(int idPatient, string categorie)
+    {
+        string num = "";
+        if (categorie == "Famille")
+        {
+            Famille fam = new();
+            fam = await affiliationService.GetFamilleById(idPatient);
+            num = fam.Numeroosiet;
+        }
+        else if (categorie == "Travailleur")
+        {
+            Employer emp = new();
+            emp = await affiliationService.GetEmployerById(idPatient);
+            num = emp.Numeroosiet;
+        }
+        return num;
+    }
+
+    public async Task<string> getNomEmployeur(int idPatient, string categorie)
+    {
+        var nom = "";
+        if (categorie == "Famille")
+        {
+            Famille fam = new();
+            fam = await affiliationService.GetFamilleById(idPatient);
+            Employer emp = new();
+            emp = await affiliationService.GetEmployerByNumOsiet(fam.Numeroosiet);
+            Employeur empl = new();
+            empl = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+            nom = empl.Raisonsociale;
+        }
+        else if (categorie == "Travailleur")
+        {
+            Employer emp = new();
+            emp = await affiliationService.GetEmployerById(idPatient);
+            Employeur empl = new();
+            empl = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+            nom = empl.Raisonsociale;
+        }
+        return nom;
+    }
+
+    public void Soigner(long soinsid)
+    {
+        Go.NavigateTo("/soins/" + soinsid);
+    }
+}

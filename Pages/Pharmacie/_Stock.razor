@@ -1,0 +1,210 @@
+﻿@page "/stock"
+@layout PharmacieLayout
+@using System.Web
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Data
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Pharmacie
+@using Radzen
+@using Radzen.Blazor
+@inject IUtilisateurService uService
+@inject NavigationManager go
+@inject IToastService toastService
+@inject IPharmacieService pharmaContext
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Pharmacie, Admin")]
+
+<PageTitle>OSIET | Pharmacie > stock</PageTitle>
+
+<AuthorizeView Roles="Pharmacie, Admin">
+    <Authorized Context="Pharmacie">
+        <div class="card mt-1 mb-4">
+
+            <div class="card-header">
+                <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Creation d'entree</h5>
+            </div>
+            <div class="card-body">
+                <div>
+                    <EditForm Model="@entree" OnValidSubmit="@SaveEntree">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+
+                            <div class="col">
+                                <div class="mb-1">
+                                    <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Nom article : </label><br />
+                                    @if (medicaments != null)
+                                    {
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="long"
+                                                            Data="@(medicaments.Select(c=>new {MedicamentId=c.Medicamentid,Designation=c.Designation + " " + c.Presentation}).Distinct().AsQueryable())"
+                                                            TextProperty="Designation" ValueProperty="MedicamentId" Change="@(()=>OnChange())"
+                                                            @bind-Value="@entree.Medicamentid" Placeholder="Nom medicament" style="border-radius:0" />
+                                        <ValidationMessage For="@(() => entree.Medicamentid)" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="mb-1">
+                                    <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Quantité : </label><br />
+                                    <RadzenNumeric Placeholder="Quantité à entrée" class="form-comtrol w-100" @bind-Value="@entree.Quantiteentree" />
+                                    <ValidationMessage For="@(() => entree.Quantiteentree)" />
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
+                                <div class="mb-1">
+                                    <label for="exampleFormControlInput1" class="form-label " style="font-weight:bold">&ensp;</label>
+                                    <RadzenButton ButtonType="Radzen.ButtonType.Submit" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Info" Text="Ajouter" class="form-comtrol w-100" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </EditForm>
+
+                </div>
+            </div>
+        </div>
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Entree en stock</h5>
+            </div>
+            <div class="card-body">
+                @if (entreeLists != null)
+                {
+                    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@entreeLists"
+                            TItem="EntreeList" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                            SelectionMode="DataGridSelectionMode.Single">
+                        <Columns>
+                            <RadzenGridColumn TItem="EntreeList" Property="dateEntree" Title="Date" Width="100px"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="EntreeList" Property="designation" Title="Designation" Width="Auto"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="EntreeList" Property="stockAvant" Title="Stock avant" Width="Auto"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="EntreeList" Property="stockEntre" Title="Quantité entrée" Width="Auto"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="EntreeList" Property="stockApres" Title="Stock après" Width="Auto"></RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+            </div>
+            <div class="card-footer">
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Medicament medicament = new();
+    IEnumerable<Medicament> medicaments = new List<Medicament>();
+    Entree entree = new();
+    EntreeList entreeList = new();
+    IEnumerable<EntreeList> entreeLists = new List<EntreeList>();
+    IEnumerable<Entree> entrees = new List<Entree>();
+    private ToastParameters? _toastParameters;
+    Utilisateur utilisateur = new();
+    public void OnChange()
+    {
+
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetListEntree();
+        await GetListArticle();
+        await getUserActif();
+        StateHasChanged();
+    }
+
+    public async Task SaveEntree()
+    {
+        Medicament med = new();
+        med = await pharmaContext.GetMedicamentById(entree.Medicamentid);
+        if (med != null && entree.Quantiteentree != 0)
+        {
+            entree.Date = DateTime.Now;
+            entree.Stockinitial = med.Quantite;
+            entree.Stockfinal = med.Quantite + entree.Quantiteentree;
+            entree.Utilisateurid = utilisateur.Utilisateurid;
+
+            bool rep = await pharmaContext.InsertEntree(entree);
+            if (rep)
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Success !");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                med.Quantite = med.Quantite + entree.Quantiteentree;
+                await pharmaContext.UpdateMedicament(med);
+                await GetListEntree();
+                entree = new();
+                StateHasChanged();
+
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Erreur d'enregistrement, veuillez reessayer, SVP.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                await GetListEntree();
+                entree = new();
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Veuillez completer tous les champs.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+    }
+
+    public async Task GetListEntree()
+    {
+        entrees = await pharmaContext.GetListEntree();
+        List<EntreeList> lists = new List<EntreeList>();
+        foreach (var item in entrees)
+        {
+            EntreeList eL = new();
+            eL.dateEntree = item.Date.ToShortDateString();
+            eL.stockEntre = item.Quantiteentree;
+            eL.stockAvant = item.Stockinitial;
+            eL.stockApres = item.Stockfinal;
+            eL.designation = await pharmaContext.GetDesignstionMedicamentById(item.Medicamentid);
+            lists.Add(eL);
+        }
+        entreeLists = lists;
+    }
+
+    public async Task GetListArticle()
+    {
+        medicaments = await pharmaContext.GetListMedicament();
+    }
+
+    public async Task getUserActif()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+    }
+
+    class EntreeList
+    {
+        public string? designation { get; set; }
+        public decimal? stockAvant { get; set; }
+        public decimal? stockApres { get; set; }
+        public decimal? stockEntre { get; set; }
+        public string? dateEntree { get; set; }
+    }
+}

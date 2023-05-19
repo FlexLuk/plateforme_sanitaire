@@ -1,0 +1,47 @@
+﻿@using Blazored.Toast.Services
+@inject IToastService toastService
+
+@if (Level == "Error")
+{
+	<div class="p-3 bg-danger rounded">
+		<span class="fas fa-close" style="float: right; cursor: pointer"
+		onclick="@(()=>toastService.ClearAll())">&times;</span>
+		<h3>@Title</h3>
+		<h5 class="mb-0">@Message</h5>
+	</div>
+}
+else if (Level == "Warning")
+{
+	<div class="text-white p-4 bg-warning rounded">
+		<span class="fas fa-close" style="float: right; cursor: pointer"
+		onclick="@(()=>toastService.ClearAll())">&times;</span>
+		<h3>@Title</h3>
+		<h5 class="mb-0">@Message</h5>
+	</div>
+}
+else if (Level == "Info")
+{
+	<div class="text-white p-4 bg-info rounded">
+		<span class="fas fa-close" style="float: right; cursor: pointer"
+		onclick="@(()=>toastService.ClearAll())">&times;</span>
+		<h3>@Title</h3>
+		<h5 class="mb-0">@Message</h5>
+	</div>
+}
+else if (Level == "Success")
+{
+	<div class="p-3 bg-success rounded">
+		<span class="fas fa-close" style="float: right; cursor: pointer"
+		onclick="@(()=>toastService.ClearAll())">&times;</span>
+		<h3>@Title</h3>
+		<h5 class="mb-0">@Message</h5>
+	</div>
+}
+
+@code {
+	[Parameter] public string? Title { get; set; }
+	[Parameter] public string? Message { get; set; }
+	[Parameter] public string? Level { get; set; }
+
+
+}

@@ -1,0 +1,17 @@
+﻿@page "/"
+@namespace LYRA.Pages
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_Layout";
+
+    [JSInvokable]
+    static string SayHelloCS(string name)
+    {
+        return "Hello, " + name;
+    }
+}
+
+<component type="typeof(App)" render-mode="Server" />

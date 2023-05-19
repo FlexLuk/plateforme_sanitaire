@@ -1,0 +1,262 @@
+﻿@page "/adhesion"
+@layout SecretaireLayout
+
+@using System.Web
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@using LYRA.Shared.Secretaire
+@using Radzen
+@using Radzen.Blazor
+@inject IToastService toastService
+@inject IAdhesionService adhesionService
+@inject NavigationManager go
+@attribute [Authorize(Roles = "Admin,Secretaire")]
+
+<PageTitle>Secretaire</PageTitle>
+
+<AuthorizeView Roles="Admin,Secretaire">
+    <Authorized Context="Flex">
+        <div class="card card-info mb-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0">AJOUT EMPLOYEUR</h5>
+            </div>
+            <div class="card-body">
+                <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmitSaveEmployeur">
+                    <DataAnnotationsValidator />
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Raison sociale : </span>
+                                <RadzenTextBox class="form-control form-control-sm" @bind-Value="@employeur.Raisonsociale"
+                                               Placeholder="Nom de l'etablissement" />
+                                <ValidationMessage For="@(() => employeur.Raisonsociale)" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Numero OSIET : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Numemployeur"
+                                               Placeholder="numero de l'employeur" />
+                                <ValidationMessage For="@(() => employeur.Numemployeur)" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>NIF : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Nif" Placeholder="NIF" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Forme jurdique : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Formejurdique"
+                                               Placeholder="Forme jurdique" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>STAT : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Stat" Placeholder="STAT" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Adresse : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Adresse"
+                                               Placeholder="Adresse de l'etablissement" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Téléphone : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Telephone"
+                                               Placeholder="Numero téléphone" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Nom contact : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Nomcontact"
+                                               Placeholder="Personne a contacter" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>E-mail : </span>
+                                <RadzenTextBox class="form-control " @bind-Value="@employeur.Email"
+                                               Placeholder="Adresse mail" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group-sm mb-2" style="font-size:small">
+                                <span>Statut : </span>
+                                <RadzenDropDown @bind-Value="@employeur.Statut" Class="form-control" Data=@statusEmployeur
+                                                Change="@(args=>OnChange(args))" Placeholder="reglement d'adhesion" />
+                                <ValidationMessage For="@(() => employeur.Statut)" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div style="height: 30px">
+                        <RadzenButton Text="Enregistrer" Icon="save" ButtonStyle="ButtonStyle.Success"
+                                      ButtonType="Radzen.ButtonType.Submit" class="float-lg-end" />
+                        <RadzenButton Text="Annuler" Icon="highlight_off" ButtonStyle="ButtonStyle.Danger"
+                                      class="float-right mr-2" ButtonType="Radzen.ButtonType.Reset" />
+
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+
+        <div class="card card-info mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">LISTE DES EMPLOYERS</h5>
+            </div>
+            <div class="card-body">
+                <div style="">
+                    @if (employeurs == null)
+                    {
+                        <Loading />
+                    }
+                    else
+                    {
+                        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                AllowPaging="true" PageSize="10" AllowSorting="true" Responsive="false" Data="@employeurs"
+                                TItem="Employeur" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                                FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                                SelectionMode="DataGridSelectionMode.Single">
+                            <Columns>
+                                <RadzenGridColumn TItem="Employeur" Property="Numemployeur" Title="Numero employeur">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Employeur" Property="Raisonsociale" Title="Raison sociale">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Employeur" Property="Email" Title="Email"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Employeur" Property="Telephone" Title="Contact"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Employeur" Property="Statut" Title="Statut" Width="100px">
+                                    <Template Context="data">
+                                        @if (data.Statut == "En regle")
+                                        {
+                                            <span class="badge bg-success p-1">En regle</span>
+                                        }
+                                        else if (data.Statut == "Suspendu")
+                                        {
+                                            <span class="badge bg-danger">Suspendu</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">En etat de grace</span>
+                                        }
+                                    </Template>
+                                </RadzenGridColumn>
+                                @*<RadzenGridColumn TItem="Employeur" Property="Employeurid" Title="Action" Width="150px">
+                            <Template Context="data">
+                            <div class="row" style="margin: 0">
+                            <div class="col d-flex justify-content-center" style="padding: 0">
+                            <RadzenButton Icon="info" data-toggle="tooltip" class="mr-2" title="Voir"
+                            ButtonStyle="ButtonStyle.Secondary"
+                            Click="@(() => infoEmployeur(data.Employeurid))" />
+                            <RadzenButton Icon="lock" data-toggle="tooltip" title="Desactiver"
+                            ButtonStyle="ButtonStyle.Warning"
+                            Click="@(() => desactiveEmployeur(data.Employeurid))" />
+                            </div>
+                            </div>
+                            </Template>
+                            </RadzenGridColumn>*@
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                </div>
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="6" />
+    </Authorized>
+    <NotAuthorized>
+        @{
+            go.NavigateTo("/main_page");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@*//Flex*@
+
+@code {
+    private ToastParameters? _toastParameters;
+    public IEnumerable<Employeur>? employeurs;
+    public Object? u;
+    public Employeur employeur = new();
+    bool loading;
+    protected EditContext? editContext = null;
+    RadzenButton btmReset = new();
+    IEnumerable<string> statusEmployeur = new string[] { "En regle", "Suspendu", "En etat de grace" };
+
+    public void OnChange(object args) { }
+
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(employeur);
+        await LoadTableEmployeur();
+    }
+
+    public async Task HandleValidSubmitSaveEmployeur()
+    {
+        Employeur? employeurr = new();
+        employeurr = await adhesionService.InsertAdhesion(employeur);
+
+        if (employeurr != null)
+        {
+            await LoadTableEmployeur();
+
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Creation reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Employeur a ete ajoute avec succes.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Erreur d'enregistrement.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+
+        employeur = new();
+        StateHasChanged();
+    }
+
+    public async Task LoadTableEmployeur()
+    {
+        employeurs = await adhesionService.GetAllAdhesion();
+    }
+
+    public async void deleteEmployeur(int id)
+    {
+        await adhesionService.DeleteAdhesion(id);
+        await LoadTableEmployeur();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void infoEmployeur(int id)
+    {
+
+    }
+
+    public void desactiveEmployeur(int iduser)
+    {
+
+    }
+
+}

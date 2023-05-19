@@ -1,0 +1,269 @@
+﻿@page "/docteurPatiant"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Shared.Medecin
+@using LYRA.Models
+@using LYRA.Models.Administration
+@inject IMedecinService medecinService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IFichisteService fichisteservice
+@inject IParametreService parametreService
+@inject IAffiliationService affService
+@inject NavigationManager go
+@inject Radzen.DialogService DialogService
+@layout MedecinLayout
+
+<AuthorizeView Roles="Admin, Medecin">
+    <Authorized>
+        <div class="card" style="border-radius: 0">
+            <div class="card-header">
+                <h4 class="m-0">Patiants en attente</h4>
+            </div>
+            <div class="card-body">
+                @if (ready == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">Nouvelle liste d'attente</h5>
+                                </div>
+
+                                <hr class="mt-0" />
+
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                        AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@consultationAttentes"
+                                        TItem="MedecinPatiant" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%" class="mb-3"
+                                        SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="date" Title="Date" Width="70px">
+                                            <Template Context="data">
+                                                <span>@data.date.Value.ToString("dd MMMM yyyy")</span>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Numjour" Title="Numero du jour" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Nom" Title="Nom" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Prenom" Title="Prenom" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Width="70px">
+                                            <Template Context="datas">
+                                                <button onclick="@(()=>Traiter(datas.idConsultation))" class="btn btn-sm btn-outline-success">Traiter</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">Traitement en cours</h5>
+                                </div>
+                                <hr class="mt-0" />
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                        AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@consultationEncours"
+                                        TItem="MedecinPatiant" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%" class="mb-3"
+                                        SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="date" Title="Date" Width="70px">
+                                            <Template Context="data">
+                                                <span>@data.date.Value.ToString("dd MMMM yyyy")</span>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Numjour" Title="ID" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Nom" Title="ID" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Property="Prenom" Title="ID" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MedecinPatiant" Width="70px">
+                                            <Template Context="datas">
+                                                <button onclick="@(()=>Traiter(datas.idConsultation))" class="btn btn-sm btn-outline-success">Traiter</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @*<div class="card mt-4 mb-4" style="border-radius: 0">
+        <div class="card-header">
+        <h4 class="m-0">Patiants sur rendez-vous</h4>
+        </div>
+        <div class="card-body">
+        <RadzenScheduler Data="@data" TItem="DataItem" TodayText="Ajourd'hui" SelectedIndex="2" StartProperty="Start" EndProperty="End" TextProperty="Text">
+        <RadzenDayView Text="Aujourd'hui" />
+        <RadzenWeekView Text="Semaine" />
+        <RadzenMonthView Text="Mois" />
+        </RadzenScheduler>
+        </div>
+        </div>*@
+
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    bool ready;
+    Medecin medecin = new();
+    Consultation consultation = new();
+    IEnumerable<Consultation> consultations = new List<Consultation>();
+    IEnumerable<Consultation> consultationss = new List<Consultation>();
+    IEnumerable<Consultation> listAttente = new List<Consultation>();
+    List<MedecinPatiant> consultationAttentes = new List<MedecinPatiant>();
+    List<MedecinPatiant> consultationEncours = new List<MedecinPatiant>();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    int numeroMedecin = 0;
+    int idUtilMedecin = 0;
+    string emailAddress = "";
+
+    public async Task Traiter(long idConsultation)
+    {
+        go.NavigateTo("/docteurPatiant/" + idConsultation);
+    }
+
+    protected async override void OnInitialized()
+    {
+        ready = false;
+        emailAddress = await _localStorageService.GetItemAsync<string>("emailAddress");
+        await LoadUtilisateur();
+        foreach (var item in utilisateurs)
+        {
+            if (item.Email.Trim() == emailAddress)
+            {
+                idUtilMedecin = item.Utilisateurid;
+                break;
+            }
+
+        }
+
+        await GetListAttente(idUtilMedecin);
+        await GetListAttenteMedecin();
+        await GetListEncoursMedecin();
+        ready = true;
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    public async Task GetListAttente(int idUtilMedecin)
+    {
+        Medecin med = await medecinService.GetMedecinByIdUtilisateur(idUtilMedecin);
+        numeroMedecin = med.Medecinid;
+        consultations = await medecinService.GetConsultationByMedecin(numeroMedecin);
+        consultationss = await medecinService.GetConsultationByMedecinEnAttente(numeroMedecin);
+    }
+
+    public async Task LoadUtilisateur() => utilisateurs = await uService.GetAllUtilisateur();
+
+    public async Task GetListAttenteMedecin()
+    {
+        foreach (var item in consultations)
+        {
+            string nom = "";
+            string prenom = "";
+            MedecinPatiant p = new();
+            p.idFichiste = item.Fichisteid;
+            p.Numjour = item.Numjour;
+            p.idConsultation = item.Consultationid;
+            Fichiste getFichiste = await fichisteservice.getFichisteById(item.Fichisteid);
+            if (getFichiste != null)
+            {
+                @if (getFichiste.Categorie.Trim() == "Famille")
+                {
+                    Famille fam = new();
+                    fam = await affService.GetFamilleById(Convert.ToInt32(getFichiste.Affiliationid));
+                    nom = fam.Nom;
+                    prenom = fam.Prenom;
+
+                }
+                else if (getFichiste.Categorie.Trim() == "Travailleur")
+                {
+                    Employer emp = new();
+                    emp = await affService.GetEmployerById(Convert.ToInt32(getFichiste.Affiliationid));
+                    nom = emp.Nom;
+                    prenom = emp.Prenom;
+                }
+                p.Nom = nom;
+                p.Prenom = prenom;
+                p.date = getFichiste.Date;
+                consultationAttentes.Add(p);
+            }
+        }
+    }
+
+    public async Task GetListEncoursMedecin()
+    {
+        foreach (var item in consultationss)
+        {
+            string nom = "";
+            string prenom = "";
+            MedecinPatiant p = new();
+            p.idFichiste = item.Fichisteid;
+            p.Numjour = item.Numjour;
+            p.idConsultation = item.Consultationid;
+            Fichiste getFichiste = await fichisteservice.getFichisteById(item.Fichisteid);
+            if (getFichiste != null)
+            {
+                @if (getFichiste.Categorie.Trim() == "Famille")
+                {
+                    Famille fam = new();
+                    fam = await affService.GetFamilleById(Convert.ToInt32(getFichiste.Affiliationid));
+                    nom = fam.Nom;
+                    prenom = fam.Prenom;
+
+                }
+                else if (getFichiste.Categorie.Trim() == "Travailleur")
+                {
+                    Employer emp = new();
+                    emp = await affService.GetEmployerById(Convert.ToInt32(getFichiste.Affiliationid));
+                    nom = emp.Nom;
+                    prenom = emp.Prenom;
+                }
+                p.Nom = nom;
+                p.Prenom = prenom;
+                p.date = getFichiste.Date;
+                consultationEncours.Add(p);
+            }
+        }
+    }
+
+    class DataItem
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public string Text { get; set; }
+    }
+
+    DataItem[] data = new DataItem[]
+    {
+      new DataItem
+      {
+        Start = DateTime.Today,
+        End = DateTime.Today.AddDays(2),
+        Text = "Birthday"
+      },
+    };
+
+}

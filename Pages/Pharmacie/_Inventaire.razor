@@ -1,0 +1,28 @@
+﻿@page "/inventaire"
+@layout PharmacieLayout
+@using System.Web
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Data
+@using LYRA.Models
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Pharmacie
+@using Radzen
+@using Radzen.Blazor
+@inject NavigationManager go
+@inject IToastService toastService
+@inject IPharmacieService pharmaContext
+@attribute [Authorize(Roles = "Pharmacie, Admin")]
+
+<h3>_Inventaire</h3>
+
+@code {
+    Medicament medicament = new();
+    IEnumerable<Medicament> medicaments = new List<Medicament>();
+    Entree entree = new();
+    MouvementStock mvtStock = new();
+    IEnumerable<Entree> entrees = new List<Entree>();
+    IEnumerable<MouvementStock> mvtStocks = new List<MouvementStock>();
+}

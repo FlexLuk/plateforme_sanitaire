@@ -1,0 +1,166 @@
+﻿@page "/dentiste_attente"
+@using LYRA.Controllers.ControllerDentiste
+@using LYRA.Shared.Dentiste
+@layout DentisteLayout
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Shared.Medecin
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Models.Examens
+@inject IDentisteService dentisteService
+@inject IMedecinService medecinService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IFichisteService fichisteService
+@inject IAffiliationService affService
+@inject NavigationManager go
+@inject Radzen.DialogService DialogService
+
+<AuthorizeView Roles="Admin, Medecin">
+    <Authorized>
+        <div class="card" style="border-radius: 0">
+            <div class="card-header">
+                <h4 class="m-0">Liste d'attente</h4>
+            </div>
+            <div class="card-body">
+                @if (ready == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">Nouveau</h5>
+                                </div>
+
+                                <hr class="mt-2" />
+
+                                <table class="table table-hover table-responsive table-bordered table-secondary align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>N° du jour</th>
+                                            <th>Nom</th>
+                                            <th>Prenom</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (listDentiste.Count() > 0)
+                                        {
+                                            @foreach (var item in listDentiste)
+                                            {
+                                                <tr>
+                                                    <td>@item.numJour</td>
+                                                    <td>@item.nom</td>
+                                                    <td>@item.prenom</td>
+                                                    <td>
+                                                        <button onclick="@(()=>Traiter(item.fichisteID))" class="btn btn-sm btn-outline-success">Entrer</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">En cours</h5>
+                                </div>
+
+                                <hr class="mt-2" />
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    bool ready;
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    List<Dentiste> dentistes = new List<Dentiste>();
+    List<DentisteList> listDentiste = new List<DentisteList>();
+    Fichiste fichiste = new();
+
+    public void Traiter(long? idFichiste)
+    {
+        go.NavigateTo("/dentiste/" + idFichiste);
+    }
+
+    protected async override void OnInitialized()
+    {
+        ready = false;
+        await GetListAttente();
+        await GetListAttenteMedecin();
+        ready = true;
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    public async Task GetListAttente()
+    {
+        dentistes = await dentisteService.GetAllDentisteNonTerminer();
+    }
+
+    public async Task LoadUtilisateur() => utilisateurs = await uService.GetAllUtilisateur();
+
+    public async Task GetListAttenteMedecin()
+    {
+        foreach (var item in dentistes)
+        {
+            if (item.Fichisteid != null)
+            {
+                fichiste = await fichisteService.getFichisteById(item.Fichisteid.Value);
+                string? nom = "", prenom = "";
+                DentisteList dL = new();
+                dL.fichisteID = fichiste.Fichisteid;
+                if (fichiste != null)
+                {
+                    @if (fichiste.Categorie.Trim() == "Famille")
+                    {
+                        Famille fam = new();
+                        fam = await affService.GetFamilleById(Convert.ToInt32(fichiste.Affiliationid));
+                        nom = fam.Nom;
+                        prenom = fam.Prenom;
+
+                    }
+                    else if (fichiste.Categorie.Trim() == "Travailleur")
+                    {
+                        Employer emp = new();
+                        emp = await affService.GetEmployerById(Convert.ToInt32(fichiste.Affiliationid));
+                        nom = emp.Nom;
+                        prenom = emp.Prenom;
+                    }
+                    dL.numJour = fichiste.Numjour;
+                    dL.nom = nom;
+                    dL.prenom = prenom;
+                    listDentiste.Add(dL);
+                }
+            }
+        }
+    }
+
+    class DentisteList
+    {
+        public int numJour { get; set; }
+        public string? nom { get; set; }
+        public string? prenom { get; set; }
+        public long? fichisteID { get; set; }
+    }
+
+}

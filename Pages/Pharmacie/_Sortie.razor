@@ -1,0 +1,200 @@
+﻿@page "/sortie"
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Pharmacie
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.SoinsController
+@using LYRA.Shared.Medecin
+@using LYRA.Models
+@layout PharmacieLayout
+@inject IPharmacieService pharmaService
+@inject NavigationManager Go
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject Radzen.NotificationService notificationService
+@inject Radzen.DialogService DialogService
+@attribute [Authorize(Roles = "Admin, Pharmacie")]
+
+<PageTitle>Pharmacie</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+
+        <RadzenDialog />
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                LSITE DE TOUTES LES ORDONNANCE
+            </div>
+            <div class="card-body ">
+                <div class="row mb-0 pb-0">
+                    @* <div class="col">
+                    <div class="control-group p-2 mt-2">
+                    <RadzenButton Style="border-radius:0px" Size="ButtonSize.Small" Click="@(()=>CreateOrdonnance())" ButtonStyle="ButtonStyle.Secondary" Text="Créer une ordonnance" />
+                    </div>
+
+                    </div>*@
+                    <div class="col">
+                        <div class="float-right">
+                            <div class="control-group bg-light p-2">
+                                <label class="control-label " for="focusedInput">Recherche : </label>
+                                <div class="row">
+                                    <div class="col"><RadzenTextBox Placeholder="Numero OSIET" class="w-100" /></div>
+                                    <div class="col"><RadzenButton ButtonStyle="ButtonStyle.Secondary" Style="border-radius: 0px" Text="Recherche" /></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-0 w-100" style="overflow-x: scroll;">
+                    @if (ordonnances == null)
+                    {
+                        <Loading />
+                    }
+                    else
+                    {
+                        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                AllowPaging="true" PageSize="10" AllowSorting="true" Responsive="false" Data="@listOrdonnances"
+                                TItem="ListOrdonnance" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                                SelectionMode="DataGridSelectionMode.Single">
+                            <Columns>
+                                <RadzenGridColumn Width="70px" TItem="ListOrdonnance" Property="Ordonnanceid" Title="ID" Sortable=false Filterable=false></RadzenGridColumn>
+                                <RadzenGridColumn Width="95px" TItem="ListOrdonnance" Title="Date">
+                                    <Template Context="data">
+                                        @data.Date.GetValueOrDefault().ToShortDateString()
+                                    </Template>
+                                </RadzenGridColumn>
+
+                                <RadzenGridColumn Width="140px" TItem="ListOrdonnance" Property="etablissement" Title="Etablissement"></RadzenGridColumn>
+                                <RadzenGridColumn Width="150px" TItem="ListOrdonnance" Property="Numordonnance" Title="N° Ordonnance"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="ListOrdonnance" Property="nomComplet" Title="Nom patiant">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn Width="135px" TItem="ListOrdonnance" Property="Fichistteid" Title="N° Fichiste">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn Width="95px" TItem="ListOrdonnance" Title="Statut">
+                                    <Template Context="data">
+                                        <RadzenButton Click="@(()=>GoSortieMedicament(data.Ordonnanceid))" Text="Afficher" Size="ButtonSize.Small" Style="border-radius: 0px" ButtonStyle="ButtonStyle.Light" />
+                                    </Template>
+                                </RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Ordonnance ordonnance = new();
+    List<Ordonnance> ordonnances = new List<Ordonnance>();
+    ListOrdonnance listOrdonnance = new();
+    List<ListOrdonnance> listOrdonnances = new List<ListOrdonnance>();
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Fichiste fichiste = new();
+    Famille famille = new();
+    Employeur employeur = new();
+    Employer employer = new();
+    string? numOsiet, Nom, Etablissement;
+
+    protected async override Task OnInitializedAsync()
+    {
+        ordonnances = await pharmaService.GetAllOrdonnanceListe();
+        await CompleteCustomListOrdonnance();
+        StateHasChanged();
+    }
+
+    public async Task GoSortieMedicament(long idOrdonnance)
+    {
+        var result = await DialogService.OpenAsync<_DialogOrdonnance>("ORDONNANCE",
+        new Dictionary<string, object>() { { "idOrdonnance", idOrdonnance } },
+            new Radzen.DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false, Left = "50px" });
+    }
+
+    public void CreateOrdonnance()
+    {
+        Go.NavigateTo("/creation_ordonnance");
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+    public async Task CompleteCustomListOrdonnance()
+    {
+        Medecin medecina = new();
+        foreach (var item in ordonnances)
+        {
+            fichiste = await fichisteService.getFichisteById(item.Fichistteid);
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+                listOrdonnance = null;
+                listOrdonnance = new();
+                listOrdonnance.Date = item.Date;
+                listOrdonnance.etablissement = employeur.Raisonsociale;
+                listOrdonnance.Fichistteid = item.Fichistteid;
+                Consultation? cons = new();
+                listOrdonnance.Ordonnanceid = item.Ordonnanceid;
+                listOrdonnance.Numordonnance = item.Numordonnance;
+                listOrdonnance.nomComplet = employer.Nom + " " + employer.Prenom;
+                listOrdonnances.Add(listOrdonnance);
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+                listOrdonnance = null;
+                listOrdonnance = new();
+                listOrdonnance.Date = item.Date;
+                listOrdonnance.etablissement = employeur.Raisonsociale;
+                listOrdonnance.Fichistteid = item.Fichistteid;
+                Consultation? cons = new();
+                listOrdonnance.Ordonnanceid = item.Ordonnanceid;
+                listOrdonnance.Numordonnance = item.Numordonnance;
+                listOrdonnance.nomComplet = famille.Nom + " " + famille.Prenom;
+                listOrdonnances.Add(listOrdonnance);
+            }
+        }
+
+    }
+}

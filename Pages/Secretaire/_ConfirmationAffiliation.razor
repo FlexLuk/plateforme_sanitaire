@@ -1,0 +1,28 @@
+﻿@using LYRA.Models
+@using MudBlazor
+
+@inject Radzen.DialogService dialogService
+@attribute [Authorize(Roles = "Admin, Secretaire")]
+
+<MudDialog>
+    <DialogContent>
+        Voullez-vous changer le statut de l'employer en @if(statut == "Ok"){
+            <b class="text-danger">Débauché</b>
+        }else{
+            <b class="text-success">Ayan droit</b>
+        }
+        ?
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Annuler</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Valider">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string? statut { get; set; }
+
+    void Close() => MudDialog.Close(DialogResult.Ok(false));
+    void Valider() => MudDialog.Close(DialogResult.Ok(true));
+}

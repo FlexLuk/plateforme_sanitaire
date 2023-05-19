@@ -1,0 +1,18 @@
+﻿@page "/test/{id}"
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Models
+@inject IFichisteService fichisteservice
+
+<h3>Component</h3>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Models.Fichiste fichiste = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        fichiste = await fichisteservice.getFichisteById(Convert.ToInt64(id));
+        Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>< " + fichiste.Fichisteid);
+    }
+}

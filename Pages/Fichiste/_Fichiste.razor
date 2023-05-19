@@ -1,0 +1,474 @@
+﻿@page "/verification_fichiste"
+@layout FichisteLayout
+@inject IJSRuntime JsRuntime
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models.Administration
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Data
+@using LYRA.Shared.Fichiste
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@inject NavigationManager NavigationManager
+@inject IJSRuntime iJSRuntime
+@inject HttpClient _httpClient
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IParametreService paramService
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Fichiste, Admin")]
+
+<AuthorizeView Roles="Fichiste, Admin">
+    <Authorized>
+        <PageTitle>Fichiste</PageTitle>
+        <div class="bg-white shadow">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm mt-3 ml-3">
+                        <RadzenTextBox class="form-control" @bind-Value="@numOSIET" Component="numEnter" onkeydown="@EnterPressed" />
+                        <span class="">
+                            <button name="numEnter" type="button" class="btn form-control btn-outline-dark"
+                                    onclick="@recherche" style="border-radius: 0px; height: 35px;">
+                                Chercher
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div style="margin-top:20px" class="ml-2">
+                        <RadzenLabel Text="Famille : &ensp;" Component="labCateg" />
+                        <RadzenCheckBox @bind-Value="@boolFamille" Name="labCateg" TriState="false" TValue="bool"
+                                        Change=@(args => OnChange(args)) />
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="" style="margin-top: 17px">
+                        @if (famCateg == false && employer != null)
+                        {
+                            <RadzenLabel Text="@name" class="form-control" />
+                        }
+                        else if (famCateg == true && familles != null && familles.Count() > 0)
+                        {
+                            <RadzenDropDownDataGrid Class="form-control" AllowClear="true" AllowFiltering="true"
+                                                TValue="Int32" style="border-radius: 0px"
+                                                Data="@(familles.Select(c=>new {id=c.Familleid,Nom=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
+                                                TextProperty="Nom" ValueProperty="id" @bind-Value="@famille.Familleid"
+                                                Change="@GetInfoFamille" />
+                        }
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="mt-3 mr-3">
+                        @if (employer == null || suspenduBtmActive)
+                        {
+                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Enregistrer" Click="@(()=>showParametreOption())" Disabled />
+                        }
+                        else
+                        {
+                            @if (employer.Numeroosiet == null || (boolFamille == true && famille.Numeroosiet == null))
+                            {
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Enregistrer" Click="@(()=>showParametreOption())" Disabled />
+                            }
+                            else
+                            {
+                                <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Enregistrer" Click="@(()=>showParametreOption())" />
+                            }
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4" style="border-radius:0px !important">
+                <div class="card-header bg-Light" style="font-weight: 700">
+                    <div class="row">
+                        <div class="col">
+                            TRAVAILLEUR :
+                            @if (employer != null)
+                            {
+                                <small>@employer.Nom @employer.Prenom</small>
+                            }
+                        </div>  
+                        <div class="col-3 ">
+                            <RadzenDatePicker TValue="DateTime" ShowTime=true class="float-right" @bind-Value=@dateFichiste />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered" style="font-size: 0.8rem">
+                        <tbody>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">
+                                    Etablissement de l'employer :
+                                </td>
+                                <td>
+                                    @if (employeur != null)
+                                    {
+                                        @employeur.Raisonsociale
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Situation matrimoniale : </td>
+                                <td>
+                                    @if (employeur != null && famCateg == false)
+                                    {
+                                        @employer.Situationmatrimoniale
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Nom et Prenom : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @name
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Nom @famille.Prenom
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Sexe : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @employer.Sexe
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Sexe
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Numero OSIET : </td>
+                                <td>
+                                    <b style="font-size:13px">
+
+                                        @numOSIET
+                                    </b>
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Adresse : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @employer.Adresse
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Adresse
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                @* <td class="w-25" style="background-color:rgba(0,0,0,.03)">Date d'embauche : </td>
+                                <td>
+                                @if (employeur != null)
+                                {
+
+                                }
+                                </td> *@
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Email : </td>
+                                <td>
+                                    @if (employer != null)
+                                    {
+                                        @employer.Email
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Contact : </td>
+                                <td>
+                                    @if (employer != null)
+                                    {
+                                        <span>@employer.Contact</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Fonction : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @employer.Fonction
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">C.I.N : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @employer.Cin
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Cin
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Status : </td>
+                                <td>
+                                    @if (employer != null && employeur != null && famille != null)
+                                    {
+                                        if (employeur.Statut == "En regle" && employer.Statut == "Ok")
+                                        {
+                                            <span class="bg-success p-1">En regle</span>
+                                        }
+                                        else if (employeur.Statut == "Suspendu")
+                                        {
+                                            <span class="bg-danger p-1">Suspendu</span>
+                                        }
+                                        else if (employeur.Statut == "En etat de grace" && employer.Statut == "Ok")
+                                        {
+                                            <span class="bg-warning p-1">En regle</span>
+                                        }
+                                        else if (employeur.Statut == "En regle" && employer.Statut == "Débauché")
+                                        {
+                                            <span class="bg-danger p-1">Suspendu</span>
+                                        }
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Categorie : </td>
+                                <td>
+                                    @if (famCateg == false)
+                                    {
+                                        <span>Travailleur</span>
+                                    }
+                                    else if (famCateg == true)
+                                    {
+                                        @if (famille != null)
+                                        {
+                                            <span>@famille.Categorie</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Famille</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Date de naissance : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @dtNaiss
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Datenaissance
+                                    }
+                                </td>
+                                <td class="w-25" style="background-color:rgba(0,0,0,.03)">Lieu de naissance : </td>
+                                <td>
+                                    @if (employer != null && famCateg == false)
+                                    {
+                                        @employer.Lieunaissance
+                                    }
+                                    else if (famille != null && famCateg == true)
+                                    {
+                                        @famille.Lieunaissance
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr />
+                </div>
+            </div>
+        </div>
+
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized>
+        <Login />
+    </NotAuthorized>
+</AuthorizeView>
+<style>
+    .btn-group button {
+        background-color: #04AA6D;
+        /* Green background */
+        border: 1px solid green;
+        /* Green border */
+        color: white;
+        /* White text */
+        padding: 10px 24px;
+        /* Some padding */
+        cursor: pointer;
+        /* Pointer/hand icon */
+        width: 50%;
+        /* Set a width if needed */
+        display: block;
+        /* Make the buttons appear below each other */
+    }
+
+        .btn-group button:not(:last-child) {
+            border-bottom: none;
+            /* Prevent double borders */
+        }
+</style>
+
+@code {
+    bool suspenduBtmActive = false;
+    string? numOSIET;
+    bool boolFamille;
+    IEnumerable<Affiliation>? affiliations;
+    IEnumerable<Employer>? employers;
+    Employer? employer = new();
+    Famille? famille = new();
+    Patiant patiant = new();
+    Utilisateur utilisateur = new();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    IEnumerable<Famille>? familles;
+
+    Fichiste? fichiste = new();
+    IEnumerable<Fichiste>? fichistes;
+    IEnumerable<Employeur>? employeurs;
+    Employeur? employeur;
+    bool? famCateg;
+    string? name;
+    DateTime dateFichiste = DateTime.Now;
+
+    public async void OnChange(bool? args)
+    {
+        if (args == true && numOSIET != null)
+        {
+            famCateg = true;
+            await LoadFamilleByNumOsiet(numOSIET);
+            StateHasChanged();
+        }
+        else if (args == false && numOSIET != null)
+        {
+            famCateg = false;
+            await LoadEmployerByNumOsiet(numOSIET);
+            familles = null;
+            StateHasChanged();
+        }
+    }
+
+    public async void EnterPressed(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Task.Delay(100);
+            recherche();
+        }
+    }
+
+
+    public async Task getUserActif()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        utilisateurs = await uService.GetAllUtilisateur();
+    }
+
+
+
+    public async Task LoadEmployeur()
+    {
+        employeurs = await adhesionService.GetAllAdhesion();
+    }
+
+    public async Task LoadEmployerByNumOsiet(string numosiet)
+    {
+        employer = await affiliService.GetEmployerByNumOsiet(numosiet);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+        }
+    }
+
+    public async Task LoadFamilleByNumOsiet(string numosiet)
+    {
+        familles = await affiliService.GetFamilleByNumOsiet(numosiet);
+    }
+
+    DateTime dtNaiss;
+    private ToastParameters? _toastParameters;
+    public async void recherche()
+    {
+        boolFamille = false;
+        if (numOSIET != null)
+        {
+            famCateg = false;
+            employer = await affiliService.GetEmployerByNumOsiet(numOSIET);
+
+            if (employer != null)
+            {
+                name = employer.Nom + " " + employer.Prenom;
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-GB");
+                dtNaiss = DateTime.Parse(employer.Datenaissance.ToString()).Date.ToLocalTime();
+                if (employer.Statut.Trim() != "Ok" || employeur.Statut.Trim() == "Suspendu") suspenduBtmActive = true;
+                else suspenduBtmActive = false;
+                StateHasChanged();
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Employer n'est pas trouvé !");
+                _toastParameters.Add(nameof(MyToast.Level), "Warning");
+                _toastParameters.Add(nameof(MyToast.Message), "Vérifier le numéro ou contacter le secrétariat.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                employers = null;
+                familles = null;
+                suspenduBtmActive = true;
+                StateHasChanged();
+
+            }
+
+        }
+
+    }
+
+    public async Task GetInfoFamille()
+    {
+        var id = famille.Familleid;
+        famille = await affiliService.GetFamilleById(id);
+    }
+
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    public async void showParametreOption()
+    {
+        var parameters = new ModalParameters();
+        fichiste.Date = dateFichiste;
+        parameters.Add(nameof(Fichiste), fichiste);
+        parameters.Add(nameof(Famille), famille);
+        parameters.Add(nameof(Employer), employer);
+        parameters.Add(nameof(famCateg), famCateg);
+        try
+        {
+            var result = await Modal.Show<_DialogFichiste>("Liste des parametres disponibles", parameters).Result;
+            if ((bool)result.Data == true)
+            {
+                NavigationManager.NavigateTo("/verification_fichiste", true, true);
+            }
+        }
+        catch (Exception ex)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Info !");
+            _toastParameters.Add(nameof(MyToast.Level), "Information");
+            _toastParameters.Add(nameof(MyToast.Message), "Action annuler par l'utilisateur.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+
+    }
+}

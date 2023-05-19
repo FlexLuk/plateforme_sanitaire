@@ -1,0 +1,40 @@
+﻿@using Blazored.Toast
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@inject IAffiliationService affiliService
+@inject Radzen.NotificationService notificationService
+
+<RadzenNotification />
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Update" Class="mr-3 " />
+            Mettre à jours les informations
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="@employer.Numeroosiet" Label="N° OSIET" />
+        <MudTextField @bind-Value="@employer.Nom" Label="Nom" />
+        <MudTextField @bind-Value="@employer.Prenom" Label="Prénom" />
+        <MudTextField @bind-Value="@employer.Email" Label="Email" />
+        <MudTextField @bind-Value="@employer.Contact" Label="N° Téléphone" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="SaveAffiliation">Modifier</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public Employer? employer { get; set; }
+    NotificationMessage notification = new();
+    ToastParameters? _toastParameters;
+
+    void Cancel() => MudDialog.Cancel();
+
+    async void SaveAffiliation()
+    {
+        var result = await affiliService.UpdateEmployer(employer);
+        MudDialog.Close(DialogResult.Ok(result));
+    }
+}

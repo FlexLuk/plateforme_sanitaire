@@ -1,0 +1,677 @@
+﻿@page "/rapport_parametre"
+@using LYRA.Shared.Parametre
+@layout ParametreLayout
+@attribute [Authorize(Roles = "Admin, Parametre")]
+
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Models
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Data
+@using LYRA.Shared.Fichiste
+@using Newtonsoft.Json
+@using System.Text
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IToastService toastService
+@inject IJSRuntime iJSRuntime
+@inject HttpClient _httpClient
+@inject Radzen.NotificationService notificationService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Parametre, Admin")]
+
+<AuthorizeView Roles="Parametre, Admin">
+    <Authorized>
+        <RadzenNotification />
+        <div class="card card-info mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">RAPPORT PARAMETRE</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="text-center font-weight-bold text-muted text-uppercase small ">Rapport personnaliser</h5>
+                <hr class="m-0 mb-2" />
+                <div class="row">
+                    <div class="col" style="margin-right: -15px">
+                        <div style="padding:10px;" class="bg-light">
+                            <div class="form-check form-switch ml-5">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="@checkedJournalier" onchange="@(()=>ChangeRapportType())">
+                                <label class="form-check-label mt-1" for="flexSwitchCheckChecked">@textTwoDate</label>
+                            </div>
+                            <div class="w-100">
+                                @if (checkedJournalier == true)
+                                {
+                                    <div class="mt-2 mb-2">
+                                        <RadzenDatePicker AllowClear="true" class="w-100 " @bind-Value="@dateRapport1" DateFormat="d"
+                                                      Placeholder="Date debut" />
+                                    </div>
+                                    <div class="mt-2 mb-2">
+                                        <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport2" DateFormat="d"
+                                                      Placeholder="Date fin" />
+                                    </div>
+                                }
+                                else if (checkedJournalier == false)
+                                {
+                                    <div class="mt-2 mb-2">
+                                        <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport" DateFormat="d"
+                                                      Placeholder="Specifier la date a exporter" />
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="padding:10px; margin-top:-10px;">
+                        <div style="padding:10px;" class="bg-light">
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <RadzenCheckBox Name="emp" TValue="bool" @bind-Value=@checkEmployer Change="@(args=>OnChangeEmployer(args))" />
+                                    <label for="emp">Travailleur</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox Name="fam" TValue="bool" @bind-Value=@checkFamille Change="@(args=>OnChangeFamille(args))" />
+                                    <label for="fam">Famille</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox Name="etab" TValue="bool" @bind-Value=@checkEtablissement Change="@(args => OnChangeEtablissement(args))" />
+                                    <label for="etab">Par etablissement</label>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row " style="margin-top:3px">
+                                <div class="col" style="margin-top:7px">
+                                    @if (employeurs != null)
+                                    {
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string" Disabled=@(!checkEtablissement)
+                                                            Data="@(employeurs.Select(c=>new {NumEmployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                            TextProperty="Raisonsociale" ValueProperty="NumEmployeur" @bind-Value="@employeur.Numemployeur" Placeholder="Etablissement" />
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="m-1" />
+                <div class="mt-2 mb-2 w-100 ">
+                    <RadzenButton Text="Exporter en excel" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" class="float-end mt-2 mb-0" Click="@(()=>ExportInDate(checkedJournalier))" BusyText="Traitement en cours" IsBusy=@isBusy />
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Fichiste fichiste = new();
+    NotificationMessage notification = new();
+    IEnumerable<Fichiste> fichistes = new List<Fichiste>();
+    IEnumerable<FichisteModel> fichisteCustoms = new List<FichisteModel>();
+    IEnumerable<Employeur>? employeurs;
+    Employeur employeur = new();
+    IEnumerable<Employeur>? employeursFind;
+    bool isBusy = false;
+    bool checkedJournalier = false, checkEmployer = false, checkFamille = false, checkEtablissement = false, etablissementChecked = false;
+    string textTwoDate;
+    DateTime? dateRapport1;
+    DateTime? dateRapport2;
+    DateTime? dateRapport;
+
+    public async Task LoadTableEmployeur()
+    {
+        employeurs = await adhesionService.GetAllAdhesion();
+        employeursFind = await adhesionService.GetAllAdhesion();
+        StateHasChanged();
+    }
+
+    private bool OnChangeEmployer(object check)
+    {
+        bool checkStatus = (bool)check;
+        if (checkStatus)
+        {
+            checkEmployer = true;
+            if (checkFamille) checkFamille = false;
+        }
+        else
+        {
+            checkEmployer = false;
+        }
+        return checkStatus;
+    }
+
+    private bool OnChangeFamille(object check)
+    {
+        bool checkStatus = (bool)check;
+        if (checkStatus)
+        {
+            checkFamille = true;
+            if (checkEmployer) checkEmployer = false;
+        }
+        else
+        {
+            checkFamille = false;
+        }
+        return checkStatus;
+    }
+
+    private bool OnChangeEtablissement(object check)
+    {
+        bool checkStatus = (bool)check;
+        checkEtablissement = (checkStatus == true) ? true : false;
+        return checkStatus;
+    }
+
+    public void ChangeRapportType()
+    {
+        if (checkedJournalier == true)
+        {
+            textTwoDate = "Rapport journalier a une date";
+            checkedJournalier = false;
+        }
+        else if (checkedJournalier == false)
+        {
+            textTwoDate = "Rapport entre deux date";
+            checkedJournalier = true;
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        ChangeRapportType();
+        await LoadTableEmployeur();
+        StateHasChanged();
+    }
+    //VITA
+    public async void ExportInDate(bool entreDeuxDate)
+    {
+
+        isBusy = true;
+        if (checkEmployer == false && checkFamille == false && checkEtablissement == false)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDate();
+            }
+            else
+            {
+                await ExportDateSpecifique();
+            }
+        }
+        else if (checkEmployer == true && checkEtablissement == false)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDateEmployer();
+            }
+            else if (!entreDeuxDate)
+            {
+                await ExportDateSpecifiqueEmployer();
+            }
+        }
+        else if (checkEmployer == true && checkEtablissement == true)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDateEmployerParEtab();
+            }
+            else if (!entreDeuxDate)
+            {
+                await ExportDateSpecifiqueEmployerParEtab();
+            }
+        }
+        else if (checkFamille == true && checkEtablissement == false)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDateFamille();
+            }
+            else if (!entreDeuxDate)
+            {
+                await ExportDateSpecifiqueFamille();
+            }
+        }
+        else if (checkFamille == true && checkEtablissement == true)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDateFamilleParEtab();
+            }
+            else if (!entreDeuxDate)
+            {
+                await ExportDateSpecifiqueFamilleParEtab();
+            }
+        }
+        else if (checkEmployer == false && checkFamille == false && checkEtablissement == true)
+        {
+            if (entreDeuxDate)
+            {
+                await ExportEntreDeuxDateAllParEtab();
+            }
+            else if (!entreDeuxDate)
+            {
+                await ExportDateSpecifiqueAllParEtab();
+            }
+        }
+        isBusy = false;
+        StateHasChanged();
+    }
+    //VITA
+    public async Task ExportEntreDeuxDateAllParEtab()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            dateClass.numEmployeur = employeur.Numemployeur;
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadInTwoDateAllParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreEntreDeuxDateParEtablissement--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportDateSpecifiqueAllParEtab()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            dateClass.numEmployeur = employeur.Numemployeur;
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadInDateAllParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreUneDateParEtablissement--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportEntreDeuxDate()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadAllInTwoDate");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreEntreDeuxDate--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+
+    }
+    //VITA
+    public async Task ExportDateSpecifique()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadAllInDate");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreUneDate--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportEntreDeuxDateEmployerParEtab()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            dateClass.categorie = "Employer";
+            dateClass.numEmployeur = employeur.Numemployeur;
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadInTwoDateEmployerParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreEntreDeuxDateEmployerParEtablissement--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportEntreDeuxDateEmployer()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            dateClass.categorie = "Employer";
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/ParametreExport/DownloadInTwoDateEmployer");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportParametreEntreDeuxDateEmployerParEtablissement--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportDateSpecifiqueEmployer()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInDateEmployer");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteUneDateEmployer--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+    //VITA
+    public async Task ExportDateSpecifiqueEmployerParEtab()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInDateEmployerParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteUneDateParEmployer--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+
+    public async Task ExportEntreDeuxDateFamille()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            dateClass.categorie = "Famille";
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInTwoDateFamille");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteEntreDeuxDateFamille--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task ExportDateSpecifiqueFamille()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInDateFamille");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteUneDateFamille--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task ExportEntreDeuxDateFamilleParEtab()
+    {
+        isBusy = true;
+        if (dateRapport1 != null && dateRapport2 != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d1 = dateRapport1.Value.ToShortDateString();
+            dateClass.d2 = dateRapport2.Value.ToShortDateString();
+            dateClass.categorie = "Famille";
+            dateClass.numEmployeur = employeur.Numemployeur;
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInTwoDateFamilleParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteEntreDeuxDateEmployerParEtablissement--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task ExportDateSpecifiqueFamilleParEtab()
+    {
+        isBusy = true;
+        if (dateRapport != null)
+        {
+            DateClass dateClass = new();
+            dateClass.d0 = dateRapport.Value.ToShortDateString();
+            dateClass.numEmployeur = employeur.Numemployeur;
+            var json = JsonConvert.SerializeObject(dateClass);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = new Uri(NavigationManager.BaseUri + "api/FichisteExport/DownloadInDateFamilleParEtab");
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, data);
+            response.EnsureSuccessStatusCode();
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileName = $"RapportFichisteUneDateFamilleParEtab--{DateTime.Now.ToString("dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture)}.xlsx";
+            await iJSRuntime.InvokeAsync<object>("saveAsFile", fileName, Convert.ToBase64String(fileBytes));
+            isBusy = false;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Date du rapport incorrect.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    class DateClass
+    {
+        public string? d0 { get; set; }
+        public string? d1 { get; set; }
+        public string? d2 { get; set; }
+        public string? numEmployeur { get; set; }
+        public string? categorie { get; set; }
+    }
+
+}

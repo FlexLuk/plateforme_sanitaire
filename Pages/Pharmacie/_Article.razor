@@ -1,0 +1,166 @@
+﻿@page "/article"
+@layout PharmacieLayout
+@using System.Web
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Data
+@using LYRA.Models
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Pharmacie
+@using Radzen
+@using Radzen.Blazor
+@inject NavigationManager go
+@inject IToastService toastService
+@inject IPharmacieService pharmaContext
+@attribute [Authorize(Roles = "Pharmacie, Admin")]
+
+<PageTitle>OSIET | Pharmacie > article</PageTitle>
+
+<AuthorizeView Roles="Pharmacie, Admin">
+    <Authorized Context="Pharmacie">
+        @if (loaded)
+        {
+            <div class="card mb-0">
+                <EditForm Model="@medicament" OnValidSubmit="@saveMedicament">
+                    <DataAnnotationsValidator />
+                    <div class="card-header">
+                        <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Creation d'article</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-1">
+                                        <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Nom article :  </label><br />
+                                        <RadzenTextBox Placeholder="Nom du medicament avec le dose" class="form-comtrol w-100"
+                                                   @bind-Value="@medicament.Designation" />
+                                        <ValidationMessage For="@(() => medicament.Designation)" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-1">
+                                        <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Presentation : </label><br />
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string"
+                                                            Data="@formesPharmacetique" @bind-Value="@medicament.Presentation"
+                                                            Placeholder="Forme du medicament" style="border-radius:0" />
+                                        <ValidationMessage For="@(() => medicament.Presentation)" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-1">
+                                        <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Quantite en stock : </label><br />
+                                        <RadzenNumeric Placeholder="quantite en stock" class="form-comtrol w-100"
+                                                   @bind-Value="@medicament.Quantite" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-1">
+                                        <label for="exampleFormControlInput1" class="form-label" style="font-weight:bold">Stock minimum : </label><br />
+                                        <RadzenNumeric Placeholder="stock minimum pour faire une commande" class="form-comtrol w-100"
+                                                   @bind-Value="@medicament.Stockmin" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <RadzenButton ButtonType="Radzen.ButtonType.Submit" Class="float-right" Text="Enregistrer" Size="ButtonSize.Small" />
+                                <RadzenButton ButtonType="Radzen.ButtonType.Reset" Class="float-right mr-2" Text="Annuler" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+
+
+            <div class="card mt-1 mb-2">
+                <div class="card-header">
+                    <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Liste des articles</h5>
+                </div>
+                <div class="card-body">
+                    @if (medicaments != null)
+                    {
+                        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="4" AllowSorting="true" Responsive="false" Data="@medicaments"
+                            TItem="Medicament" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                            SelectionMode="DataGridSelectionMode.Single">
+                            <Columns>
+                                <RadzenGridColumn TItem="Medicament" Property="Designation" Title="Designation">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medicament" Property="Presentation" Title="Presentation">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medicament" Property="Quantite" Title="Quantité réel"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medicament" Property="Stockmin" Title="Stock minimum"> </RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                </div>
+                <div class="card-footer">
+                </div>
+            </div>
+            <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+        }
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    IEnumerable<string> formesPharmacetique = new string[] { "comprimé", "gélule", "sirop", "ampoule", "pommade", "suppositoire" };
+    Medicament medicament = new();
+    IEnumerable<Medicament> medicaments = new List<Medicament>();
+    bool loaded = false;
+    private ToastParameters? _toastParameters;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetListArticle();
+        loaded = true;
+        StateHasChanged();
+    }
+    public async void saveMedicament()
+    {
+        bool rep = await pharmaContext.InsertArticle(medicament);
+        if (rep)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await GetListArticle();
+            medicament = new();
+            StateHasChanged();
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Erreur d'enregistrement, veuillez reessayer, SVP.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await GetListArticle();
+            medicament = new();
+            StateHasChanged();
+        }
+
+    }
+
+    public async void cancelSave()
+    {
+
+    }
+
+    public async Task GetListArticle()
+    {
+        medicaments = await pharmaContext.GetListMedicament();
+    }
+}

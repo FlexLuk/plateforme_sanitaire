@@ -1,0 +1,337 @@
+﻿@page "/ordonnance_dentiste/{idFichiste}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerOrdonnance
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Dentiste
+@using LYRA.Shared.Medecin
+@inject IPharmacieService pharmacieService
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@inject IToastService toastService
+@inject NavigationManager Go
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject ISoinsService soinsService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject IOrdonnanceService ordonnanceService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@layout DentisteLayout
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@attribute [Authorize(Roles = "Admin, Medecin")]
+
+<div class="card" style="border-radius: 0">
+    <div class="card-header">
+        <h4 class="m-0">Création ordonnance</h4>
+    </div>
+    <div class="card-body ml-2 mr-2">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="label form-label">Medicament : </label>
+                @if (medicaments != null)
+                {
+                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="Medicament"
+                                        Data="@medicaments"
+                                        Placeholder="Liste medicament" Change="@(args => Onchange(args))">
+                            <Template Context="data">
+                            @if (data.Quantite <= data.Stockmin)
+                            {
+                                @data.Designation
+                                @data.Presentation <span class="float-right bg-danger pl-1 pr-1">@data.Quantite</span>
+                            }
+                            else if (data.Quantite > data.Stockmin)
+                            {
+                                @data.Designation
+                                @data.Presentation <span class="float-right bg-success pl-1 pr-1">@data.Quantite</span>
+                            }
+                            </Template>
+                        </RadzenDropDownDataGrid>
+                }
+                <label class="label form-label">Quantité : </label>
+                <RadzenNumeric @bind-Value="@nombre" Class="form-control" TValue="Decimal"></RadzenNumeric>
+                <label class="label form-label">Prescription : </label>
+                <RadzenTextArea @bind-Value="@prescription" Class="form-control "></RadzenTextArea>
+
+                <RadzenButton Click="@(()=>AddPrescInListe())" Size="ButtonSize.Small" Text="Ajouter" class="mt-3 mb-2 float-end" />
+            </div>
+            <div class="col" style="flex: 1; overflow: auto;">
+                <div class="row">
+                    <label class="label form-label float-right ">
+                        <RadzenTextBox @bind-Value="NumOrdo" Placeholder="N° ordonnance" class="float-right" />
+                        <span class="float-right mr-2" style="line-height: 30px">Numéro ordonnance :</span>
+                    </label>
+                </div>
+                <div class="">
+                    @if (prescDoc != null)
+                    {
+                            <RadzenGrid style="height: 215px" @ref="gridPresc" AllowColumnResize="true" AllowPaging="true" PageSize="6" Data="@prescDoc"
+                                TItem="PrescriptionDoc" PageSizeText="Page" EmptyText="Aucune information" class="mt-0"
+                                PagerHorizontalAlign="HorizontalAlign.Center">
+                                <Columns>
+                                    <RadzenGridColumn Width="50px" TItem="PrescriptionDoc" Property="ArticleId" Title="ID" Filterable=false Sortable=false></RadzenGridColumn>
+                                    <RadzenGridColumn TItem="PrescriptionDoc" Property="Article" Title="Article" Filterable=false Sortable=false></RadzenGridColumn>
+                                    <RadzenGridColumn Width="80px" TItem="PrescriptionDoc" Property="Nombre" Title="Quantité" Filterable=false Sortable=false></RadzenGridColumn>
+                                    <RadzenGridColumn TItem="PrescriptionDoc" Property="Prescription" Title="Préscription" Filterable=false Sortable=false></RadzenGridColumn>
+                                    <RadzenGridColumn Width="80px" TItem="PrescriptionDoc" Title="Sortie" Filterable=false Sortable=false>
+                                        <Template Context=data>
+                                        @if (data.Sortie == 0 || data.Sortie == null)
+                                        {
+                                                    <span class="p-2 bg-light">Non</span>
+                                        }
+                                        else
+                                        {
+                                                    <span class="p-2 bg-info">Oui</span>
+                                        }
+                                        </Template>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn Width="40px" TItem="PrescriptionDoc" Property="Prescription" Filterable=false Sortable=false>
+                                        <Template Context=data>
+                                        @if (data.Sortie == 0 || data.Sortie == null)
+                                        {
+                                                    <RadzenButton Click="@(()=>DeletePrescInListe(data))" ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" title="Effacer" />
+                                        }
+                                        else
+                                        {
+                                                    <RadzenButton Click="@(()=>DeletePrescInListe(data))" ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" title="Effacer" IsBusy />
+                                        }
+                                        </Template>
+                                    </RadzenGridColumn>
+                                </Columns>
+                            </RadzenGrid>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <RadzenButton Click="@SavePrescription" ButtonStyle="ButtonStyle.Secondary" class="float-end" Text="Enregistrer" />
+        <RadzenButton Click="@GoBack" ButtonStyle="ButtonStyle.Warning" class="float-start" Text="Retour en arriere" />
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="5" />
+@code {
+    [Parameter]
+    public string idFichiste { get; set; } = null!;
+    RadzenGrid<PrescriptionDoc>? gridPresc;
+    Ordonnance ordonnance = new();
+    List<OrdonnanceAvoir> avoirOrdonnances = new List<OrdonnanceAvoir>();
+    Medicament medicament = new();
+    Consultation consultation = new();
+    List<Medicament> medicaments = new List<Medicament>();
+    List<PrescriptionDoc> prescDoc = new List<PrescriptionDoc>();
+    private ToastParameters? _toastParameters;
+
+    string article = null!, prescription = null!, NumOrdo = null!;
+    Decimal nombre;
+    string? idArticle;
+
+    protected async Task Onchange(Object medic)
+    {
+        Medicament meds = new();
+        meds = (Medicament)medic;
+        nombre = new();
+        long med = meds.Medicamentid;
+        Medicament m = new();
+        m = await pharmacieService.GetMedicamentById(med);
+        idArticle = "" + m.Medicamentid;
+        article = m.Designation + " " + m.Presentation;
+    }
+
+    protected async override void OnInitialized()
+    {
+        await GetAllMedicament();
+        await CompletePrescList();
+        if (gridPresc != null)
+        {
+            await gridPresc.Reload();
+        }
+        if (ordonnance != null) NumOrdo = ordonnance.Numordonnance;
+        StateHasChanged();
+    }
+
+    public async Task CompletePrescList()
+    {
+        ordonnance = await ordonnanceService.GetOrdonnancesByFichisteId(Convert.ToInt64(idFichiste));
+        if (ordonnance != null)
+        {
+            avoirOrdonnances = await ordonnanceService.GetAvoirOrdonnancesByOrdonnanceId(ordonnance.Ordonnanceid);
+            foreach (var item in avoirOrdonnances)
+            {
+                Medicament m = await pharmacieService.GetMedicamentById(item.Medicamentid);
+                if (m != null)
+                {
+                    PrescriptionDoc pDoc = new();
+                    pDoc.AvoirId = item.Ordonnanceavoirid;
+                    pDoc.ArticleId = item.Medicamentid;
+                    pDoc.Nombre = item.Quantite;
+                    pDoc.Prescription = item.Prescription;
+                    pDoc.Article = m.Designation + " " + m.Presentation;
+                    pDoc.Sortie = item.Sortie;
+                    prescDoc.Add(pDoc);
+                }
+            }
+        }
+    }
+
+    public async Task SavePrescription()
+    {
+        if (ordonnance != null && ordonnance.Ordonnanceid > 0)
+        {
+            foreach (var data in prescDoc)
+            {
+                if (data.Sortie == 0 || data.Sortie == null)
+                {
+                    OrdonnanceAvoir OA = new();
+                    OA.Medicamentid = data.ArticleId;
+                    OA.Ordonnanceid = ordonnance.Ordonnanceid;
+                    OA.Prescription = data.Prescription;
+                    OA.Quantite = data.Nombre;
+                    OA.Sortie = 0;
+                    await ordonnanceService.CreateAvoirOrdonnance(OA);
+                }
+            }
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement terminer.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+
+        }
+        else
+        {
+            Ordonnance O = new();
+            O.Fichistteid = Convert.ToInt64(idFichiste);
+            O.Date = DateTime.Now;
+            O.Numordonnance = NumOrdo;
+            await ordonnanceService.CreateOrdonnance(O);
+            foreach (var data in prescDoc)
+            {
+                ordonnance = await ordonnanceService.GetOrdonnancesByFichisteId(Convert.ToInt64(idFichiste));
+
+                OrdonnanceAvoir OA = new();
+                OA.Medicamentid = data.ArticleId;
+                OA.Ordonnanceid = ordonnance.Ordonnanceid;
+                OA.Prescription = data.Prescription;
+                OA.Quantite = data.Nombre;
+                OA.Sortie = 0;
+                await ordonnanceService.CreateAvoirOrdonnance(OA);
+            }
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement terminer.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+    }
+
+    public async Task GetAllMedicament()
+    {
+        medicaments = await pharmacieService.GetListMedicament();
+    }
+
+    public async Task<decimal> CheckMedicamentQuantityInStock(int idMedicament)
+    {
+        Medicament medica = new();
+        medica = await pharmacieService.GetMedicamentById(idMedicament);
+        return medica.Quantite;
+    }
+
+    public async Task AddPrescInListe()
+    {
+        bool exist = false;
+        decimal QMedicamentInStock = await CheckMedicamentQuantityInStock(Convert.ToInt32(idArticle));
+        decimal QDemande = nombre;
+        if (QDemande > QMedicamentInStock)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Stock insuffisant!");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Nombre de l’Article au pharmacie est insuffisant.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+        else
+        {
+            if (idArticle != null && nombre > 0)
+            {
+                //foreach (var item in prescDoc)
+                //{
+                //    if (item.ArticleId == Convert.ToInt64(idArticle))
+                //    {
+                //        _toastParameters = new ToastParameters();
+                //        _toastParameters.Add(nameof(MyToast.Title), "Article deja sur la liste !");
+                //        _toastParameters.Add(nameof(MyToast.Level), "Warning");
+                //        _toastParameters.Add(nameof(MyToast.Message), "Veuillez le supprimer pour pouvoir le modifier.");
+                //        toastService.ShowToast<MyToast>(_toastParameters);
+                //        exist = true;
+                //        break;
+                //    }
+                //}
+                if (exist == false)
+                {
+                    PrescriptionDoc presc = new();
+                    presc.ArticleId = Convert.ToInt64(idArticle);
+                    presc.Article = article;
+                    presc.Nombre = nombre;
+                    presc.Prescription = prescription;
+                    prescDoc.Add(presc);
+                }
+
+                await gridPresc.Reload();
+                StateHasChanged();
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Attention !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Veuillez verifier le nombre ou l'article.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                await gridPresc.Reload();
+                StateHasChanged();
+            }
+        }
+
+    }
+
+    public async void DeletePrescInListe(PrescriptionDoc data)
+    {
+        if (data.AvoirId > 0)
+        {
+            await ordonnanceService.DeleteAvoirOrdonnance(data.AvoirId);
+            prescDoc.Remove(data);
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Effacer terminer.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+        else
+        {
+            prescDoc.Remove(data);
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Effacer terminer.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+
+        await gridPresc.Reload();
+        StateHasChanged();
+    }
+
+    protected async void GoBack()
+    {
+        consultation = await medecinService.GetConsultationByFichisteId(Convert.ToInt64(idFichiste));
+        Go.NavigateTo("dentiste/" + consultation.Fichisteid);
+    }
+}

@@ -1,0 +1,593 @@
+﻿@page "/affiliation"
+@layout SecretaireLayout
+
+@using System.Web
+@using LYRA.Data
+@using LYRA.Models
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared.Secretaire
+@using Radzen
+@using Radzen.Blazor
+@inject IToastService toastService
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject NavigationManager go
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@inject IDialogService Dialog
+@attribute [Authorize(Roles = "Secretaire, Admin")]
+
+<PageTitle>Secretaire</PageTitle>
+<AuthorizeView Roles="Secretaire, Admin">
+    <Authorized Context="Flex">
+        <RadzenTabs class="mb-4">
+            <Tabs>
+                <RadzenTabsItem Text="Employer">
+                    <EditForm Model="@employer" OnValidSubmit="@HandleValidSubmitSaveEmployer">
+                        <DataAnnotationsValidator />
+                        <div class="row p-2" style="background-color: #dee2e6;">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Employeur : </span>
+                                    @if (employeurs != null)
+                                    {
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string"
+                                                            Data="@(employeurs.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                            TextProperty="Raisonsociale" ValueProperty="Numemployeur"
+                                                            @bind-Value="@employeur.Numemployeur" Placeholder="Etablissement" />
+                                        <ValidationMessage For="@(() => employeur.Raisonsociale)" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Date d'embauche : </span>
+                                    <RadzenDatePicker class="w-100" @bind-Value="@histoEmploi.Dateembauche" DateFormat="d"
+                                                      Placeholder="Date d'embauche" />
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Numero OSIET : </span>
+                                    <RadzenTextBox class="form-control form-control-sm"
+                                                   @bind-Value="@employer.Numeroosiet" Placeholder="Numero OSIET de l'employer" />
+                                    <ValidationMessage For="@(() => employer.Numeroosiet)" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Nom : </span>
+                                    <RadzenTextBox class="form-control form-control-sm" @bind-Value="@employer.Nom"
+                                                   Placeholder="Nom" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Prenom : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Prenom"
+                                                   Placeholder="Prenom" />
+                                    <ValidationMessage For="@(() => employer.Prenom)" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Sexe : </span>
+                                    <RadzenDropDown @bind-Value="@employer.Sexe" Class="form-control" Data=@sexeAdhesion
+                                                    Change="@(args=>OnChange(args))" Placeholder="Sexe" />
+                                    <ValidationMessage For="@(() => employer.Sexe)" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>CIN : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Cin"
+                                                   Placeholder="carte d'identite'" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Adresse : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Adresse"
+                                                   Placeholder="Adresse de residence" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Contact : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Contact"
+                                                   Placeholder="Numero telephone" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Email : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Email"
+                                                   Placeholder="Adresse mail" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Date de naissance : </span>
+                                    <RadzenDatePicker class="w-100" @bind-Value="@employer.Datenaissance" DateFormat="d"
+                                                      Placeholder="Date de naissance" />
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Lieu de naissance : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Lieunaissance"
+                                                   Placeholder="Lieu de naissance" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Situation matrimoniale : </span>
+                                    <RadzenDropDown @bind-Value="@employer.Situationmatrimoniale" Class="form-control"
+                                                    Data=@situationMatri Change="@(args=>OnChange(args))"
+                                                    Placeholder="Choisissez ici" />
+                                    <ValidationMessage For="@(() => employer.Situationmatrimoniale)" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Fonction : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@employer.Fonction"
+                                                   Placeholder="Emploi" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr />
+                        <div style="height: 30px">
+                            <RadzenButton Text="Annuler" Icon="highlight_off" ButtonStyle="ButtonStyle.Warning"
+                                          class="float-right ml-2" ButtonType="Radzen.ButtonType.Reset" />
+                            <RadzenButton Text="Enregistrer" Icon="save" ButtonStyle="ButtonStyle.Success"
+                                          class="float-right" ButtonType="Radzen.ButtonType.Submit" />
+                        </div>
+                        <hr />
+                    </EditForm>
+                    <div class="">
+                        <div class="control-group bg-light p-2">
+                            <label class="control-label " for="focusedInput">Recherche par employeur : </label>
+
+                            @if (employeurs != null)
+                            {
+                                <RadzenDropDownDataGrid Class="form-control " AllowFiltering="true" TValue="string" AllowClear="true"
+                                                    Data="@(employeursFind.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                    TextProperty="Raisonsociale" ValueProperty="Numemployeur" Change="@(args => OnChangeEmployeurFind(args))"
+                                                    @bind-Value="@employeurFind.Numemployeur" Placeholder="Etablissement" />
+                            }
+                        </div>
+                    </div>
+                    <div class="mt-0 ">
+                        @if (employers == null)
+                        {
+                            <Loading />
+                        }
+                        else
+                        {
+                            <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                    AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@employers"
+                                    TItem="Employer" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                    AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                    ApplyFilterText="appliquer" PageSizeText="Page"
+                                    SelectionMode="DataGridSelectionMode.Single">
+                                <Columns>
+                                    <RadzenGridColumn TItem="Employer" Property="Numeroosiet" Title="N° OSIET" Width="120px">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Property="Nom" Title="Nom">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Property="Prenom" Title="Prenom">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Property="Email" Title="Email" Width="250px" Sortable=false> </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Property="Contact" Title="Contact" Width="110px" Sortable=false Filterable=false>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Sortable=false Filterable=false Property="Statut" Title="Statut" Width="100px">
+                                        <Template Context="data">
+                                            @if (data.Statut.Trim() == "Ok")
+                                            {
+                                                <RadzenButton Click="@(()=>ConfirmAffiliation(data,"Ok"))" Text="Ayant droit" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                            }
+                                            else if (data.Statut.Trim() == "Débauché")
+                                            {
+                                                <RadzenButton Click="@(()=>ConfirmAffiliation(data,"Débauché"))" Text="Débauché" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                            }
+                                        </Template>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Title="Document" Sortable=false Filterable=false Width="105px">
+                                        <Template Context="data">
+                                            <RadzenButton Click="@(()=>GoDocumentEmployer(data))" Text="Historique" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                        </Template>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Sortable=false Filterable=false Width="60px">
+                                        <Template Context="data">
+                                            <RadzenButton Click="@(()=>UpdateAffiliation(data))" Icon="build" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Style="line-height: 15px; padding: 10px" />
+                                        </Template>
+                                    </RadzenGridColumn>
+                                </Columns>
+                            </RadzenGrid>
+                        }
+                    </div>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Famille" onclick="@OnTabFamilledSelected">
+                    <EditForm Model="@famille" OnValidSubmit="@HandleValidSubmitSaveFamille">
+                        <DataAnnotationsValidator />
+                        <div class="row p-2" style="background-color: #dee2e6;">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Employeur : </span>
+                                    @if (employeurs != null)
+                                    {
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string"
+                                                            Data="@(employeurs.Select(c=>new {NumEmployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                            TextProperty="Raisonsociale" ValueProperty="NumEmployeur" Change=@(args => OnChangeEmployeurFind(args))
+                                                            @bind-Value="@employerFindFam.Numemployeur" Placeholder="Etablissement" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Employer : </span>
+                                    @if (employers != null)
+                                    {
+                                        <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="Int32"
+                                                            Data="@(employers.Select(c=>new {Num=c.Employerid,Name=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
+                                                            TextProperty="Name" ValueProperty="Num" @bind-Value="@famille.Employerid"
+                                                            Change=@(args => OnChangeEmployer(args)) Placeholder="reglement d'adhesion" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Numero OSIET : </span>
+                                    <RadzenTextBox class="form-control form-control-sm" Disabled
+                                                   @bind-Value="@famille.Numeroosiet" Placeholder="Numero OSIET de l'employer" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Nom : </span>
+                                    <RadzenTextBox class="form-control form-control-sm" @bind-Value="@famille.Nom"
+                                                   Placeholder="Nom" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Prenom : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@famille.Prenom"
+                                                   Placeholder="Prenom" />
+                                    <ValidationMessage For="@(() => employer.Prenom)" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Sexe : </span>
+                                    <RadzenDropDown @bind-Value="@famille.Sexe" Class="form-control" Data=@sexeAdhesion
+                                                    Change="@(args=>OnChange(args))" Placeholder="Sexe" />
+                                    <ValidationMessage For="@(() => employer.Sexe)" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>CIN : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@famille.Cin"
+                                                   Placeholder="carte d'identite'" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Adresse : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@famille.Adresse"
+                                                   Placeholder="Adresse de residence" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Contact : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@famille.Contact"
+                                                   Placeholder="Numero telephone" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Date de naissance : </span>
+                                    <RadzenDatePicker class="w-100" @bind-Value="@famille.Datenaissance" DateFormat="d"
+                                                      Placeholder="Date de naissance" />
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Lieu de naissance : </span>
+                                    <RadzenTextBox class="form-control " @bind-Value="@famille.Lieunaissance"
+                                                   Placeholder="Lieu de naissance" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group-sm mb-2" style="font-size:small">
+                                    <span>Categorie : </span>
+                                    <RadzenDropDown @bind-Value="@famille.Categorie" Class="form-control" Data=@categorieFamille
+                                                    Change="@(args=>OnChange(args))" Placeholder="Categorie de la famille" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div style="height: 30px">
+                            <RadzenButton Text="Annuler" Icon="highlight_off" ButtonStyle="ButtonStyle.Warning"
+                                          class="float-right ml-2" ButtonType="Radzen.ButtonType.Reset" />
+                            <RadzenButton Text="Enregistrer" Icon="save" ButtonStyle="ButtonStyle.Success"
+                                          class="float-right" ButtonType="Radzen.ButtonType.Submit" />
+                        </div>
+                        <hr />
+                    </EditForm>
+                    <div class="mt-4">
+                        @if (familles == null)
+                        {
+                            <Loading />
+                        }
+                        else
+                        {
+                            <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                    AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@familles"
+                                    TItem="Famille" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                    AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                    ApplyFilterText="appliquer" PageSizeText="Page"
+                                    SelectionMode="DataGridSelectionMode.Single">
+                                <Columns>
+                                    <RadzenGridColumn TItem="Famille" Property="Numeroosiet" Title="Numero OSIET">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Property="Nom" Title="Nom">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Property="Prenom" Title="Prenom">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Property="Categorie" Title="Categorie"> </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Property="Contact" Title="Contact">
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Title="Document" Sortable=false Filterable=false Width="105px">
+                                        <Template Context="data">
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="@(()=>GoDocumentFamille(data))">Historique</button>
+                                        </Template>
+                                    </RadzenGridColumn>
+                                </Columns>
+                            </RadzenGrid>
+                        }
+                    </div>
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="5" />
+    </Authorized>
+    <NotAuthorized>
+        @{
+            go.NavigateTo("/main_page");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Employeur employeur = new();
+    Employeur employeurFind = new();
+    Employer employer = new();
+    Employer employerFind = new();
+    Employer employerFindFam = new();
+    Famille famille = new();
+    HistoEmploi histoEmploi = new();
+    private ToastParameters? _toastParameters;
+    MudBlazor.DialogOptions topCenter = new MudBlazor.DialogOptions() { Position = DialogPosition.TopCenter };
+
+    int employerid = 0;
+
+    IEnumerable<Employeur>? employeurs;
+    IEnumerable<Famille>? familles;
+    IEnumerable<Employeur>? employeursFind;
+    IEnumerable<Employer>? employers;
+    IEnumerable<Employer>? employersFind;
+
+    IEnumerable<string> sexeAdhesion = new string[] { "Homme", "Femme" };
+    IEnumerable<string> statutAdhesion = new string[] { "Actif", "Inactif" };
+    IEnumerable<string> situationMatri = new string[] { "Celibataire", "Marie(e)" };
+    IEnumerable<string> categorieFamille = new string[] { "Conjoint(e)", "Enfant" };
+
+    private async void ConfirmAffiliation(object data, string statut)
+    {
+        Employer empl = (Employer)data;
+        var parameters = new DialogParameters { ["statut"] = statut };
+        var result = await Dialog.Show<_ConfirmationAffiliation>("Confirmation ?", parameters, topCenter).Result;
+        if (!result.Canceled)
+        {
+
+            if ((bool)result.Data)
+            {
+                string stat;
+                if (statut == "Ok")
+                    stat = "Débauché";
+                else
+                    stat = "Ok";
+
+                empl.Statut = stat;
+                var resultat = await affiliService.UpdateEmployer(empl);
+                if (resultat)
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Réussi !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Success");
+                    _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async void UpdateAffiliation(object data)
+    {
+        Employer empl = (Employer)data;
+        var parameters = new DialogParameters { ["employer"] = empl };
+        var result = await Dialog.Show<_UpdateAffiliation>("Confirmation ?", parameters, topCenter).Result;
+        if(!result.Canceled){
+            if(((bool)result.Data)){
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Réussi !");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }else{
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            StateHasChanged();
+        }
+    }
+
+    public void OnChange(object args) { }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTableEmployer();
+    }
+
+    protected async void HandleValidSubmitSaveEmployer()
+    {
+        employer.Categorie = "Travailleur";
+        employer.Statut = "Ok";
+        employer.Numemployeur = employeur.Numemployeur;
+        employer.NomDossier = employer.Numeroosiet + "_" + employer.Prenom;
+        int num = await affiliService.InsertEmployer(employer);
+        histoEmploi.Numemployeur = employeur.Numemployeur;
+        histoEmploi.Employerid = num;
+        histoEmploi.Numemployeur = employeur.Numemployeur;
+        histoEmploi.Numosiet = employer.Numeroosiet;
+        histoEmploi.Emploi = employer.Fonction;
+        await affiliService.CreateHistoEmploi(histoEmploi);
+        _toastParameters = new ToastParameters();
+        _toastParameters.Add(nameof(MyToast.Title), "Ajout reussi !");
+        _toastParameters.Add(nameof(MyToast.Level), "Success");
+        _toastParameters.Add(nameof(MyToast.Message), "Ajout reussi.");
+        toastService.ShowToast<MyToast>(_toastParameters);
+        await LoadTableEmployer();
+        await InvokeAsync(StateHasChanged);
+    }
+    protected async void HandleValidSubmitSaveFamille()
+    {
+        famille.NomDossier = famille.Numeroosiet + "_" + famille.Prenom;
+        await affiliService.InsertFamille(famille);
+        _toastParameters = new ToastParameters();
+        _toastParameters.Add(nameof(MyToast.Title), "Ajout reussi !");
+        _toastParameters.Add(nameof(MyToast.Level), "Success");
+        _toastParameters.Add(nameof(MyToast.Message), "Ajout reussi.");
+        toastService.ShowToast<MyToast>(_toastParameters);
+        await LoadTableFamille();
+        employers = null;
+        famille = new();
+        await LoadTableFamille();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task<bool> OnTabFamilledSelected()
+    {
+        employeurs = await adhesionService.GetAllAdhesion();
+        familles = await affiliService.GetAllFamille();
+        StateHasChanged();
+        return true;
+    }
+
+    public async Task LoadTableFamille()
+    {
+        familles = await affiliService.GetAllFamille();
+    }
+    public async Task LoadTableEmployer()
+    {
+        employers = await affiliService.GetAllEmployer();
+        employeurs = await adhesionService.GetAllAdhesion();
+        employeursFind = await adhesionService.GetAllAdhesion();
+        StateHasChanged();
+    }
+
+    public async Task OnChangeEmployer(Object args)
+    {
+        Employer emp = await affiliService.GetEmployerById(Convert.ToInt32(args));
+        famille.Numeroosiet = emp.Numeroosiet;
+    }
+
+    public async void OnChangeEmployeurFind(Object args)
+    {
+        if (args != null)
+        {
+            employers = null;
+            employers = await affiliService.GetEmployerByEmployeur(args.ToString());
+            StateHasChanged();
+        }
+        else
+        {
+            employers = await affiliService.GetAllEmployer();
+            StateHasChanged();
+        }
+    }
+
+    private async Task GoDocumentEmployer(Employer employer)
+    {
+        string nomDossier = employer.Numeroosiet + "_" + employer.Prenom;
+        string folderName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\archives\" + nomDossier);
+        System.IO.Directory.CreateDirectory(folderName);
+        if (employer.NomDossier == null)
+        {
+            employer.NomDossier = nomDossier;
+            await affiliService.UpdateEmployer(employer);
+        }
+
+        await localStorage.SetItemAsStringAsync("nom_dossier", employer.NomDossier.Trim());
+        go.NavigateTo("/historique_employer/" + employer.Employerid);
+    }
+
+    private async Task GoDocumentFamille(Famille famille)
+    {
+        string nomDossier = famille.Numeroosiet + "_" + famille.Prenom;
+        string folderName = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\archives\" + nomDossier);
+        System.IO.Directory.CreateDirectory(folderName);
+        if (famille.NomDossier == null)
+        {
+            famille.NomDossier = nomDossier;
+            await affiliService.UpdateFamille(famille);
+        }
+
+        await localStorage.SetItemAsStringAsync("nom_dossier", famille.NomDossier.Trim());
+        go.NavigateTo("/historique_famille/" + famille.Familleid);
+    }
+}

@@ -1,0 +1,192 @@
+﻿@page "/parametre"
+@layout ParametreLayout
+
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Shared.Parametre
+@inject IParametreService paramService
+@inject IUtilisateurService uService
+@inject IAffiliationService affiliService
+@inject NavigationManager go
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Admin, Parametre")]
+
+<AuthorizeView Roles="Admin, Parametre">
+    <Authorized>
+        @if (full == false)
+        {
+            <Loading />
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h4>Nouveau patiant</h4>
+                </div>
+                <div class="card-body p-0">
+                    @*<div class="container">*@
+                    <div class="row">
+                        <div class="col">
+                            @if (patiants != null)
+                            {
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                    AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@listAttentes"
+                                    TItem="PatiantModel" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                                    FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                                    SelectionMode="DataGridSelectionMode.Single">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="Numjour" Title="Numero du jour">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="NomPrenom" Title="Nom patiant"></RadzenGridColumn>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="Fichisteid" Title="Action">
+                                            <Template Context="data">
+                                                <button class="btn btn-sm btn-secondary" onclick="@(()=>Paramatrer(data.FichisteId.Value))">Parametrer</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="card">
+                <div class="card-header">
+                    <h4>Patiant en cours</h4>
+                </div>
+                <div class="card-body p-0">
+                    @if (patiantsOld != null)
+                    {
+                        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@listAttentesOld"
+                            TItem="PatiantModel" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                            SelectionMode="DataGridSelectionMode.Single">
+                            <Columns>
+                                <RadzenGridColumn Width="120px" Sortable=false Filterable=false TItem="PatiantModel" Property="Numjour" Title="Numero du jour">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn Width="160px" TItem="PatiantModel" Property="Date" Title="Passage"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="PatiantModel" Property="NomPrenom" Title="Nom patiant"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="PatiantModel" Property="Fichisteid" Title="Action" Width="100px" Sortable=false Filterable=false>
+                                    <Template Context="data">
+                                        <button class="btn btn-sm btn-secondary" onclick="@(()=>Paramatrer(data.FichisteId.Value))">Parametrer</button>
+                                    </Template>
+                                </RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                </div>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+@code {
+    Patiant patiant = new();
+    ListeParametre listParam = new();
+    List<Patiant> patiants = new List<Patiant>();
+    List<Patiant> patiantsOld = new List<Patiant>();
+    Utilisateur utilisateur = new();
+    List<PatiantModel> listAttente = new List<PatiantModel>();
+    List<PatiantModel> listAttenteOld = new List<PatiantModel>();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    IEnumerable<PatiantModel> listAttentes = new List<PatiantModel>();
+    IEnumerable<PatiantModel> listAttentesOld = new List<PatiantModel>();
+    bool? full;
+    protected override async void OnInitialized()
+    {
+        full = false;
+        await LoadUtilisateurByEmail();
+        await LoadPatiants();
+        full = true;
+        StateHasChanged();
+    }
+
+    public void Paramatrer(long id)
+    {
+        go.NavigateTo("/parametre/" + id);
+    }
+
+    public async Task LoadPatiants()
+    {
+        if (listParams.Count() > 0)
+        {
+            foreach (var item in listParams)
+            {
+                List<Patiant> pats = new List<Patiant>();
+                List<Patiant> patsOld = new List<Patiant>();
+                pats = await paramService.getListPatiantInParam(item.Numero);
+                patsOld = await paramService.getListPatiantInParamNonTerminer(item.Numero);
+                foreach (var ite in pats)
+                {
+                    patiants.Add(ite);
+                }
+                foreach (var ite in patsOld)
+                {
+                    patiantsOld.Add(ite);
+                }
+            }
+
+        }
+        if (patiants != null)
+        {
+            foreach (var item in patiants)
+            {
+                PatiantModel model = new();
+                model.Numjour = item.Numjour;
+                if (item.Categorie.Trim() == "Famille")
+                {
+                    Famille famille = await affiliService.GetFamilleById(Convert.ToInt32(item.Affiliationid));
+                    model.NomPrenom = famille.Nom + " " + famille.Prenom;
+                }
+                else if (item.Categorie.Trim() == "Travailleur")
+                {
+                    Employer employer = await affiliService.GetEmployerById(Convert.ToInt32(item.Affiliationid));
+                    model.NomPrenom = employer.Nom + " " + employer.Prenom;
+                }
+                model.Patiantid = Convert.ToInt32(item.Patiantid);
+                model.FichisteId = item.Fichisteid;
+                listAttente.Add(model);
+            }
+            listAttentes = listAttente;
+            StateHasChanged();
+        }
+        if (patiantsOld != null)
+        {
+            foreach (var item in patiantsOld)
+            {
+                PatiantModel model = new();
+                model.Numjour = item.Numjour;
+                if (item.Categorie.Trim() == "Famille")
+                {
+                    Famille famille = await affiliService.GetFamilleById(Convert.ToInt32(item.Affiliationid));
+                    model.NomPrenom = famille.Nom + " " + famille.Prenom;
+                }
+                else if (item.Categorie.Trim() == "Travailleur")
+                {
+                    Employer employer = await affiliService.GetEmployerById(Convert.ToInt32(item.Affiliationid));
+                    model.NomPrenom = employer.Nom + " " + employer.Prenom;
+                }
+                model.Patiantid = Convert.ToInt32(item.Patiantid);
+                model.FichisteId = item.Fichisteid;
+                model.Date = item.Datepassage;
+                listAttenteOld.Add(model);
+            }
+            listAttentesOld = listAttenteOld;
+            StateHasChanged();
+        }
+    }
+    List<ListeParametre> listParams = new List<ListeParametre>();
+    public async Task LoadUtilisateurByEmail()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+        listParams = await paramService.GetListAllParamByUser(Convert.ToInt32(utilisateur.Utilisateurid));
+    }
+}

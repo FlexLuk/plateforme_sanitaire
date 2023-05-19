@@ -1,0 +1,196 @@
+﻿@page "/laboratoire_rapport"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@using LYRA.Models.Examens
+@using LYRA.Shared.Laboratoire
+@inject IExamenService examensService
+@inject NavigationManager go
+@layout LaboratoireLayout
+@inject IFichisteService fichisteService
+@inject IAffiliationService affiliationService
+@inject IAdhesionService adhesionService
+@inject IExamenService examenService
+@inject NavigationManager Go
+@inject Radzen.NotificationService notificationService
+@attribute [Authorize(Roles = "Laboratoire, Admin")]
+
+<AuthorizeView Roles="Laboratoire, Admin">
+    <Authorized>
+        <RadzenNotification/>
+        <div class="card card-info mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">RAPPORT LABORATOIRE</h5>
+            </div>
+            <div class="card-body">
+                <RadzenCard class="mb-4">
+                    <h5 class="text-center font-weight-bold text-muted text-uppercase small">Rapport journalier</h5>
+                    <hr class="m-0 mb-2" />
+                    <div class="row">
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Total passage :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">200</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Employers :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">50</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Familles :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">150</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                    </div>
+                </RadzenCard>
+                <RadzenCard>
+                    <h5 class="text-center font-weight-bold text-muted text-uppercase small ">Rapport personnaliser</h5>
+                    <hr class="m-0 mb-2" />
+                    <div class="row">
+                        <div class="col">
+                            <div style="padding:10px;" class="bg-light">
+
+                                @*<div class="row">*@
+                                <div class="form-check form-switch ml-5">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="@checkedJournalier" onchange="@(()=>ChangeRapportType())">
+                                    <label class="form-check-label mt-1" for="flexSwitchCheckChecked">@textTwoDate</label>
+                                </div>
+                                @*</div*@
+                                <div class="w-100">
+                                    @if (checkedJournalier == true)
+                                    {
+                                                <div class="mt-2 mb-2">
+                                                    <RadzenDatePicker AllowClear="true" class="w-100 " @bind-Value="@dateRapport1" DateFormat="d"
+                                                          Placeholder="Date debut" />
+                                                </div>
+                                                <div class="mt-2 mb-2">
+                                                    <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport2" DateFormat="d"
+                                                          Placeholder="Date fin" />
+                                                </div>
+                                    }
+                                    else if (checkedJournalier == false)
+                                    {
+                                                <div class="mt-2 mb-2">
+                                                    <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport" DateFormat="d"
+                                                          Placeholder="Specifier la date a exporter" />
+                                                </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col bg-light" style="padding:10px;">
+                            <div class="form-check form-switch ml-5 mb-3">
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Travailleur</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Famille</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Par etablissement</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 mb-2 w-100">
+                        <button class="btn btn-sm btn-outline-success"type="button"><span class="fas fa-file-excel"></span> &ensp; Exporter en excel</button>
+                    </div>
+                </RadzenCard>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    List<AvoirLaboratoire> laboratoires = new List<AvoirLaboratoire>();
+    Employer employer = new();
+    Famille famille = new();
+    Employeur employeur = new();
+    string nom = null!;
+    string textTwoDate = "";
+    DateTime? dateRapport1;
+    DateTime? dateRapport2;
+    DateTime? dateRapport;
+    bool checkedJournalier = false;
+
+    protected async override void OnInitialized()
+    {
+        laboratoires = await examensService.GetAllAvoirLaboratoire();
+        StateHasChanged();
+    }
+
+    public async Task Traiter(long idConsultation)
+    {
+        go.NavigateTo("/laboratoire/" + idConsultation);
+    }
+
+    public void ChangeRapportType()
+    {
+        if (checkedJournalier == true)
+        {
+            textTwoDate = "Rapport journalier a une date";
+            checkedJournalier = false;
+        }
+        else if (checkedJournalier == false)
+        {
+            textTwoDate = "Rapport entre deux date";
+            checkedJournalier = true;
+        }
+        StateHasChanged();
+    }
+
+    public async Task LoadFichiste(Fichiste fichee)
+    {
+        if (fichee != null)
+        {
+            if (fichee.Categorie.Trim() == "Famille")
+            {
+                famille = await affiliationService.GetFamilleById(Convert.ToInt32(fichee.Affiliationid));
+                if (famille != null)
+                {
+                    nom = famille.Nom + " " + famille.Prenom;
+                    employer = await affiliationService.GetEmployerByNumOsiet(famille.Numeroosiet);
+                    if (employer != null)
+                    {
+                        employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                    }
+                }
+            }
+            else if (fichee.Categorie.Trim() == "Travailleur")
+            {
+                employer = await affiliationService.GetEmployerById(Convert.ToInt32(fichee.Affiliationid));
+                if (employer != null)
+                {
+                    employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                    nom = employer.Nom + " " + employer.Prenom;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,204 @@
+﻿@page "/maternite_patiant"
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared.Maternites
+@using LYRA.Models.Maternites
+@using LYRA.Models
+@inject IMaterniteService materniteService
+@inject IFichisteService fichisteService
+@inject IAffiliationService affiliationService
+@inject NavigationManager navigate
+@layout MaterniteLayout
+
+<AuthorizeView Roles="Admin, Maternite">
+    <Authorized>
+        <div class="card" style="border-radius: 0">
+            <div class="card-header">
+                <h4 class="m-0">Patiants en attente</h4>
+            </div>
+            <div class="card-body">
+                @if (ready == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">Nouvelle liste d'attente</h5>
+                                </div>
+
+                                <hr class="mt-0" />
+
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                        AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@maternitePatiants"
+                                        TItem="MaternitePatiant" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%" class="mb-3"
+                                        SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Date" Title="Date" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Fichisteid" Title="ID Fichiste" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Name" Title="Nom" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Width="70px">
+                                            <Template Context="datas">
+                                                <button class="btn btn-sm btn-outline-success" onclick="@(()=>Traiter(datas.Fichisteid))">Entrer</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-auto w-100 border border-secondary">
+                                <div class="">
+                                    <h5 class="mt-2 mb-0">Traitement en cours</h5>
+                                </div>
+                                <hr class="mt-0" />
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                        AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@maternitePatiantsOld"
+                                        TItem="MaternitePatiant" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%" class="mb-3"
+                                        SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Date" Title="Date" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Fichisteid" Title="ID Fichiste" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Property="Name" Title="Nom" Width="70px">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Width="70px" Title="Etat">
+                                            <Template Context="datas">
+                                                @if (datas.Etat != "Terminer")
+                                                {
+                                                    <h4><span class="badge bg-info ">@datas.Etat</span></h4>
+                                                }
+                                                else
+                                                {
+                                                    <h4><span class="badge bg-secondary ">@datas.Etat</span></h4>
+                                                }
+                                            </Template>
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="MaternitePatiant" Width="24px">
+                                            <Template Context="datas">
+                                                <button class="btn btn-sm btn-outline-success" onclick="@(()=>Traiter(datas.Fichisteid))">Entrer</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    bool ready = false;
+    List<AvoirMaternite> avoirMaternites = new List<AvoirMaternite>();
+    List<AvoirMaternite> avoirMaternitesOld = new List<AvoirMaternite>();
+    List<MaternitePatiant> maternitePatiants = new List<MaternitePatiant>();
+    List<MaternitePatiant> maternitePatiantsOld = new List<MaternitePatiant>();
+    Fichiste fichiste = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMaternite();
+        await CompleteMaternitePatiant();
+        await CompleteMaternitePatiantNonTerminer();
+        ready = true;
+        StateHasChanged();
+    }
+
+    private async Task LoadMaternite()
+    {
+        avoirMaternites = await materniteService.GetAllAvoirMaternite();
+        avoirMaternitesOld = await materniteService.GetAllAvoirMaterniteNonTerminer();
+    }
+
+    private async Task CompleteMaternitePatiant()
+    {
+        foreach (var item in avoirMaternites)
+        {
+            MaternitePatiant patiant = new();
+            Fichiste fichiste = await fichisteService.getFichisteById(item.FichisteId);
+            if (fichiste != null)
+            {
+                @if (fichiste.Categorie.Trim() == "Famille")
+                {
+                    Famille fam = new();
+                    fam = await affiliationService.GetFamilleById(Convert.ToInt32(fichiste.Affiliationid));
+                    patiant.Fichisteid = fichiste.Fichisteid;
+                    patiant.Date = item.Date;
+                    patiant.Name = fam.Nom + " " + fam.Prenom;
+                    patiant.AvoirMaterniteId = item.AvoirMaterniteId;
+                    maternitePatiants.Add(patiant);
+                }
+                else if (fichiste.Categorie.Trim() == "Travailleur")
+                {
+                    Employer emp = new();
+                    emp = await affiliationService.GetEmployerById(Convert.ToInt32(fichiste.Affiliationid));
+                    patiant.Fichisteid = fichiste.Fichisteid;
+                    patiant.Date = item.Date;
+                    patiant.Name = emp.Nom + " " + emp.Prenom;
+                    patiant.AvoirMaterniteId = item.AvoirMaterniteId;
+                    maternitePatiants.Add(patiant);
+                }
+            }
+        }
+    }
+
+    private async Task CompleteMaternitePatiantNonTerminer()
+    {
+        foreach (var item in avoirMaternitesOld)
+        {
+            MaternitePatiant patiant = new();
+            Fichiste fichiste = await fichisteService.getFichisteById(item.FichisteId);
+            if (fichiste != null)
+            {
+                @if (fichiste.Categorie.Trim() == "Famille")
+                {
+                    Famille fam = new();
+                    fam = await affiliationService.GetFamilleById(Convert.ToInt32(fichiste.Affiliationid));
+                    patiant.Fichisteid = fichiste.Fichisteid;
+                    patiant.Date = item.Date;
+                    patiant.Name = fam.Nom + " " + fam.Prenom;
+                    patiant.Etat = item.Etat;
+                    patiant.AvoirMaterniteId = item.AvoirMaterniteId;
+                    maternitePatiantsOld.Add(patiant);
+                }
+                else if (fichiste.Categorie.Trim() == "Travailleur")
+                {
+                    Employer emp = new();
+                    emp = await affiliationService.GetEmployerById(Convert.ToInt32(fichiste.Affiliationid));
+                    patiant.Fichisteid = fichiste.Fichisteid;
+                    patiant.Date = item.Date;
+                    patiant.Name = emp.Nom + " " + emp.Prenom;
+                    patiant.Etat = item.Etat;
+                    patiant.AvoirMaterniteId = item.AvoirMaterniteId;
+                    maternitePatiantsOld.Add(patiant);
+                }
+            }
+        }
+    }
+
+    private void Traiter(long idFichiste)
+    {
+        navigate.NavigateTo("/maternite_consultation/" + idFichiste);
+    }
+}

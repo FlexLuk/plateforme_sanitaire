@@ -1,0 +1,553 @@
+﻿@page "/sortie_medicament/{idFichiste}"
+@layout PharmacieLayout
+@using Blazored.SessionStorage
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using LYRA.Controllers.ControllerOrdonnance
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Pharmacie
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@inject IPharmacieService pharmaService
+@inject ISoinsService soinsService
+@inject IOrdonnanceService ordonnanceService
+@inject NavigationManager Go
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@inject ISessionStorageService sessionStorage
+@inject Radzen.NotificationService notificationService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@attribute [Authorize(Roles = "Admin, Pharmacie")]
+
+<PageTitle>Pharmacie</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <RadzenNotification />
+        <div class="card mb-2">
+            <div class="card-header">
+                Information de l'ordonnance
+            </div>
+            <div class="card-body p-0 ">
+                <table class="table table-sm table-bordered m-0 p-0">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Numéro OSIET</th>
+                            <th style="text-align:center">Numéro Ordonnance</th>
+                            <th style="text-align:center">Numéro Fichiste</th>
+                            <th style="text-align:center">Etablissement</th>
+                            <th style="text-align:center">Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align:center">@numOsiet</td>
+                            <td style="text-align:center">
+                                @if (ordonnance.Numordonnance != null)
+                                {
+                                    <span>@ordonnance.Numordonnance</span>
+                                }
+                            </td>
+                            <td style="text-align:center">@ordonnance.Fichistteid</td>
+                            <td style="text-align:center">@Etablissement</td>
+                            <td style="text-align:center">@Nom</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                Sortie medicament
+            </div>
+            <div class="card-body ">
+                @if (loadded == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <RadzenDataGrid @ref=listMed AllowColumnResize="true" AllowPaging="true" PageSize="7" AllowSorting="true"
+                                Responsive="true" Data="@ListAvoirOrdonnanceMed" TItem="OrdonnanceAvoirList"
+                                SelectionMode="DataGridSelectionMode.Single" ShowPagingSummary>
+                        <Columns>
+                            <RadzenDataGridColumn Width="70px" Filterable=false Sortable=false TItem="OrdonnanceAvoirList" Property="Sortie" Title="A sortie">
+                                <Template Context="data">
+                                    <RadzenCheckBox @bind-Value="data.Sortie" Disabled="@data.Sortie.Value" TValue="bool?" TriState=false />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="OrdonnanceAvoirList" Filterable=false Sortable=false Property="Article" Title="Article"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Width="70px" Filterable=false Sortable=false TItem="OrdonnanceAvoirList" Property="Quantite" Title="Quantite"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Width="100px" Filterable=false Sortable=false TItem="OrdonnanceAvoirList" Title="Passe soins" Property="Soins">
+                                <Template Context="data">
+                                    <RadzenCheckBox Change="@(args=>SoinsOnChange(data))" Disabled="@data.Soins.Value" @bind-Value="data.Soins" TValue="bool?" TriState=false />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="OrdonnanceAvoirList" Filterable=false Sortable=false Property="Prescription" Title="Prescription"></RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                }
+
+            </div>
+            <div class="card-footer">
+                <RadzenButton Click="@(()=>Go.NavigateTo("/ordonnance"))" class="float-left" Style="border-radius: 0" Text="<= Retour liste ordonnance" ButtonType="Radzen.ButtonType.Button" ButtonStyle="ButtonStyle.Info" />
+                <RadzenButton Click="@(()=>SaveSortieArticle())" class="float-right" Style="border-radius: 0" Text="Enregistrer" ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Secondary" />
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string idFichiste { get; set; } = null!;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    Ordonnance ordonnance = new();
+    Employer employer = new();
+    Famille famille = new();
+    Employeur employeur = new();
+    Fichiste fichiste = new();
+    RadzenDataGrid<OrdonnanceAvoirList>? listMed;
+    Soins soins = new();
+    List<AvoirSoins> soinss = new List<AvoirSoins>();
+    List<OrdonnanceAvoir> ListAvoirOrdonnance = new List<OrdonnanceAvoir>();
+    List<OrdonnanceAvoirList> ListAvoirOrdonnanceMed = new List<OrdonnanceAvoirList>();
+    bool loadded = false;
+    string? numOsiet, Nom, Etablissement;
+    private ToastParameters? _toastParameters;
+    NotificationMessage notification = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        await DefaultLoading();
+        await CompleteTable();
+        loadded = true;
+        StateHasChanged();
+    }
+
+    protected async Task DefaultLoading()
+    {
+        ordonnance = await ordonnanceService.GetOrdonnancesByFichisteId(Convert.ToInt64(idFichiste));
+        fichiste = await fichisteService.getFichisteById(Convert.ToInt64(idFichiste));
+        if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        else if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        ListAvoirOrdonnance = await ordonnanceService.GetAvoirOrdonnancesByOrdonnanceId(ordonnance.Ordonnanceid);
+    }
+
+    protected async Task CompleteTable()
+    {
+        foreach (var item in ListAvoirOrdonnance)
+        {
+            OrdonnanceAvoirList ordAvLst = new();
+            if (item.Sortie == 0)
+            {
+                ordAvLst.Sortie = false;
+                ordAvLst.Edit = true;
+            }
+            else if (item.Sortie == 1)
+            {
+                ordAvLst.Sortie = true;
+                ordAvLst.Edit = false;
+            }
+            if (item.Soins == 0 || item.Soins == null)
+            {
+                ordAvLst.Soins = false;
+            }
+            else if (item.Soins == 1)
+            {
+                ordAvLst.Soins = true;
+            }
+            ordAvLst.Quantite = item.Quantite;
+            ordAvLst.Prescription = item.Prescription;
+            ordAvLst.Ordonnanceid = item.Ordonnanceid;
+            ordAvLst.Ordonnanceavoirid = item.Ordonnanceavoirid;
+            ordAvLst.Medicamentid = item.Medicamentid;
+            ordAvLst.Article = await GetArticle(item.Medicamentid);
+            ListAvoirOrdonnanceMed.Add(ordAvLst);
+        }
+    }
+
+    public async Task<string> GetArticle(long idMedicament)
+    {
+        Medicament med = await pharmaService.GetMedicamentById(idMedicament);
+        return med.Designation + " " + med.Presentation;
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            if (famille.Numeroosiet != null)
+            {
+                employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+                if (employer.Numemployeur != null)
+                {
+                    employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                    numOsiet = famille.Numeroosiet;
+                    Nom = famille.Nom + " " + famille.Prenom;
+                    Etablissement = employeur.Raisonsociale;
+                }
+            }
+
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer.Numemployeur != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+    protected async void SaveSortieArticle()
+    {
+        foreach (var item in ListAvoirOrdonnanceMed)
+        {
+
+            if (item.Sortie == true && item.Edit == true && item.Soins == false)
+            {
+                await SortieArticle(item);
+            }
+            else if (item.Sortie == true && item.Edit == false && item.Soins == true)
+            {
+                OrdonnanceAvoir ordoAvoir = new();
+                ordoAvoir.Ordonnanceid = item.Ordonnanceid;
+                ordoAvoir.Ordonnanceavoirid = item.Ordonnanceavoirid;
+                ordoAvoir.Sortie = 1;
+                ordoAvoir.Soins = 1;
+                await ordonnanceService.UpdateAvoirOrdonnance(ordoAvoir);
+            }
+            else if (item.Sortie == true && item.Edit == true && item.Soins == true)
+            {
+                OrdonnanceAvoir ordoAvoir = new();
+                ordoAvoir.Ordonnanceid = item.Ordonnanceid;
+                ordoAvoir.Ordonnanceavoirid = item.Ordonnanceavoirid;
+                ordoAvoir.Sortie = 1;
+                ordoAvoir.Soins = 1;
+                await ordonnanceService.UpdateAvoirOrdonnance(ordoAvoir);
+                Medicament medica = await pharmaService.GetMedicamentById(item.Medicamentid);
+                Sortie sortie = new();
+                sortie.Fichisteid = ordonnance.Fichistteid;
+                sortie.Date = DateTime.Now;
+                sortie.Medicamentid = item.Medicamentid;
+                sortie.Ordonnanceid = ordonnance.Ordonnanceid;
+                sortie.Quantitesortie = item.Quantite;
+                sortie.Stockinitial = medica.Quantite;
+                sortie.Stockfinal = medica.Quantite - item.Quantite;
+                await ordonnanceService.CreateSortie(sortie);
+                medica.Quantite = medica.Quantite - item.Quantite;
+                await ordonnanceService.UpdateMedicament(medica);
+            }
+
+        }
+        ordonnance.Etat = "Terminer";
+        await ordonnanceService.UpdateOrdonance(ordonnance);
+
+        Consultation consultation = new();
+        consultation.ListeAttente = "Non";
+        consultation.Fichisteid = fichiste.Fichisteid;
+        consultation.Passage = 1;
+
+        await medecinService.UpdateConsultationByFichiste(fichiste.Fichisteid, consultation);
+
+        notification = new NotificationMessage
+            {
+                Style = "position: absolute; top: -50px",
+                Severity = NotificationSeverity.Success,
+                Summary = "Success.",
+                Detail = "Enregistrement reussi.",
+                Duration = 4000
+            };
+        notificationService.Notify(notification);
+    }
+
+    protected async Task SortieArticle(OrdonnanceAvoirList avOrdo)
+    {
+        OrdonnanceAvoir ordoAvoir = new();
+        ordoAvoir.Ordonnanceid = avOrdo.Ordonnanceid;
+        ordoAvoir.Ordonnanceavoirid = avOrdo.Ordonnanceavoirid;
+        ordoAvoir.Sortie = 1;
+        await ordonnanceService.UpdateAvoirOrdonnance(ordoAvoir);
+        Medicament medica = await pharmaService.GetMedicamentById(avOrdo.Medicamentid);
+        Sortie sortie = new();
+        sortie.Fichisteid = ordonnance.Fichistteid;
+        sortie.Date = DateTime.Now;
+        sortie.Medicamentid = avOrdo.Medicamentid;
+        sortie.Ordonnanceid = ordonnance.Ordonnanceid;
+        sortie.Quantitesortie = avOrdo.Quantite;
+        sortie.Stockinitial = medica.Quantite;
+        sortie.Stockfinal = medica.Quantite - avOrdo.Quantite;
+        await ordonnanceService.CreateSortie(sortie);
+        medica.Quantite = medica.Quantite - avOrdo.Quantite;
+        await ordonnanceService.UpdateMedicament(medica);
+    }
+
+    public async Task SoinsOnChange(Object args)
+    {
+        OrdonnanceAvoirList OrdoAvoirList = (OrdonnanceAvoirList)args;
+        Medicament med = new();
+        decimal qMed = 0;
+        if (OrdoAvoirList.Medicamentid > 0)
+        {
+            med = await pharmaService.GetMedicamentById(OrdoAvoirList.Medicamentid);
+            if (med.Medicamentid > 0)
+            {
+                qMed = med.Quantite;
+            }
+            if (qMed <= 0)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Warning,
+                        Summary = "Attention.",
+                        Detail = "Médicament insuffisant, annulation de soins.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            else
+            {
+                if (OrdoAvoirList.Soins == true)
+                {
+                    var parameters = new ModalParameters();
+                    try
+                    {
+                        var result = await Modal.Show<_DialogSoinsPharmacie>("Creation de soins", parameters).Result;
+                        if ((bool)result.Data == true)
+                        {
+                            await SaveSoinsInfo(OrdoAvoirList);
+                            OrdonnanceAvoir ordoAvoir = new();
+                            ordoAvoir = await ordonnanceService.GetAvoirOrdonnancesById(OrdoAvoirList.Ordonnanceavoirid);
+                            ordoAvoir.Soins = 1;
+                            ordoAvoir.Sortie = 1;
+                            await ordonnanceService.UpdateAvoirOrdonnanceSoins(ordoAvoir);
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        notification = new NotificationMessage
+                            {
+                                Style = "position: absolute; top: -50px",
+                                Severity = NotificationSeverity.Info,
+                                Summary = "Info.",
+                                Detail = "Action annuler par l'utilisateur.",
+                                Duration = 4000
+                            };
+                        notificationService.Notify(notification);
+                    }
+                }
+            }
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Il n'y a pas ce médicament dans la base.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        listMed.Reset();
+        ListAvoirOrdonnanceMed = new List<OrdonnanceAvoirList>();
+        await CompleteTable();
+        listMed.Reload();
+
+        StateHasChanged();
+    }
+
+    private async Task SaveSoinsInfo(OrdonnanceAvoirList OrdoAvoirList)
+    {
+        string TypeSoins = await sessionStorage.GetItemAsync<string>("TypeSoins");
+        string Demande = await sessionStorage.GetItemAsync<string>("Demande");
+        string Resultat = await sessionStorage.GetItemAsync<string>("Resultat");
+        string Etat = await sessionStorage.GetItemAsync<string>("Etat");
+        string DemandeSup = await sessionStorage.GetItemAsync<string>("DemandeSup");
+        AvoirSoins avSoins = new();
+        avSoins.Date = DateTime.Now;
+        avSoins.TypeSoins = TypeSoins;
+        avSoins.Demande = Demande;
+        avSoins.Resultat = Resultat;
+        avSoins.Etat = Etat;
+        avSoins.DemandeSup = DemandeSup;
+        bool res = await CreerSoins(avSoins);
+        await sessionStorage.ClearAsync();
+    }
+
+    public async Task<bool> CreerSoins(AvoirSoins avSoins)
+    {
+        bool resultat = false;
+        soins = await soinsService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        if (soins != null)
+        {
+            if (soins.Soinsid <= 0)
+            {
+                bool res = await CreerNouveauSoins(avSoins);
+                if (res)
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Success,
+                            Summary = "Success.",
+                            Detail = "Enregistrement reussi.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    resultat = true;
+                }
+                else
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Erreur.",
+                            Detail = "Erreur d'enregistrement, reessayer plus tard.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    resultat = false;
+                }
+
+            }
+            else if (soins.Soinsid > 0)
+            {
+                bool res = await AjoutNouveauSoins(avSoins);
+                if (res)
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Success,
+                            Summary = "Success.",
+                            Detail = "Enregistrement reussi.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    resultat = true;
+                }
+                else
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Erreur.",
+                            Detail = "Erreur d'enregistrement, reessayer plus tard.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    resultat = false;
+                }
+
+            }
+        }else{
+            bool res = await CreerNouveauSoins(avSoins);
+            if (res)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Success.",
+                        Detail = "Enregistrement reussi.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+                resultat = true;
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Erreur d'enregistrement, reessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+                resultat = false;
+            }
+        }
+        StateHasChanged();
+        return resultat;
+    }
+
+    public async Task<bool> CreerNouveauSoins(AvoirSoins avSoins)
+    {
+        bool resultat = false;
+        bool reponse = false;
+        bool rep = false;
+        Soins s = new();
+        s.Fichisteid = fichiste.Fichisteid;
+        s.Affiliationid = Convert.ToInt64(fichiste.Affiliationid);
+        s.Categorie = fichiste.Categorie;
+        s.Date = DateTime.Now;
+        s.Fin = "non";
+        reponse = await soinsService.CreateSoins(s);
+        if (reponse)
+        {
+            soins = await soinsService.GetSoinsByFichisteId(fichiste.Fichisteid);
+            avSoins.Soinsid = soins.Soinsid;
+            rep = await soinsService.CreateAvoirSoins(avSoins);
+            if (rep) resultat = true;
+            else resultat = false;
+        }
+        else
+        {
+            resultat = false;
+        }
+        return resultat;
+    }
+
+    public async Task<bool> AjoutNouveauSoins(AvoirSoins avSoins)
+    {
+        bool resultat = false;
+        bool rep = false;
+        soins = await soinsService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        avSoins.Soinsid = soins.Soinsid;
+        rep = await soinsService.CreateAvoirSoins(avSoins);
+        if (rep) resultat = true;
+        else resultat = false;
+        return resultat;
+    }
+}

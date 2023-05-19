@@ -1,0 +1,292 @@
+﻿@page "/echoecg_medecin/{idConsultation}"
+@using LYRA.Controllers.ControllerDentiste
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Models
+@using LYRA.Models.Examens
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Shared.EchoEcg
+@using Radzen
+@using Radzen.Blazor
+@inject NavigationManager Go
+@inject IToastService toastService
+@inject IFichisteService fichisteservice
+@inject IMedecinService medecinService
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliationService
+@inject IExamenService examenService
+@layout EchoEcgLayout
+@attribute [Authorize(Roles = "EchoEcg, Admin")]
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Création dentiste pour le patiant</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 m-0">
+                    <div class="card border-left-primary shadow  py-2">
+                        <div class="card-body m-0">
+                            <table class="table table-sm table-bordered" style="">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">N° OSIET</th>
+                                        <td style="font-weight:bold">
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@numOsiet</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">NOM COMPLET</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@Nom</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">ETABLISSEMENT</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@Etablissement</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CARACTERISTIQUE</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@fichiste.Categorie</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">AGE</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                <span>@age</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card border-left-primary shadow  py-2">
+                        <div class="card-body m-0">
+                            <div class="row">
+                                <div class="col ">
+                                    <div class="col mb-3 ">
+                                        <label>Type : </label>
+                                        <RadzenDropDown TValue="string" Data="@type" @bind-Value="@_type" Class="form-control" Placeholder="Echo ou ECG" Change="@(()=>changingEcho())" />
+                                    </div>
+                                </div>
+                                <div class="col ">
+                                    <div class="col mb-3 ml-0 pl-0">
+                                        <label>Type d'echo' : </label>
+                                        <RadzenDropDown Disabled="@t_echo" TValue="string" @bind-Value="@_type_echo" Class="form-control" Data=@type_echo Placeholder="Type d'echo" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col ">
+                                <div class="input-group input-group-sm mb-3">
+                                    <RadzenTextArea Name="commentRadzen" @bind-Value="@demande" class="w-100" style="height: 57px" Placeholder="Demande" />
+                                </div>
+                                <div class="">
+                                    <div class="row">
+                                        <div class="col pt-2">
+                                            <span class="">Prescripteur : </span>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <RadzenTextBox @bind-Value="@echoEcg.Prescripteur" class="w-100" Placeholder="Prescripteur" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <hr/>
+                                <RadzenButton Click="@(()=>SaveEchoEcg())" class="float-right ml-4" Text="Enregistrer" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" />
+                                <RadzenButton Click="@(()=>Go_Back())" class="float-right" Text="Consultation" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-2 mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Liste du demande</h5>
+        </div>
+        <div class="card-body" style="border-radius: 0">
+            <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                        AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@EchoEcgs"
+                        TItem="EchoEcg" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                        SelectionMode="DataGridSelectionMode.Single">
+                <Columns>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Date" Title="DATE"></RadzenGridColumn>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Echo" Title="ECHO"></RadzenGridColumn>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Ecg" Title="ECG"></RadzenGridColumn>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Demande" Title="DEMANDE"></RadzenGridColumn>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Resultat" Title="RESULTAT"></RadzenGridColumn>
+                    <RadzenGridColumn TItem="EchoEcg" Property="Prescripteur" Title="PRESCRIPTEUR"></RadzenGridColumn>
+                </Columns>
+            </RadzenGrid>
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [Parameter]
+    public string idConsultation { get; set; } = null!;
+    IEnumerable<string> type_echo = new string[] { "Obstetricale", "Pelivienne", "Abdominale" };
+    IEnumerable<string> type = new string[] { "ECHO", "ECG" };
+    List<EchoEcg> EchoEcgs = new List<EchoEcg>();
+    int numeroDent, age;
+    string? demande, numOsiet, Nom, Etablissement, categorie, _type, _type_echo;
+    Fichiste fichiste = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    private ToastParameters? _toastParameters;
+    bool t_echo = false;
+    EchoEcg echoEcg = new();
+    Consultation consultation = new();
+
+    protected async override void OnInitialized()
+    {
+        consultation = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+        fichiste = await fichisteservice.getFichisteById(consultation.Fichisteid);
+        if (fichiste != null)
+        {
+            if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt32(fichiste.Affiliationid));
+            }
+            else if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt32(fichiste.Affiliationid));
+            }
+        }
+        await LoadEchoEcg();
+        StateHasChanged();
+    }
+
+    private async Task LoadEchoEcg()
+    {
+        EchoEcgs = await examenService.GetAllEchoEcgByFichiste(fichiste.Fichisteid);
+    }
+
+    private async Task SaveEchoEcg()
+    {
+        echoEcg.Statut = "En cours";
+        echoEcg.Demande = demande;
+        echoEcg.Fichisteid = fichiste.Fichisteid;
+        if (_type == "ECG")
+        {
+            echoEcg.Ecg = _type;
+        }
+        else if (_type == "ECHO")
+        {
+            echoEcg.Echo = _type_echo;
+        }
+        echoEcg.Date = DateTime.Now;
+        bool result = await examenService.CreateEchoEcg(echoEcg);
+        if (result)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await Task.Delay(2000);
+            Go.NavigateTo("/docteurPatiant");
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Error !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement échoué, reessayer plus tard.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await Task.Delay(2000);
+        }
+    }
+
+    private void changingEcho()
+    {
+        if (_type == "ECG")
+        {
+            t_echo = true;
+        }
+        else if (_type == "ECHO")
+        {
+            t_echo = false;
+        }
+    }
+
+    public void Go_Back()
+    {
+        Go.NavigateTo("/docteurPatiant/" + idConsultation);
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliationService.GetFamilleById(familleID);
+        if (famille.Numeroosiet != null)
+        {
+            employer = await affiliationService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer.Numemployeur != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                categorie = fichiste.Categorie;
+                if (famille.Datenaissance != null)
+                {
+                    int dateNaissance = famille.Datenaissance.Value.Year;
+                    int currentDate = DateTime.Now.Year;
+                    age = currentDate - dateNaissance;
+                }
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliationService.GetEmployerById(employerID);
+        if (employer.Numemployeur != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            categorie = fichiste.Categorie;
+            if (employer.Datenaissance != null)
+            {
+                int dateNaissance = employer.Datenaissance.Value.Year;
+                int currentDate = DateTime.Now.Year;
+                age = currentDate - dateNaissance;
+            }
+        }
+    }
+}

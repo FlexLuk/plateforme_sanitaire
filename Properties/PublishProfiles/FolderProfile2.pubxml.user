@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\Users\Flex\source\repos\LYRA\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>True|2023-04-01T07:30:06.3415821Z;True|2023-02-20T14:28:42.5585884+03:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="osiet_connection">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="LYRA.Models.ADHESIONContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Administration.AVROLEContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Administration.UtilisateurContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Complementaire.COMPLEMENTAIREContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.CONSULTATIONContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Examens.EXAMENSContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.FICHISTEContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Maternites.MATERNITEContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.PARAMETREContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Pharmacie.PHARMACIEContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+    <EFMigrations Include="LYRA.Models.Rendez_vous.RDVContext">
+      <Value>Data Source=SERVER-OSIET%3bInitial Catalog=OSIET%3bIntegrated Security=True%3bMultipleActiveResultSets=true</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

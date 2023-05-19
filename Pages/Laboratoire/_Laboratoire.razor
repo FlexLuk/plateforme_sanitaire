@@ -1,0 +1,505 @@
+﻿@page "/laboratoire/{idFichiste}"
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@using LYRA.Models.Examens
+@using LYRA.Models.Pharmacie
+@using LYRA.Shared.Laboratoire
+@layout LaboratoireLayout
+@inject IToastService toastService
+@inject IFichisteService fichisteService
+@inject IAffiliationService affiliationService
+@inject IAdhesionService adhesionService
+@inject IParametreService parametreService
+@inject IExamenService examenService
+@inject NavigationManager Go
+@inject Radzen.NotificationService notificationService
+@attribute [Authorize(Roles = "Laboratoire, Admin")]
+
+<PageTitle>Laboratoire</PageTitle>
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+
+<AuthorizeView Roles="Admin, Laboratoire">
+    <Authorized>
+        <RadzenNotification />
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-1">
+                <div class="card border-left-primary shadow  py-2">
+                    <div class="card-body m-0">
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">N° OSIET</th>
+                                    <td style="font-weight:bold">
+                                        @if (numOsiet != null)
+                                        {
+                                            @numOsiet
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">NOM COMPLET</th>
+                                    <td>
+                                        @if (Nom != null)
+                                        {
+                                            @Nom
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">AGE</th>
+                                    <td><span>@age</span>&ensp;<i>ans</i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card border-left-primary shadow  py-2">
+                    <div class="card-body m-0">
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">TEMPERATURE</th>
+                                    <td>
+                                        <span class="" style="color: #fd7e14; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Temperature
+                                            }°
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.D</th>
+                                    <td>
+                                        <span class="" style="color: #0d6efd; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tad
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.G</th>
+                                    <td>
+                                        <span class="" style="color: #6f42c1; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tag
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                    <td>
+                                        <span class="" style="font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.FrequenceCardiaque
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">POIDS</th>
+                                    <td colspan="3">
+                                        <span class="" style="color: #0d6efd; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Poids
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">OBSERVATION</th>
+                                    <td colspan="5">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Observation
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Liste de soins a faire</h6>
+            </div>
+            <div class="ard-body ">
+                @if (getRepListSoins == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="true" Data="@listLabo"
+                            TItem="Laboratoire" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page" EmptyText="Aucune information"
+                            SelectionMode="DataGridSelectionMode.Single" class="mt-0">
+                        <Columns>
+                            <RadzenGridColumn TItem="Laboratoire" Title="Date" Width="90px">
+                                <Template Context="data">
+                                    @data.Date.ToShortDateString()
+                                </Template>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="Laboratoire" Property="TypeTest" Title="TYPE"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="Laboratoire" Property="Test" Title="Test"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="Laboratoire" Property="Resultat" Title="Resultat"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="Laboratoire" Property="Commentaire" Title="Commentaire"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="Laboratoire" Title="" Width="100px" Filterable="false" Sortable="false">
+                                <Template Context="data">
+                                    <RadzenButton style="border-radius:0px;" Text="" Click="@(args=>Set_Labo(data))" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" class="oi oi-eye" />
+                                </Template>
+                            </RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="mb-0" style="margin-top:8px">Enregistrement de soins</h6>
+                    </div>
+                    <div class="col ">
+                        <button disabled="@saveBool" onclick="@(()=>EnregistrementLabo())" class="btn btn-secondary btn-sm float-right" style="border-radius:0">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+            @if (labo.Prescripteur == "Maternité" || labo.Test == "TPHA")
+            {
+                <div class="card-body ">
+                    <div class="row">
+                        <div class="col float-start">
+                            <div class="input-group">
+                                <label class="input-group-text" style="height: 35px !important">Date : </label>
+                                <RadzenDatePicker TValue="DateTime" Value="DateTime.Now" />
+                            </div>
+                        </div>
+                        <div class="col float-end">
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text w-50" style="height:35px; border-radius:0px;">Type du test : </span>
+                                <RadzenTextBox class="form-control" Placeholder="Le tye du test" @bind-Value="labo.TypeTest" Disabled />
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text w-50" style="height:35px; border-radius:0px;">Test à faire : </span>
+                                <RadzenTextBox class="form-control" Placeholder="Le test à faire au labo" @bind-Value="labo.Test" Disabled />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group h-100">
+                                <span class="input-group">Résultat du test : </span>
+                                <RadzenDropDown Class="form-control " AllowFiltering="false" TValue="string" AllowClear="true"
+                                            Data="@resultatTest" Placeholder="Resultat du test" @bind-Value="@labo.Resultat"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" PageSize="3" AllowSorting=false />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col float-start">
+                            <div class="input-group">
+                                <label class="input-group-text" style="height: 35px !important">Date : </label>
+                                <RadzenDatePicker TValue="DateTime" Value="DateTime.Now" />
+                            </div>
+                        </div>
+                        <div class="col float-end">
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text w-50" style="height:35px; border-radius:0px;">Type du test : </span>
+                                <RadzenDropDown TValue="string" Name="typeDropBox" @bind-Value="@type_test_selected" Class="form-control" Data=@type_tests Change="@((args) => OnChange(args))"
+                                            Placeholder="Veuillez choisir le type de test ici" style="border-radius:0" />
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text w-50" style="height:35px; border-radius:0px;">Test à faire : </span>
+                                <RadzenDropDown Name="demandeDropBox" TValue="string" Class="form-control" Data=@demandess Change="@((args) => OnChanging(args))"
+                                           Placeholder="Veuillez choisir le test ici" style="border-radius:0" @bind-Value="@test_selected"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group h-100">
+                                <span class="input-group-text">Résultat du test : </span>
+                                <RadzenTextArea @bind-Value="@labo.Resultat" Placeholder="Resultat du laboratoire"
+                                            aria-label="With textarea" class="form-control fs-6" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col">
+                        @*<RadzenButton ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Text="Créer un ordonnance ici" />*@
+                    </div>
+                    <div class="col">
+                        <RadzenButton Click="@(()=>TerminerLabo())" Text="Terminer" Style="border-radius:0" class="float-right" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <Demarrage />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string? idFichiste { get; set; }
+    IEnumerable<string> resultatTest = new string[] { "Positif", "Négatif" };
+    IEnumerable<string> type_tests = new string[] { "BANDELETTE URINAIRE", "PARASITOLOGIE", "BACTERIOLOGIE", "HEMATOLOGIE", "SEROLOGIE", "BIOCHIMIE", "AUTRES" };
+    bool loaded = false;
+    string? numOsiet, Nom, Etablissement, categorie, nbrPresence, test_selected, type_test_selected;
+    int age;
+    RadzenGrid<SoinsModel> grid;
+    ToastParameters? _toastParameters;
+    NotificationMessage notification = new();
+    Employer employer = new();
+    Famille famille = new();
+    Employeur employeur = new();
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    bool getRepListSoins = false, saveBool = false;
+    AvoirLaboratoire? avoir_labo;
+    List<Laboratoire> listLabo = new List<Laboratoire>();
+    List<Demande> demandes = new List<Demande>();
+    List<string> demandess = new List<string>();
+
+    Laboratoire labo = new();
+
+    public void OnChange(Object value)
+    {
+        string type = (string)value;
+        demandess = null!;
+        demandess = new List<string>();
+        if (type == "BANDELETTE URINAIRE")
+        {
+            demandess = new List<string>();
+            demandess.Add("Albumines");
+            demandess.Add("Sucre");
+            demandess.Add("Acetones");
+            demandess.Add("Test de grossesse");
+        }
+        else if (type == "PARASITOLOGIE")
+        {
+            demandess = new List<string>();
+            demandess.Add("FM/GE");
+            demandess.Add("SELLE KOP");
+        }
+        else if (type == "BACTERIOLOGIE")
+        {
+            demandess = new List<string>();
+            demandess.Add("FROTTIS CERVICO-VAGINAL");
+            demandess.Add("ECBU");
+            demandess.Add("FROTTIS URETRALE");
+        }
+        else if (type == "HEMATOLOGIE")
+        {
+            demandess = new List<string>();
+            demandess.Add("GLOBULE BLANC");
+            demandess.Add("GLOBULE ROUGE");
+            demandess.Add("HEMOGLOBINE");
+            demandess.Add("PLAQUETTE");
+            demandess.Add("VSH");
+        }
+        else if (type == "SEROLOGIE")
+        {
+            demandess = new List<string>();
+            demandess.Add("ASLO");
+            demandess.Add("BILHARZIENNE");
+            demandess.Add("CRP");
+            demandess.Add("CYSTICERCOSE");
+            demandess.Add("HEPATITE B");
+            demandess.Add("TOXOPLASMOSE");
+            demandess.Add("TPHA");
+            demandess.Add("SDW");
+        }
+        else if (type == "BIOCHIMIE")
+        {
+            demandess = new List<string>();
+            demandess.Add("Acide Urique");
+            demandess.Add("ALAT/GPT");
+            demandess.Add("AMYLASEMIE");
+            demandess.Add("ASAT/GT");
+            demandess.Add("Calcémie");
+            demandess.Add("Chloride");
+            demandess.Add("Azotémie");
+            demandess.Add("Cholesterolemie");
+            demandess.Add("Créatinémie");
+            demandess.Add("Magnésemie");
+            demandess.Add("Potassium");
+            demandess.Add("Sodium");
+            demandess.Add("Glycémie");
+        }
+        else if (type == "AUTRES")
+        {
+            demandess = new List<string>();
+            demandess.Add("GROUPAGES");
+            demandess.Add("Triglyceridemie");
+        }
+        StateHasChanged();
+    }
+
+    public void OnChanging(Object value)
+    {
+        Demande dem = (Demande)value;
+        test_selected = dem.demande;
+        StateHasChanged();
+    }
+
+    class Demande
+    {
+        public int id { get; set; }
+        public string demande { get; set; } = null!;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        saveBool = true;
+        fichiste = await fichisteService.getFichisteById(Convert.ToInt64(idFichiste));
+        if (fichiste != null)
+        {
+            listLabo = await examenService.GetAllLaboratoireByFichiste(fichiste.Fichisteid);
+            avoir_labo = await examenService.GetAvoirLaboratoireByFichiste(fichiste.Fichisteid);
+            parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            }
+        }
+
+        getRepListSoins = true;
+        StateHasChanged();
+    }
+
+    private async Task Set_Labo(Laboratoire laboSelected)
+    {
+        labo = laboSelected;
+
+        type_test_selected = labo.TypeTest;
+        OnChange(type_test_selected);
+        test_selected = labo.Test;
+        saveBool = false;
+    }
+
+    private async Task GetFamille(int familleID)
+    {
+        famille = await affiliationService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliationService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                categorie = fichiste.Categorie;
+                int dateNaissance = employer.Datenaissance.Value.Year;
+                int currentDate = DateTime.Now.Year;
+                age = currentDate - dateNaissance;
+            }
+
+        }
+    }
+
+    private async Task GetEmployer(int employerID)
+    {
+        employer = await affiliationService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            categorie = fichiste.Categorie;
+            int dateNaissance = employer.Datenaissance.Value.Year;
+            int currentDate = DateTime.Now.Year;
+            age = currentDate - dateNaissance;
+        }
+    }
+
+    private async Task EnregistrementLabo()
+    {
+        labo.Test = test_selected;
+        labo.TypeTest = type_test_selected;
+        bool result = await examenService.UpdateLaboratoire(labo);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Enregistrement reussi.",
+                    Detail = "L'enregistrement a été fait avec succès.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        if (!result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur d'enregistrement.",
+                    Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task TerminerLabo()
+    {
+        await EnregistrementLabo();
+        avoir_labo.Statut = "Terminer";
+        await examenService.UpdateAvoirLaboratoire(avoir_labo);
+        Go.NavigateTo("/laboratoire_patiant");
+    }
+}

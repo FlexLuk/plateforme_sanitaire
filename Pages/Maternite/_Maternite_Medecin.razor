@@ -1,0 +1,332 @@
+﻿@page "/maternite_medecin/{idFichiste}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models.Administration
+@using LYRA.Models.Maternites
+@using LYRA.Shared.Maternites
+@using LYRA.Models
+@using LYRA.Shared.Medecin
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject IUtilisateurService uService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IMaterniteService materniteService
+@inject Radzen.NotificationService notificationService
+@layout MedecinLayout
+@attribute [Authorize(Roles = "Admin, Maternite")]
+
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+<RadzenNotification />
+<div class="row">
+    <div class="col-xl-4 col-md-6 m-0">
+        <div class="card border-left-primary shadow  py-1">
+            <div class="card-body m-0 pb-1" style="margin-bottom:-10px">
+                <table class="table table-sm table-bordered mb-0">
+                    <tbody>
+                        <tr>
+                            <th scope="row">N° OSIET</th>
+                            <td style="font-weight:bold">@numOsiet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">NOM COMPLET</th>
+                            <td>@Nom</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">CATEGORIE</th>
+                            <td>
+                                @if (fichiste != null)
+                                {
+                                    @fichiste.Categorie
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if (files != null)
+                {
+                    @foreach (var file in files)
+                    {
+                        @if (i == 0)
+                        {
+                            <a style="border-radius:0;" href="@file.Substring(8)" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                        }
+                        else
+                        {
+                            <a href="@file.Substring(8)" data-lightbox="roadtrip" class="d-none">@i</a>
+                        }
+                        <span class="invisible">@(i++)</span>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8 col-md-6 mb-0">
+        <div class="card border-left-secondary shadow py-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-4">
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">HEURE D’ARRIVEE</th>
+                                    <td>
+                                        @if (fichiste != null)
+                                        {
+                                            @fichiste.Date.TimeOfDay.Hours
+
+                                            <span>h</span>
+                                            <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">N° DU JOUR</th>
+                                    <td>
+                                        @if (fichiste != null)
+                                        {
+                                            @fichiste.Numjour
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">N° PARAMETRE</th>
+                                    <td>
+                                        @if (fichiste != null)
+                                        {
+                                            @fichiste.Parametreid
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">N° FICHISTE</th>
+                                    <td>
+                                        @if (fichiste != null)
+                                        {
+                                            @fichiste.Fichisteid
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">TEMPERATURE</th>
+                                    <td>
+                                        <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Temperature <span>°</span>
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.D</th>
+                                    <td>
+                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tad
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.G</th>
+                                    <td>
+                                        <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tag
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                    <td>
+                                        <span class="" style="font-weight:bold; font-size:1.1em">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.FrequenceCardiaque
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">POIDS</th>
+                                    <td colspan="3">
+                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Poids
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">OBSERVATION</th>
+                                    <td colspan="5">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Observation
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">MEDECIN</th>
+                                    <td colspan="5">@medecin.NomMedecin @medecin.PrenomMedecin</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<RadzenCard class="mt-3">
+    <h5 class="m-0">Demande de consultation au maternité</h5>
+    <hr class="m-0" />
+    <RadzenTextArea Placeholder="Demande" class="mt-1" Style="Resize:false" @bind-bind-Value="@avoirMaternite.Commentaire" />
+    <hr class="m-0 mt-1" />
+    <div>
+        <RadzenButton Text="Enregistrer" Style="border-radius:0px" class="float-right" />
+    </div>
+</RadzenCard>
+@code {
+    [Parameter]
+    public string? idFichiste { get; set; }
+
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    Medecin medecin = new();
+    Utilisateur utilisateur = new();
+    string[]? files = null;
+    short idUtilMedecin = 0;
+    string emailAddress = "";
+    Consultation consultation = new();
+    List<Utilisateur> utilisateurs = new List<Utilisateur>();
+    string? numOsiet, Nom, Etablissement, nomDossier;
+    int i = 0;
+    AvoirMaternite avoirMaternite = new();
+    NotificationMessage notification = new();
+
+    public async Task LoadFirst()
+    {
+        fichiste = await fichisteservice.getFichisteById(Convert.ToInt64(idFichiste));
+        consultation = await medecinService.GetConsultationByFichisteId(fichiste.Fichisteid);
+        if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            if (employer.NomDossier != null)
+            {
+                nomDossier = employer.NomDossier.Trim();
+                files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+            }
+
+        }
+        else if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            if (famille.NomDossier != null)
+            {
+                nomDossier = famille.NomDossier.Trim();
+                files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+            }
+        }
+
+        if (fichiste != null)
+        {
+            parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+            medecin = await medecinService.GetMedecinById(Convert.ToInt32(parametre.Medecinid));
+        }
+    }
+
+    protected async override void OnInitialized()
+    {
+        await LoadFirst();
+        StateHasChanged();
+    }
+
+    private async Task EnregistrementMAterniteMedecin()
+    {
+        avoirMaternite.Date = DateTime.Now;
+        avoirMaternite.Etat = "En cours";
+        avoirMaternite.Validation = 0;
+        bool result = await materniteService.CreateAvoirMaternite(avoirMaternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Enregistrement reussi.",
+                    Detail = "L'enregistrement a été fait avec succès.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur d'enregistrement.",
+                    Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+}

@@ -1,0 +1,196 @@
+﻿@page "/parametre_manage"
+@layout ParametreLayout
+
+@using System.Web
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Shared.Parametre
+@using Radzen
+@using Radzen.Blazor
+@inject IParametreService paramService
+@inject IToastService toastService
+@inject IUtilisateurService uService
+
+<AuthorizeView Roles="Admin, Parametre">
+    <Authorized>
+        <div class="card card-info mb-2" style="border-radius:0">
+            <div class="card-header">
+                <h5 class="card-title mb-0">GESTION PARAMETRE</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="border-radius:0">Numero : </span>
+                            <input style="border-radius:0" type="text" @bind-value="@listeParametre.Numero" class="form-control" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="border-radius:0">Responsable : </span>
+                            @if (utilisateurs != null)
+                            {
+                                <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="Int16?"
+                                                    Data="@(utilisateurs.Select(c=>new {NumUtilisateur=c.Utilisateurid,Nom=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
+                                                    TextProperty="Nom" ValueProperty="NumUtilisateur" Change="@(()=>OnChange())"
+                                                    @bind-Value="@listeParametre.Utilisateurid" Placeholder="Responsable" style="border-radius:0" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="border-radius:0">Statut : </span>
+                            <RadzenDropDown @bind-Value="@listeParametre.Statut" Class="form-control" Data=@statutListParam
+                                            Placeholder="parametre etat" style="border-radius:0" />
+                        </div>
+                    </div>
+                </div><hr />
+                <div class="float-right">
+                    <RadzenButton Text="Créer" ButtonStyle="ButtonStyle.Secondary" Click="@addListeParam" Icon="save" />
+                </div>
+            </div>
+        </div>
+        <div class="card card-info" style="border-radius:0">
+            <div class="card-header">
+                <h5 class="card-title mb-0">LISTE PARAMETRE</h5>
+            </div>
+            <div class="card-body">
+                @if (listeParametres == null)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="true" Data="@listeParametres"
+                            TItem="ListeParametre" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                            SelectionMode="DataGridSelectionMode.Single" class="m-0">
+                        <Columns>
+                            <RadzenGridColumn TItem="ListeParametre" Property="Numero" Title="Numero parametre"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="ListeParametre" Property="Utilisateurid" Title="Id reponsable"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="ListeParametre" Property="ListeParametreid" Title="Etat">
+                                <Template Context="data">
+                                    @if (data.Statut.Trim() == "Activer")
+                                    {
+                                        <p style="text-align: center" class="bg-success">@data.Statut</p>
+
+                                    }
+                                    else if (data.Statut.Trim() == "Desactiver")
+                                    {
+                                        <p style="text-align: center" class="bg-warning">@data.Statut</p>
+                                    }
+                                </Template>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="ListeParametre" Property="ListeParametreid" Title="Action" Width="150px">
+                                <Template Context="data">
+                                    <div class="row" style="margin: 0">
+                                        <div class="col d-flex justify-content-center" style="padding: 0">
+                                            <RadzenButton Icon="edit" data-toggle="tooltip" class="mr-2" title="Modifier"
+                                                      ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small"
+                                                      Click="@(() => modifierListParam(data.Listeparametreid))" />
+                                            @if (data.Statut.Trim() == "Activer")
+                                            {
+                                                <RadzenButton Icon="lock" data-toggle="tooltip" title="Desactiver"
+                                                      ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.Small"
+                                                      Click="@(() => desactiverListParam(data.Listeparametreid))" />
+
+                                            }
+                                            else if (data.Statut.Trim() == "Desactiver")
+                                            {
+                                                <RadzenButton Icon="lock-unlocked" data-toggle="tooltip" title="Activer"
+                                                      ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small"
+                                                      Click="@(() => activerListParam(data.Listeparametreid))" />
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </Template>
+                            </RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="2" />
+    </Authorized>
+    <NotAuthorized></NotAuthorized>
+</AuthorizeView>
+
+@code {
+    List<ListeParametre>? listeParametres = null;
+    ListeParametre listeParametre = new();
+    IEnumerable<string> statutListParam = new string[] { "Activer", "Desactiver" };
+    Utilisateur utilisateur = new();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    Int16 userID;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadListParam();
+        utilisateurs = await uService.GetAllUtilisateur();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void OnChange()
+    {
+
+    }
+
+    private ToastParameters? _toastParameters;
+    protected async void addListeParam()
+    {
+        await paramService.AddListParametre(listeParametre);
+        _toastParameters = new ToastParameters();
+        _toastParameters.Add(nameof(MyToast.Title), "Ok !");
+        _toastParameters.Add(nameof(MyToast.Level), "Success");
+        _toastParameters.Add(nameof(MyToast.Message), "Action reussi.");
+        toastService.ShowToast<MyToast>(_toastParameters);
+        StateHasChanged();
+        listeParametre = new();
+        await LoadListParam();
+    }
+
+    protected async void modifierListParam(int idListParam)
+    {
+
+    }
+
+    protected async void desactiverListParam(int idListParam)
+    {
+        await paramService.DesactiverListeParametre(idListParam);
+        _toastParameters = new ToastParameters();
+        _toastParameters.Add(nameof(MyToast.Title), "Ok !");
+        _toastParameters.Add(nameof(MyToast.Level), "Success");
+        _toastParameters.Add(nameof(MyToast.Message), "Action reussi.");
+        toastService.ShowToast<MyToast>(_toastParameters);
+        StateHasChanged();
+        listeParametre = new();
+        await LoadListParam();
+    }
+
+    protected async void activerListParam(int idListParam)
+    {
+        await paramService.ActiverListeParametre(idListParam);
+        _toastParameters = new ToastParameters();
+        _toastParameters.Add(nameof(MyToast.Title), "Ok !");
+        _toastParameters.Add(nameof(MyToast.Level), "Success");
+        _toastParameters.Add(nameof(MyToast.Message), "Action reussi.");
+        toastService.ShowToast<MyToast>(_toastParameters);
+        StateHasChanged();
+        listeParametre = new();
+        await LoadListParam();
+    }
+
+    public async Task LoadListParam()
+    {
+        listeParametres = await paramService.GetAllListParametre();
+    }
+}

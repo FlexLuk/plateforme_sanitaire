@@ -1,0 +1,188 @@
+﻿@page "/medecin"
+@layout MedecinLayout
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Shared.Medecin
+@using System.Web
+@using Radzen
+@using Radzen.Blazor
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@using LYRA.Models;
+@using LYRA.Models.Administration
+@inject IToastService toastService
+@inject IMedecinService medecinService
+@inject IUtilisateurService uService
+
+<AuthorizeView Roles="Admin, Medecin">
+    <Authorized>
+        <div class="card card-info mb-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0">GESTION MEDECIN</h5>
+            </div>
+            <div class="card-body ">
+                <div class="bg-light mb-3" style="padding: 1.5rem; border: solid #dee2e6;border-width: 1px;border-top-left-radius: 0.25rem;border-top-right-radius: 0.25rem;">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Nom : </span>
+                                <RadzenTextBox @bind-Value="@medecin.NomMedecin" Placeholder="Nom du medecin" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Prenom : </span>
+                                <RadzenTextBox @bind-Value="@medecin.PrenomMedecin" Placeholder="Prenom du medecin" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Fonction : </span>
+                                <RadzenTextBox @bind-Value="@medecin.Fonction" Placeholder="Fonction" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Spécialité : </span>
+                                <RadzenTextBox @bind-Value="@medecin.Specialite" Placeholder="Spécialité du medecin" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Téléphone : </span>
+                                <RadzenTextBox @bind-Value="@medecin.Telephone" Placeholder="Numero téléphone" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Adresse : </span>
+                                <RadzenTextBox @bind-Value="@medecin.Adresse" Placeholder="Adresse" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto">
+                            @if (utilisateurs != null)
+                            {
+                                <p>
+                                    <label class="pt-2 pb-2">Assigner ce medecin a un compte d'utilisateur : </label>
+                                    <RadzenDropDownDataGrid Class="form-control " AllowFiltering="true" TValue="Int16" AllowClear="true"
+                                                        Data="@(utilisateurs.Select(c=>new {UtilisateurID=c.Utilisateurid,Nom=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
+                                                        TextProperty="Nom" ValueProperty="UtilisateurID" 
+                                                        @bind-Value="@medecin.Utilisateurid" Placeholder="Utilisateur" />
+                                </p>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <RadzenButton Text="Enregistrer" class="float-right" Click="@SaveMedecin" />
+                        </div>
+                    </div>
+                </div>
+                @if (full == false)
+                {
+                    <Loading />
+                }
+                else if (full == true)
+                {
+                    @if (medecins != null)
+                    {
+                        <RadzenGrid FilterMode="FilterMode.Advanced" AllowFiltering=true AllowColumnResize=true
+                            PageSize="9" AllowSorting="true" Data="@medecins" AllowPaging=true
+                            TItem="Medecin" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                            AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                            ApplyFilterText="appliquer" PageSizeText="Page" Responsive=false
+                            SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée" Style="width:1050px" ColumnWidth="150px">
+                            <Columns>
+                                <RadzenGridColumn TItem="Medecin" Property="Medecinid" Title="ID"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="NomMedecin" Title="Nom"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="PrenomMedecin" Title="Prenom"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Fonction" Title="Fonction"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Specialite" Title="Spécialité"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Adresse" Title="Adresse"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Telephone" Title="Téléphone"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Medecinid" Title="ID"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="NomMedecin" Title="Nom"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="PrenomMedecin" Title="Prenom"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Fonction" Title="Fonction"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Specialite" Title="Spécialité"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Adresse" Title="Adresse"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Medecin" Property="Telephone" Title="Téléphone"></RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                }
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized></NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private ToastParameters? _toastParameters;
+    IEnumerable<Medecin> medecins = new List<Medecin>();
+    Medecin medecin = new();
+    bool full = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMedecins();
+        full = true;
+        await LoadUtilisateur();
+        StateHasChanged();
+    }
+
+    public async Task LoadMedecins()
+    {
+        medecins = await medecinService.GetMedecin();
+    }
+
+    public async void SaveMedecin()
+    {
+        medecin.Statut = "Actif";
+        bool result = await medecinService.InsertMedecin(medecin);
+        if (result)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Information");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            medecin = new();
+            await LoadMedecins();
+            StateHasChanged();
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur");
+            _toastParameters.Add(nameof(MyToast.Level), "Danger");
+            _toastParameters.Add(nameof(MyToast.Message), "Action non reussi, actualiser la page et réessayer.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            medecin = new();
+            await LoadMedecins();
+            StateHasChanged();
+        }
+    }
+
+    public Int16 OnChange(Int16 item)
+    {
+        return item;
+    }
+
+
+
+    Utilisateur utilisateur = new();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    public async Task LoadUtilisateur()
+    {
+        utilisateurs = await uService.GetAllUtilisateur();
+    }
+
+}

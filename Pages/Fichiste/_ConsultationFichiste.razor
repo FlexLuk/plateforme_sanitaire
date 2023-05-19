@@ -1,0 +1,138 @@
+﻿@page "/consultation_fichiste"
+@layout FichisteLayout
+
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Shared.Fichiste
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IToastService toastService
+@inject IJSRuntime JsRuntime
+@attribute [Authorize(Roles = "Fichiste, Admin")]
+
+<AuthorizeView Roles="Fichiste, Admin">
+    <Authorized>
+        <div class="card card-info mb-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0">LISTE PASSAGE FICHISTE</h5>
+            </div>
+            <div class="card-body">
+                @if (fichistes == null)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@fichisteCustoms"
+                            TItem="FichisteModel" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                            AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                            ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                            SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée">
+                        <Columns>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FId" Title="ID" Width="70px">
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FDateCreate" Title="Date" Width="100px">
+                                <Template Context="data">
+                                    @data.FDateCreate.GetValueOrDefault().ToShortDateString()
+                                </Template>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FNumero" Title="Numero" Width="70px" Filterable=false Sortable=false>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FFrequenceM" Title="Frq mois" Width="80px" Filterable=false Sortable=false>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FFrequenceY" Title="Frq annee" Width="80px" Filterable=false Sortable=false>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FName" Title="Nom et prenom">
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FCategorie" Title="Categorie" Width="90px" Filterable=false Sortable=false>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FParametre" Title="Parametre" Width="100px" Filterable=false>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn TItem="FichisteModel" Property="FEtablissement" Title="Etablissement">
+                            </RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+                <!-- /input-group -->
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Fichiste fichiste = new();
+    IEnumerable<Fichiste> fichistes = new List<Fichiste>();
+    IEnumerable<FichisteModel> fichisteCustoms = new List<FichisteModel>();
+
+    protected override async Task OnInitializedAsync() => await LoadFichisteListes();
+
+    public async Task LoadFichisteListes()
+    {
+        fichistes = await fichisteService.getAllFichiste();
+        List<FichisteModel> fModels = new List<FichisteModel>();
+        foreach (var data in fichistes)
+        {
+            Employer emp = new();
+            Famille fam = new();
+            FichisteModel fModel = new();
+
+            if (data.Categorie == "Famille")
+            {
+                fam = await affiliService.GetFamilleById(Convert.ToInt32(data.Affiliationid));
+                fModel.FId = data.Fichisteid;
+                fModel.FName = fam.Nom + " " + fam.Prenom;
+                fModel.FNomfichiste = data.Username;
+                fModel.FDateCreate = data.Date;
+                fModel.FDateNaissance = fam.Datenaissance;
+                emp = await affiliService.GetEmployerByNumOsiet(fam.Numeroosiet);
+                Employeur empr = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+                fModel.FEtablissement = empr.Raisonsociale;
+                fModel.FFrequenceM = data.Frequencemois;
+                fModel.FFrequenceY = data.Frequenceannee;
+                fModel.FLieuNaissance = fam.Lieunaissance;
+                fModel.FNumero = data.Numjour;
+                fModel.FNumeroosiet = fam.Numeroosiet;
+                fModel.FParametre = data.Parametreid;
+                fModel.FCategorie = fam.Categorie;
+                fModels.Add(fModel);
+            }
+            else
+            {
+                emp = await affiliService.GetEmployerById(Convert.ToInt32(data.Affiliationid));
+                fModel.FId = data.Fichisteid;
+                fModel.FName = emp.Nom + " " + emp.Prenom;
+                fModel.FNomfichiste = data.Username;
+                fModel.FDateCreate = data.Date;
+                fModel.FDateNaissance = emp.Datenaissance;
+                Employeur empr = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+                fModel.FEtablissement = empr.Raisonsociale;
+                fModel.FFrequenceM = data.Frequencemois;
+                fModel.FFrequenceY = data.Frequenceannee;
+                fModel.FLieuNaissance = emp.Lieunaissance;
+                fModel.FNumero = data.Numjour;
+                fModel.FNumeroosiet = emp.Numeroosiet;
+                fModel.FParametre = data.Parametreid;
+                fModel.FCategorie = data.Categorie;
+                fModels.Add(fModel);
+            }
+        }
+        fichisteCustoms = fModels;
+        StateHasChanged();
+    }
+}

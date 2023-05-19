@@ -1,0 +1,702 @@
+﻿@page "/maternite_consultation/{idFichiste}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models.Administration
+@using LYRA.Models.Examens
+@using LYRA.Models.Maternites
+@using LYRA.Shared.Maternites
+@using LYRA.Models
+@using LYRA.Shared.Medecin
+@inject IFichisteService fichisteservice
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IUtilisateurService uService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject IExamenService examenService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IMaterniteService materniteService
+@inject Radzen.NotificationService notificationService
+@inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin, Maternite")]
+@layout MaterniteLayout
+
+<RadzenNotification />
+<RadzenCard class="p-1">
+    <div class="row">
+        <div class="col-xl-4 col-md-6 m-0">
+            <div class="card-body m-0 p-0" style="margin-bottom:-10px">
+                <table class="table table-sm table-bordered mb-0">
+                    <tbody>
+                        <tr>
+                            <th scope="row">N° OSIET</th>
+                            <td style="font-weight:bold">@numOsiet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">NOM COMPLET</th>
+                            <td>@Nom</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">CATEGORIE</th>
+                            <td>
+                                @if (fichiste != null)
+                                {
+                                    @fichiste.Categorie
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if (files != null)
+                {
+                    @foreach (var file in files)
+                    {
+                        @try
+                        {
+                            @if (i == 0)
+                            {
+                                <a style="border-radius:0;" href="@file.Substring(8)" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                            }
+                            else
+                            {
+                                <a href="@file.Substring(8)" data-lightbox="roadtrip" class="d-none">@i</a>
+                            }
+                            <span class="invisible">@(i++)</span>
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-xl-8 col-md-6 mb-0">
+            <div class="row">
+                <div class="col-xl-4">
+                    <table class="table table-sm table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row">HEURE D’ARRIVEE</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Date.TimeOfDay.Hours
+
+                                        <span>h</span>
+                                        <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">N° DU JOUR</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Numjour
+                                    }
+                                </td>
+                            </tr>
+                            @* <tr>
+                            <th scope="row">N° PARAMETRE</th>
+                            <td>
+                            @if (fichiste != null)
+                            {
+                            @fichiste.Parametreid
+                            }
+                            </td>
+                            </tr>*@
+                            <tr>
+                                <th scope="row">N° FICHISTE</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Fichisteid
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pb-1">
+                    <table class="table table-sm table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row">TEMPERATURE</th>
+                                <td>
+                                    <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Temperature <span>°</span>
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">T.A.D</th>
+                                <td>
+                                    <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Tad
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">T.A.G</th>
+                                <td>
+                                    <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Tag
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">FREQUENCE CARDIAQUE</th>
+                                <td>
+                                    <span class="" style="font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.FrequenceCardiaque
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">POIDS</th>
+                                <td colspan="3">
+                                    <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Poids
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">OBSERVATION</th>
+                                <td colspan="5">
+                                    @if (parametre != null)
+                                    {
+                                        @parametre.Observation
+                                    }
+                                </td>
+                            </tr>
+                            @* <tr>
+                            <th scope="row">MEDECIN</th>
+                            <td colspan="5">@medecin.NomMedecin @medecin.PrenomMedecin</td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</RadzenCard>
+<RadzenCard class="p-0 mt-3">
+    <div class="card-header">
+        <h5 class="mb-0"><span class="fas fa-user-nurse mr-1 fa-sm"></span>Validation de grossesse</h5>
+    </div>
+    <div class="row p-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="mr-1 pt-1" style="Vertical-align: middle">Teste de Grossesse : </span>
+                @if (tdr == 0)
+                {
+                    <button class="btn btn-sm btn-success disabled" style="border-radius:0px">POSITIF</button>
+                }
+                else if (tdr == 1)
+                {
+                    <button class="btn btn-sm btn-danger disabled" style="border-radius:0px">NEGATIF</button>
+                }
+                else if (tdr == 2)
+                {
+                    <button class="btn btn-sm btn-warning " style="border-radius:0px">EN ATTENTE</button>
+                }
+                else
+                {
+                    <button class="btn btn-sm btn-secondary " onclick="@(()=>Tester())" style="border-radius:0px">A TESTER</button>
+                }
+            </div>
+
+        </div>
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="mr-1 pt-1" style="Vertical-align: middle">Commentaire : </span>
+                <RadzenTextArea class="w-75" @bind-Value=@avoirMaternite.Commentaire />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-check">
+                <RadzenCheckBox Disabled=@(closeValider) class="form-check-input" Name="flexSwitchCheckChecked" TValue="bool" @bind-Value="@valider" Change="@((args)=>validerGrossesse(args))" />
+                <label class="form-check-label" style="vertical-align:middle" for="flexSwitchCheckChecked">Confirmation grossesse</label>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <RadzenButton Click="@(()=>TerminerMaterniter())" Text="Terminer maternité" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Style="border-radius:0px; " class="float-left" />
+        <RadzenButton Click="@(()=>EnregistrerAvoirMaternite())" Text="Création maternité" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Style="border-radius:0px" class="float-right" Disabled=@(!valider) />
+    </div>
+</RadzenCard>
+<RadzenCard class="mt-2">
+    <h6>LISTE MATERNITE</h6>
+    <hr class="mt-0" />
+    <RadzenDataGrid AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single"
+                    Data="@slms" TItem="ShowListMaternite">
+        <Columns>
+            <RadzenDataGridColumn TItem="ShowListMaternite" Property="date" Title="Date et Heure"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ShowListMaternite" Property="numBebe" Title="Bébé numéro"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ShowListMaternite" Property="nbrCpn" Title="Nombre CPN"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ShowListMaternite" Property="MaterniteId" Title="ID Maternite"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ShowListMaternite" Title="Détails" Filterable="false" Sortable="false" Width="100px">
+                <Template Context="cpn">
+                    <RadzenButton Click="@(()=>navigation.NavigateTo("/maternite_page/" + cpn.MaterniteId))" Text="Détails" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Warning" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+@code {
+    [Parameter]
+    public string idFichiste { get; set; }
+    int tdr = 3;
+    bool valider; bool avMatShow = true;
+    Models.Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer? employer = null;
+    Employeur? employeur = null;
+    Famille? famille = null;
+    string[]? files = null;
+    string? numOsiet, Nom, Etablissement, nomDossier;
+    int i = 0;
+    AvoirMaternite avoirMaternite = new();
+    NotificationMessage notification = new();
+    bool dossierExiste;
+    AvoirLaboratoire avLab = new();
+    Laboratoire lab = new();
+    long id;
+    Laboratoire? labo;
+    List<Maternite> maternites = new List<Maternite>();
+    List<ShowListMaternite> listMaters = new List<ShowListMaternite>();
+    IEnumerable<ShowListMaternite> slms = new List<ShowListMaternite>();
+    ShowListMaternite slm;
+
+    private async Task TerminerMaterniter()
+    {
+        avoirMaternite.Etat = "Terminer";
+        bool result = await materniteService.UpdateAvoirMaternite(avoirMaternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "succès.",
+                    Detail = "Enregistrement réussi.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Il y a un erreur, contacter l'administrateur.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    private async Task Tester()
+    {
+        await CreateTestGrossesse();
+        StateHasChanged();
+    }
+
+    private async Task validerGrossesse(Object grossesse)
+    {
+        bool valid = (bool)grossesse, v;
+        int i;
+        if (valid)
+        {
+            i = 1;
+            valider = true;
+        }
+        else
+        {
+            i = 0;
+            valider = false;
+        }
+        if (tdr == 2)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention !",
+                    Detail = "Veuillez attendre la fin du test de grossesse.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+            valider = !valid;
+            StateHasChanged();
+        }
+        else
+        {
+            bool result = await materniteService.ChangeValidationGrossesse(i, avoirMaternite.AvoirMaterniteId);
+            if (result)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Success",
+                        Detail = "Validation ok !",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Contacter le rsponsable.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+        }
+
+
+    }
+
+    private async Task EnregistrerAvoirMaternite()
+    {
+        Maternite materniteSave = new();
+
+        bool result = await materniteService.UpdateAvoirMaternite(avoirMaternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "succès.",
+                    Detail = "Enregistrement avoir maternité réussi.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+
+            materniteSave = await materniteService.GetMAterniteByAvoirMAternite(avoirMaternite.AvoirMaterniteId);
+
+            if (materniteSave.MaterniteId != null && materniteSave.MaterniteId > 0)
+            {
+                materniteSave.Affiliationid = Convert.ToInt64(fichiste.Affiliationid);
+                materniteSave.Categorie = fichiste.Categorie;
+                materniteSave.Date = DateTime.Now;
+                materniteSave.FichisteId = fichiste.Fichisteid;
+                materniteSave.AvoirMaterniteId = avoirMaternite.AvoirMaterniteId;
+                materniteSave = await materniteService.UpdateMaternite2(materniteSave);
+            }
+            else
+            {
+                materniteSave.Affiliationid = Convert.ToInt64(fichiste.Affiliationid);
+                materniteSave.Categorie = fichiste.Categorie;
+                materniteSave.Date = DateTime.Now;
+                materniteSave.FichisteId = fichiste.Fichisteid;
+                materniteSave.AvoirMaterniteId = avoirMaternite.AvoirMaterniteId;
+                materniteSave = await materniteService.CreateMaternite2(materniteSave);
+            }
+            avoirMaternite.Etat = "Terminer";
+            bool resultat = await materniteService.UpdateAvoirMaternite(avoirMaternite);
+            if (resultat)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "succès.",
+                        Detail = "Enregistrement réussi.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Il y a un erreur, contacter l'administrateur.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            await Task.Delay(500);
+
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement, Contacter l'administrateur.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        StateHasChanged();
+    }
+
+    bool closeValider = false;
+    private async Task<bool> CreateTestGrossesse()
+    {
+        Laboratoire laboratoire = new();
+
+        laboratoire = await examenService.GetLaboratoireByFichiste(id);
+        if (laboratoire != null)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "Test déjà envoyé.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+            return true;
+        }
+        else
+        {
+            avLab.FichisteId = fichiste.Fichisteid;
+            avLab.Statut = "En cours";
+            avLab.Date = DateTime.Now;
+            bool reponse = await examenService.CreateAvoirLaboratoire(avLab);
+            if (reponse)
+            {
+                lab.Date = DateTime.Now;
+                lab.FichisteId = fichiste.Fichisteid;
+                lab.Statut = "En cours";
+                lab.Prescripteur = "Maternité";
+                lab.TypeTest = "TDR";
+                lab.Test = "Test de grossesse";
+                lab.Commentaire = "Confirmation de grossesse";
+                bool answer = await examenService.CreateLaboratoire(lab);
+                if (answer)
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Success,
+                            Summary = "succès.",
+                            Detail = "Test a été envoyé",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    return true;
+                }
+                else
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Erreur.",
+                            Detail = "Envoie Test Echoué.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                    return false;
+                }
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Envoie Test Echoué.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+                return false;
+            }
+        }
+    }
+
+    private async Task LoadFirst()
+    {
+        try
+        {
+            fichiste = await fichisteservice.getFichisteById(id);
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+                if (employer.NomDossier != null)
+                {
+                    if (employer.NomDossier != null)
+                    {
+                        nomDossier = employer.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+                }
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+                if (famille.NomDossier != null)
+                {
+                    if (famille.NomDossier != null)
+                    {
+                        nomDossier = famille.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+                }
+            }
+
+            parametre = await parametreService.GetParametreByFichiste(id);
+            avoirMaternite = await materniteService.GetAvoirMaternite(id);
+            maternites = await materniteService.GetMaterniteByAffiliation(fichiste.Categorie, fichiste.Affiliationid);
+
+            foreach (var item in maternites)
+            {
+                slm = new();
+                slm.date = item.Date;
+                if (item.NumeroBebe == null)
+                    slm.numBebe = 0;
+                else
+                    slm.numBebe = item.NumeroBebe;
+                slm.MaterniteId = item.MaterniteId;
+                try
+                {
+                    slm.nbrCpn = await materniteService.GetNombreCpnByMaternite(item.MaterniteId);
+                }
+                catch (InvalidOperationException ex)
+                {
+
+                    slm.nbrCpn = 0;
+                    slm.nbrCpn = await materniteService.GetNombreCpnByMaternite(item.MaterniteId);
+                }
+
+                listMaters.Add(slm);
+            }
+            slms = listMaters;
+            if (avoirMaternite != null)
+            {
+                if (avoirMaternite.Validation == 0)
+                {
+                    valider = false;
+                    avMatShow = true;
+                }
+                else if (avoirMaternite.Validation == 1)
+                {
+                    valider = true;
+                    avMatShow = false;
+                }
+                else
+                {
+                    valider = false;
+                    avMatShow = true;
+                }
+            }
+
+        }
+        catch (InvalidOperationException ex)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Patiant n'existe pas !",
+                    Detail = "Contacter le rsponsable.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        finally
+        {
+            labo = await examenService.GetLaboratoireByFichiste(id);
+            if (labo != null)
+            {
+                if (labo.Resultat != null)
+                {
+                    var resultat = labo.Resultat.Trim();
+                    if (resultat == "Positif") tdr = 0;
+                    else if (resultat == "Négatif") tdr = 1;
+                    else tdr = 2;
+                }
+                else
+                {
+                    tdr = 2;
+                }
+            }
+            if (slms.Count() > 0)
+            {
+                closeValider = true;
+            }
+            StateHasChanged();
+        }
+
+
+    }
+
+    private void GoMaternitePage(long idMaternite)
+    {
+        navigation.NavigateTo("/maternite_page/" + idMaternite);
+    }
+
+    protected async override void OnInitialized()
+    {
+        id = Convert.ToInt64(idFichiste);
+        await LoadFirst();
+        StateHasChanged();
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+}

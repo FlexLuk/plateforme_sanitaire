@@ -1,0 +1,981 @@
+﻿@page "/docteurPatiant/{idConsultation}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.SoinsController
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerDentiste
+@using LYRA.Models.Administration
+@using LYRA.Models.Examens
+@using LYRA.Models.Pharmacie
+@using LYRA.Models.Maternites
+@using LYRA.Shared.Medecin
+@using LYRA.Models
+@using Microsoft.JSInterop
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@inject Radzen.NotificationService notificationService
+@inject NavigationManager Go
+@inject IMaterniteService materniteService
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject ISoinsService pharmaService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@inject IExamenService examenService
+@inject IDentisteService dentisteService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@layout MedecinLayout
+@attribute [Authorize(Roles = "Admin, Medecin")]
+
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+<RadzenNotification />
+<div class="accordion" style="position: inherit !important">
+    <div class="accordion-item">
+        <h4 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <b>N° OSIET </b>&ensp;<i>@numOsiet</i>&ensp;<b>Nom du patiant </b>&ensp;<i>@Nom </i>&ensp;<b>Etablissement </b>&ensp;<i>@Etablissement</i>
+            </button>
+        </h4>
+        <div id="collapseOne" class="accordion-collapse collapse hide" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-xl-4 col-md-6 m-0">
+                        <div class="card border-left-primary shadow  py-2">
+                            <div class="card-body m-0">
+                                @*<h4 class="">PATIANT</h4>*@
+                                @*<hr class="m-0 mb-1" />*@
+                                <table class="table table-sm table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">N° OSIET</th>
+                                            <td style="font-weight:bold">@numOsiet</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">NOM COMPLET</th>
+                                            <td>@Nom</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">CARACTERISTIQUE</th>
+                                            <td>
+                                                @if (fichiste != null)
+                                                {
+                                                    @fichiste.Categorie
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                @if (files != null)
+                                {
+                                    int i = 0;
+                                    
+                                    foreach (var file in files)
+                                    {
+                                        if(i == 0){
+                                            <a style="border-radius:0;" href="@file.Substring(8)" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                                        }else{
+                                            <a href="@file.Substring(8)" data-lightbox="roadtrip" class="d-none"></a>
+                                        }
+                                        i++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-md-6 mb-0">
+                        <div class="card border-left-secondary shadow py-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        @*<h4 class="">FICHISTE</h4>*@
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">HEURE D’ARRIVEE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Date.TimeOfDay.Hours
+
+                                                            <span>h</span>
+                                                            <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° DU JOUR</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Numjour
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° PARAMETRE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Parametreid
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° FICHISTE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Fichisteid
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col">
+                                        @*<h4 class="">PARAMETRES</h4>*@
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">TEMPERATURE</th>
+                                                    <td>
+                                                        <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Temperature <span>°</span>
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.D</th>
+                                                    <td>
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tad
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.G</th>
+                                                    <td>
+                                                        <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tag
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                                    <td>
+                                                        <span class="" style="font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.FrequenceCardiaque
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">POIDS</th>
+                                                    <td colspan="3">
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Poids
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">OBSERVATION</th>
+                                                    <td colspan="5">
+                                                        @if (parametre != null)
+                                                        {
+                                                            @parametre.Observation
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">MEDECIN</th>
+                                                    <td colspan="5">@utilisateur.Nom @utilisateur.Prenom</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-1 mb-4">
+    <div class="card-header">
+        <div class="row m-0 p-0">
+            <div class="col-auto">
+                <h4 class="d-flex justify-content-left align-content-center ">Consultation</h4>
+            </div>
+            <div class="col ">
+                <div class="btn-group float-right">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Examens complementaires
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button onclick="@(()=>Go_Soins())" class="dropdown-item" type="button">Soins</button></li>
+                        <li><button onclick="@(()=>Go_Dentiste())" class="dropdown-item" type="button">Dentiste</button></li>
+                        <li><button onclick="@(()=>Go_Maternite())" class="dropdown-item" type="button">Maternite</button></li>
+                        <li><button onclick="@(()=>Go_Echoecg())" class="dropdown-item" type="button">Echo / ECG</button></li>
+                        <li><button onclick="@(()=>Go_Laboratoire())" class="dropdown-item" type="button">Laboratoire</button></li>
+                        <li><button class="dropdown-item" type="button">Radio</button></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="card-body ">
+        <div class="pl-0">
+            <RadzenLabel Text="Date : " Style="font-weight: bold; font-size: 15px" />
+            <RadzenDatePicker TValue="DateTime" @bind-Value="@dtConsulte" ShowTime=true />
+        </div>
+        <div class="row">
+
+            <div class="col-xl-6">
+                <div class="row">
+
+                    <div class="col">
+                        <div class="mb-1">
+                            <label class="form-label" style="font-weight:bold">Plaintes : </label><br />
+                            <RadzenTextArea Placeholder="Rediger ici les plaintes" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@plaintes" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label class="form-label" style="font-weight:bold">symptômes : </label><br />
+                            <RadzenTextArea Placeholder="Avis du medecin" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@symptomes" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-1">
+                            <label class="form-label" style="font-weight:bold">Observations : </label><br />
+                            <RadzenTextArea Placeholder="Observation du medcin" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@observations" />
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row ">
+                    <div class="col">
+                        <div class="mb-1">
+                            <RadzenCheckBox Name="RendezVous" class="ml-1 mr-1" @bind-Value="rdvCheck" />
+                            <label for="RendezVous" class="form-label" style="font-weight:bold">Rendez-vous : </label>
+                            <RadzenDatePicker ShowTime @bind-Value="rdv" ReadOnly=!rdvCheck class="w-100" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-1">
+                            <RadzenCheckBox Name="Repotsy" class="ml-1 mr-1" @bind-Value="reposCheck" />
+                            <label for="Repotsy" class="form-label" style="font-weight:bold">Repos: </label>
+                            <RadzenNumeric @bind-Value="reposJours" ReadOnly=!reposCheck class="w-100" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="mb-1">
+                    <div class="row">
+                        <div class="col-11">
+                            <label class="form-label w-100" style="font-weight:bold">
+                                Diagnostiques :
+                            </label><br />
+                        </div>
+                    </div>
+                    <RadzenListBox AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Multiple="true" Data="@diagsFromDb" AllowClear=true Placeholder="Recherche ici"
+                                   Style="height:10rem" Class="w-100" @bind-Value="@numQuery">
+                        <Template Context="data">
+                            @data.Designation
+                        </Template>
+                    </RadzenListBox>
+                </div>
+                <div class="mb-1">
+                    <label class="form-label" style="font-weight:bold">Examen complemantaire : </label><br />
+                    @if (soinss.Count == 0 && avoirLabo.Count == 0 && dentistes.Count == 0 && echoEcgs.Count == 0)
+                    {
+                        <span class="badge badge-primary" style="font-size: 12px">AUCUN EXAMEN COMPLEMENTAIRE POUR LE PATIANT</span>
+                    }
+                    else
+                    {
+                        <div>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <th>Examen</th>
+                                    <th>Demande</th>
+                                    <th>Resultat</th>
+                                </tr>
+                                @if (soinss != null && soinss.Count > 0)
+                                {
+                                    @foreach (var item in soinss)
+                                    {
+                                        <tr>
+                                            <td>soins</td>
+                                            <td>@item.Demande</td>
+                                            @if (item.Resultat == null || @item.Resultat == "En attente")
+                                            {
+                                                <td><span class="badge bg-danger" style="font-size:11px">@item.Resultat</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge bg-info" style="font-size:11px">@item.Resultat</span></td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                @if (dentistes != null && dentistes.Count > 0)
+                                {
+                                    @foreach (var item in dentistes)
+                                    {
+                                        <tr>
+                                            <td>dentiste</td>
+                                            <td>
+                                                @if (item.Type != null)
+                                                {
+                                                    <span>@item.Type</span>
+                                                }
+                                            </td>
+                                            @if (item.Resultat == null || @item.Resultat == "En attente")
+                                            {
+                                                <td><span class="badge bg-danger" style="font-size:11px">@item.Resultat</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td><span class="badge bg-info" style="font-size:11px">@item.Resultat</span></td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                @if (avoirLabo != null && avoirLabo.Count > 0)
+                                {
+                                    @foreach (var item in avoirLabo)
+                                    {
+                                        <tr>
+                                            <td>Laboratoire</td>
+                                            <td>@item.Test</td>
+                                            @if (item.Resultat == null || @item.Resultat == "En attente")
+                                            {
+                                                <td><span class="badge bg-danger" style="font-size:11px">@item.Resultat</span></td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.Resultat</td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                @if (echoEcgs != null && echoEcgs.Count > 0)
+                                {
+                                    @foreach (var item in echoEcgs)
+                                    {
+                                        <tr>
+
+                                            @if (item.Ecg != null)
+                                            {
+                                                <td>ecg</td>
+                                                <td>@item.Ecg</td>
+                                                @if (item.Resultat == null || @item.Resultat == "En attente")
+                                                {
+                                                    <td><span class="badge bg-danger" style="font-size:11px">@item.Resultat</span></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.Resultat</td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>echo</td>
+                                                <td>@item.Echo</td>
+                                                @if (item.Resultat == null || @item.Resultat == "En attente")
+                                                {
+                                                    <td><span class="badge bg-danger" style="font-size:11px">@item.Resultat</span></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.Resultat</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="row">
+                    <div class="col float-left">
+                        <div class="col-auto">
+                            <button onclick="@(()=>creerOrdonnance())" class="btn bt-sm btn-outline-success float-left no-radius"><span class="fas fa-kit-medical"></span>&ensp; Créer ordonnance</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="row">
+                    <div class="col float-right">
+                        <div class="col-auto">
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" class="float-right mr-3  no-radius" Click="@(()=>SaveMedecinConsultationEnAttente())" Text="En Attente" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" class="float-right mr-3  no-radius" Click="@(()=>SaveMedecinConsultation())" Text="Enregistrer" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [Parameter]
+    public string? idConsultation { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+
+    //RadzenListBox<Diagnostic?> listDiag = new();
+
+    string? plaintes;
+    string? symptomes;
+    string? observations;
+    string? numOsiet, Nom, Etablissement;
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    Utilisateur utilisateur = new();
+    Soins soins = new();
+    List<AvoirSoins> soinss = new List<AvoirSoins>();
+    List<Laboratoire> avoirLabo = new List<Laboratoire>();
+    List<Dentiste> dentistes = new List<Dentiste>();
+    List<EchoEcg> echoEcgs = new List<EchoEcg>();
+    AvoirMaternite avoirMaternite = new();
+    NotificationMessage notification = new();
+    Consultation consultation = new();
+    short idUtilMedecin = 0;
+    string emailAddress = "";
+    List<Utilisateur> utilisateurs = new List<Utilisateur>();
+    List<Diagnostic>? diagsFromDb = new List<Diagnostic>();
+    List<Diagnostic>? diagsFromDbs = new List<Diagnostic>();
+    IEnumerable<Diagnostic> diagsFromList = new List<Diagnostic>();
+    List<Diagnostic>? diagsFromEnumarable = new List<Diagnostic>();
+    List<int>? exemples = new List<int>();
+    
+    DateTime rdv = DateTime.Now;
+    DateTime dtConsulte = DateTime.Now;
+    string reposJours;
+    string? programmer;
+    bool rdvCheck = false;
+    bool reposCheck = false;
+    Medecin med = new();
+    private ToastParameters? _toastParameters;
+    string? name, nomDossier;
+    string[]? files;
+    bool session = false;
+    IEnumerable<Diagnostic> numQuery;
+    IEnumerable<Diagnostic> vide;
+
+    public async Task LoadFirst()
+    {
+        consultation = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+        fichiste = await fichisteservice.getFichisteById(consultation.Fichisteid);
+        soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            if (employer.NomDossier != null)
+            {
+                if (employer.NomDossier != null)
+                {
+                    nomDossier = employer.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+
+            }
+        }
+        else if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            if (famille.NomDossier != null)
+            {
+                if (famille.NomDossier != null)
+                {
+                    nomDossier = famille.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+            }
+        }
+        if (fichiste != null)
+        {
+            parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+        }
+        await GetAvoirSoins();
+        await GetAvoirLabo();
+        await GetAvoirDentiste();
+        await GetAvoirEchoEcg();
+
+        diagsFromDb = await medecinService.GetAllDiagnostic();
+
+        try
+        {
+            session = await sessionStorage.GetItemAsync<bool>("session");
+            if (session == true)
+            {
+                plaintes = await sessionStorage.GetItemAsync<string>("plaintes");
+                symptomes = await sessionStorage.GetItemAsync<string>("symptomes");
+                observations = await sessionStorage.GetItemAsync<string>("observations");
+                rdvCheck = await sessionStorage.GetItemAsync<bool>("rdvCheck");
+                await sessionStorage.RemoveItemAsync("plaintes");
+                await sessionStorage.RemoveItemAsync("symptomes");
+                await sessionStorage.RemoveItemAsync("observations");
+                await sessionStorage.RemoveItemAsync("rdvCheck");
+                await sessionStorage.RemoveItemAsync("session");
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    protected async override void OnInitialized()
+    {
+        await LoadFirst();
+        if (session == true)
+        {
+            diagsFromList = await sessionStorage.GetItemAsync<List<Diagnostic>>("diagsFromList");
+            diagsFromDbs = new List<Diagnostic>();
+            numQuery = new List<Diagnostic>();
+            foreach (var d in diagsFromList)
+            {
+                foreach (var item in diagsFromDb)
+                {
+                    if (d.DiagnosticId == item.DiagnosticId)
+                    {
+                        diagsFromDbs.Add(item);
+                        break;
+                    }
+                }
+            }
+            numQuery = diagsFromDbs;
+            diagsFromList = new List<Diagnostic>();
+        }
+        else
+        {
+            List<DiagnosticAvoir> avDiag = new List<DiagnosticAvoir>();
+            avDiag = await medecinService.GetDiagnosticAvoirsByFichiste(fichiste.Fichisteid, Convert.ToInt64(idConsultation));
+            List<Diagnostic> diag = new List<Diagnostic>();
+            List<int> numQueryInt = new List<int>();
+            foreach (var item in avDiag)
+            {
+                foreach (var d in diagsFromDb)
+                {
+                    if (d.DiagnosticId == item.DiagnosticId)
+                    {
+                        diagsFromDbs.Add(d);
+                        break;
+                    }
+                }
+            }
+            numQuery = diagsFromDbs;
+            diagsFromList = new List<Diagnostic>();
+        }
+        emailAddress = await _localStorageService.GetItemAsync<string>("emailAddress");
+        await LoadUtilisateur();
+        foreach (var item in utilisateurs)
+        {
+            if (item.Email.Trim() == emailAddress)
+            {
+                idUtilMedecin = item.Utilisateurid;
+                utilisateur = await uService.GetUtilisateurByIdShort(idUtilMedecin);
+                med = await medecinService.GetMedecinByIdUtilisateur(idUtilMedecin);
+                break;
+            }
+
+        }
+        if (session != true)
+            await LoadConsulte();
+        StateHasChanged();
+    }
+
+    public async Task LoadUtilisateur() => utilisateurs = await uService.GetAllUtilisateurs();
+
+    public async Task GetAvoirSoins()
+    {
+        if (soins != null)
+            soinss = await pharmaService.GetAvoirSoinsBySoins(soins.Soinsid);
+    }
+
+    public async Task GetAvoirLabo()
+    {
+        if (fichiste != null)
+            avoirLabo = await examenService.GetAllLaboratoireByFichiste(fichiste.Fichisteid);
+    }
+
+    public async Task GetAvoirDentiste()
+    {
+        if (fichiste != null)
+            dentistes = await dentisteService.GetDentisteListeByFichiste(fichiste.Fichisteid);
+    }
+
+    public async Task GetAvoirEchoEcg()
+    {
+        if (fichiste != null)
+            echoEcgs = await examenService.GetAllEchoEcgByFichiste(fichiste.Fichisteid);
+    }
+
+    public async Task SetSessionSave()
+    {
+        await sessionStorage.SetItemAsync("plaintes", plaintes);
+        await sessionStorage.SetItemAsync("symptomes", symptomes);
+        await sessionStorage.SetItemAsync("observations", observations);
+        await sessionStorage.SetItemAsync<bool>("rdvCheck", rdvCheck);
+        await sessionStorage.SetItemAsync<bool>("session", true);
+        await sessionStorage.SetItemAsync<List<Diagnostic>>("diagsFromList", numQuery.ToList());
+    }
+
+    public async void creerOrdonnance()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/ordonnance_docteur/" + fichiste.Fichisteid);
+    }
+
+    public async Task Go_Soins()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/medecin_soins/" + idConsultation);
+    }
+
+    public async Task Go_Dentiste()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/dentiste_medecin/" + idConsultation);
+    }
+
+    public async Task Go_Echoecg()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/echoecg_medecin/" + idConsultation);
+    }
+
+    public async Task Go_Laboratoire()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/laboratoire_medecin/" + idConsultation);
+    }
+
+    public async Task Go_Maternite()
+    {
+        await SetSessionSave();
+        Go.NavigateTo("/maternite_medecin/" + fichiste.Fichisteid);
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+    public async Task SaveMedecinConsultation()
+    {
+        List<Diagnostic> t = new List<Diagnostic>();
+        bool diagAvoirAdd = true;
+        if (numQuery != null)
+            foreach (var item in numQuery)
+            {
+                t.Add(item);
+            }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention!");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Veuillez selectionner un diagnostique.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            return;
+        }
+        DateTime? consultationDate = dtConsulte;
+        DateTime? rdvDate = new();
+        string statut = "";
+        soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        if (rdvCheck)
+        {
+            programmer = "Oui";
+            statut = "En cours";
+            rdvDate = rdv;
+            consultation.Programmer = "Oui";
+            consultation.DateRdv = rdvDate;
+        }
+        else
+        {
+            programmer = "Non";
+        }
+
+        if (reposCheck)
+        {
+            consultation.repos = 1;
+            consultation.reposJours = Convert.ToDecimal(reposJours);
+        }
+        else
+        {
+            consultation.repos = 0;
+        }
+        int? numJ = fichiste.Numjour;
+        consultation.Dateconsultation = consultationDate;
+        consultation.ListeAttente = "Non";
+        consultation.Fichisteid = fichiste.Fichisteid;
+        consultation.Medecinid = med.Medecinid;
+        consultation.Numjour = numJ;
+        consultation.Observations = observations;
+        consultation.Plainte = plaintes;
+        consultation.Passage = 0;
+        if (soins != null)
+        {
+            long? idSoins = soins.Soinsid;
+            consultation.Soinsid = idSoins;
+        }
+        consultation.Statut = "En cours";
+        consultation.Symptomes = symptomes;
+        bool result = await medecinService.UpdateConsultation(Convert.ToInt64(idConsultation), consultation);
+        consultation = await medecinService.GetConsultationByFichisteId(fichiste.Fichisteid);
+        bool good = true;
+        foreach (var item in t)
+        {
+            DiagnosticAvoir diagAv = new();
+            diagAv.ConsultationId = consultation.Consultationid;
+            diagAv.Date = DateTime.Now;
+            diagAv.DesignationDiag = item.Designation;
+            diagAv.DiagnosticId = item.DiagnosticId;
+            diagAv.FichisteId = fichiste.Fichisteid;
+            diagAvoirAdd = await medecinService.CreateDiagnosticAvoir(diagAv);
+            if (!diagAvoirAdd)
+            {
+                good = false;
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Error !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Enregistrement Diagnostique échoué, contacter l'administrateur !.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                break;
+            }
+        }
+
+        if (good)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await sessionStorage.ClearAsync();
+            await Task.Delay(2000);
+            Go.NavigateTo("/docteurPatiant");
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Error !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement échoué, reessayer plus tard.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await Task.Delay(2000);
+        }
+
+    }
+
+    public async Task SaveMedecinConsultationEnAttente()
+    {
+        List<Diagnostic> t = new List<Diagnostic>();
+        bool diagAvoirAdd = true;
+        if (diagsFromList != null)
+            foreach (var item in diagsFromList)
+            {
+                t.Add(item);
+            }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention!");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Veuillez selectionner un diagnostique.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            return;
+        }
+        DateTime? consultationDate = dtConsulte;
+        DateTime? rdvDate = new();
+        string statut = "";
+        soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        if (rdvCheck)
+        {
+            programmer = "Oui";
+            statut = "En cours";
+            rdvDate = rdv;
+            consultation.Programmer = "Oui";
+            consultation.DateRdv = rdvDate;
+        }
+        else
+        {
+            programmer = "Non";
+        }
+
+        if (reposCheck)
+        {
+            consultation.repos = 1;
+            consultation.reposJours = Convert.ToDecimal(reposJours);
+        }
+        else
+        {
+            consultation.repos = 0;
+        }
+        int? numJ = fichiste.Numjour;
+        consultation.Dateconsultation = consultationDate;
+        consultation.ListeAttente = "Non";
+        consultation.Fichisteid = fichiste.Fichisteid;
+        consultation.Medecinid = med.Medecinid;
+        consultation.Numjour = numJ;
+        consultation.Observations = observations;
+        consultation.Plainte = plaintes;
+        consultation.Passage = 0;
+        if (soins != null)
+        {
+            long? idSoins = soins.Soinsid;
+            consultation.Soinsid = idSoins;
+        }
+        consultation.Statut = "En attente";
+        consultation.Symptomes = symptomes;
+        bool result = await medecinService.UpdateConsultation(Convert.ToInt64(idConsultation), consultation);
+        consultation = await medecinService.GetConsultationByFichisteId(fichiste.Fichisteid);
+        bool good = true;
+        foreach (var item in t)
+        {
+            DiagnosticAvoir diagAv = new();
+            diagAv.ConsultationId = consultation.Consultationid;
+            diagAv.Date = DateTime.Now;
+            diagAv.DesignationDiag = item.Designation;
+            diagAv.DiagnosticId = item.DiagnosticId;
+            diagAv.FichisteId = fichiste.Fichisteid;
+            diagAvoirAdd = await medecinService.CreateDiagnosticAvoir(diagAv);
+            if (!diagAvoirAdd)
+            {
+                good = false;
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Error !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Enregistrement Diagnostique échoué, contacter l'administrateur !.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                break;
+            }
+        }
+
+        if (good)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await sessionStorage.ClearAsync();
+            await Task.Delay(2000);
+            Go.NavigateTo("/docteurPatiant");
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Error !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement échoué, reessayer plus tard.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await Task.Delay(2000);
+        }
+
+    }
+
+    public async Task LoadConsulte()
+    {
+        try
+        {
+            Consultation consult = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+            if (consult != null)
+            {
+                if (consult.Programmer == "Oui")
+                {
+                    rdvCheck = true;
+                    rdv = consult.DateRdv.Value;
+                }
+                symptomes = consult.Symptomes;
+                observations = consult.Observations;
+                plaintes = consult.Plainte;
+                dtConsulte = consult.Dateconsultation.Value;
+            }
+
+        }
+        catch (InvalidOperationException ex)
+        {
+
+        }
+    }
+}

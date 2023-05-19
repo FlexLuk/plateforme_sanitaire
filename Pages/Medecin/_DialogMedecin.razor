@@ -1,0 +1,223 @@
+﻿@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models.Administration
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Data
+@using LYRA.Shared.Fichiste
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IParametreService paramService
+@inject IUtilisateurService uService
+@inject IMedecinService medecinService
+@inject IToastService toastService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<hr class="mb-2 mt-0" />
+
+@if (consultationsAttente != null)
+{
+    <div class="row" style="overflow-x:auto">
+        @foreach (var item in consultationsAttente)
+        {
+            <div class="col">
+                <div class=" card">
+                    <div class="card-header">
+                        Medecin @item.MedecinID
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Liste d'attente : &ensp; <label class="bdge badge-info p-2">@item.NombreConsultation</label></p>
+                        <RadzenButton Text="Envoyer le patiant" Click="@(args=>SaveParametreOnConsultation(@item.MedecinID))" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class=" card">
+                <div class="card-header">
+                    Dentiste
+                </div>
+                <div class="card-body">
+                    @*<p class="card-text">Liste d'attente : &ensp; <label class="bdge badge-info p-2">@item.NombreConsultation</label></p>
+                <RadzenButton Text="Envoyer le patiant" Click="@(args=>SaveParametreOnConsultation(@item.MedecinID))" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" />
+                *@
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class=" card">
+                <div class="card-header">
+                    Dentiste
+                </div>
+                <div class="card-body">
+                    @*<p class="card-text">Liste d'attente : &ensp; <label class="bdge badge-info p-2">@item.NombreConsultation</label></p>
+                <RadzenButton Text="Envoyer le patiant" Click="@(args=>SaveParametreOnConsultation(@item.MedecinID))" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" />
+                *@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card card-danger card-outline">
+        <a class="d-block w-100" data-toggle="collapse" href="#collapseSeven">
+            <div class="card-header">
+                <h4 class="card-title w-100">
+                    Oups !
+                </h4>
+            </div>
+        </a>
+        <div data-parent="#accordion">
+            <div class="card-body">
+                Aucun docteur en travail.
+            </div>
+        </div>
+    </div>
+}
+
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = null!;
+
+    [Parameter] public Fichiste fichiste { get; set; } = new();
+    [Parameter] public Employer employer { get; set; } = new();
+    [Parameter] public Employeur employeur { get; set; } = new();
+    [Parameter] public Famille famille { get; set; } = new();
+    [Parameter] public Parametre parametre { get; set; } = new();
+    [Parameter] public Patiant patiant { get; set; } = new();
+    [Parameter] public bool? famCateg { get; set; }
+    [Parameter] public int? valuePassage { get; set; }
+    int i = 0;
+    IEnumerable<Employer>? employers;
+    IEnumerable<Fichiste>? fichistes;
+    IEnumerable<Employeur>? employeurs;
+    IEnumerable<Famille>? familles;
+    Medecin medecin = new();
+    Utilisateur utilisateur = new();
+    List<ConsultationAttente> consultationsAttente = new List<ConsultationAttente>();
+    List<Medecin> medecins = new List<Medecin>();
+    List<Medecin> medecinsEnTravail = new List<Medecin>();
+    ConsultationAttente consultationAttente = new();
+    Consultation? consultation;
+
+
+    protected async override void OnInitialized()
+    {
+        medecins = await medecinService.GetMedecin();
+        GetMedecinEnTravail();
+        await GetListAttente();
+        StateHasChanged();
+    }
+
+    public void GetMedecinEnTravail()
+    {
+        foreach (var item in medecins)
+        {
+            if (item.Statut.Trim() == "Actif")
+            {
+                medecinsEnTravail.Add(item);
+            }
+        }
+    }
+
+    public async Task<bool> SaveParametreOnConsultation(int idMedecin)
+    {
+        bool result;
+        try
+        {
+            Parametre par = await paramService.GetParametreByFichiste(patiant.Fichisteid);
+            parametre.Medecinid = idMedecin;
+            parametre.Passage = Convert.ToInt32(valuePassage);
+            result = await paramService.UpdateParametre(parametre);
+            consultation = null;
+            consultation = new();
+            consultation.Fichisteid = fichiste.Fichisteid;
+            consultation.Medecinid = idMedecin;
+            consultation.ListeAttente = "Oui";
+            consultation.Numjour = fichiste.Numjour;
+            consultation.Passage = valuePassage;
+            bool created;
+            try
+            {
+                Consultation consul = await medecinService.GetConsultationById(consultation.Consultationid);
+                consul = consultation;
+                created = await medecinService.UpdateConsultation(consul);
+                if (created)
+                {
+                    await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+                }
+            }
+            catch (Exception ex)
+            {
+                created = await medecinService.CreerConsultation(consultation);
+                if (created)
+                {
+                    await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+                }
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            parametre.Medecinid = idMedecin;
+            result = await paramService.AddParametre(parametre);
+            consultation = new();
+            consultation.Fichisteid = fichiste.Fichisteid;
+            consultation.Medecinid = idMedecin;
+            consultation.ListeAttente = "Oui";
+            consultation.Numjour = fichiste.Numjour;
+            consultation.Passage = valuePassage;
+            bool created;
+            if (result == true)
+            {
+                Consultation consul = new();
+                consul = await medecinService.GetConsultationById(consultation.Consultationid);
+                if (consul != null)
+                {
+                    result = await medecinService.UpdateConsultation(consultation);
+                    await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+                }
+                else
+                {
+                    result = await medecinService.CreerConsultation(consultation);
+                    await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+                }
+            }
+            else
+            {
+                await ModalInstance.CloseAsync(ModalResult.Ok<bool>(result));
+            }
+
+
+        }
+        return result;
+    }
+
+
+    public async Task GetListAttente()
+    {
+        foreach (var item in medecinsEnTravail)
+        {
+            ConsultationAttente consAttente = new();
+            consAttente.MedecinID = item.Medecinid;
+            consAttente.NombreConsultation = await medecinService.GetConsultationCountByMedecin(item.Medecinid);
+            consultationsAttente.Add(consAttente);
+        }
+    }
+
+}

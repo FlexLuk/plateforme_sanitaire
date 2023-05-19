@@ -1,0 +1,506 @@
+﻿@page "/dentiste/{idFichiste}"
+@using LYRA.Controllers.ControllerDentiste
+@using LYRA.Shared.Dentiste
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Models.Examens
+@using LYRA.Models
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@inject NavigationManager Go
+@layout DentisteLayout
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@inject IDentisteService dentisteService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h4 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <b>N° OSIET </b>&ensp;<i>@numOsiet</i>&ensp;<b>Nom du patiant </b>&ensp;<i>@Nom </i>&ensp;<b>Etablissement </b>&ensp;<i>@Etablissement</i>
+            </button>
+        </h4>
+        <div id="collapseOne" class="accordion-collapse collapse hide" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-xl-4 col-md-6 m-0">
+                        <div class="card border-left-primary shadow  py-2">
+                            <div class="card-body m-0">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">N° OSIET</th>
+                                            <td style="font-weight:bold">@numOsiet</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">NOM COMPLET</th>
+                                            <td>@Nom</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">CARACTERISTIQUE</th>
+                                            <td>
+                                                @if (fichiste != null)
+                                                {
+                                                    @fichiste.Categorie
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                @if (files != null)
+                                {
+                                    int i = 0;
+
+                                    foreach (var file in files)
+                                    {
+                                        if (i == 0)
+                                        {
+                                            <a style="border-radius:0;" href="@file.Substring(8)" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@file.Substring(8)" data-lightbox="roadtrip" class="d-none"></a>
+                                        }
+                                        i++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-md-6 mb-0">
+                        <div class="card border-left-secondary shadow py-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        @*<h4 class="">FICHISTE</h4>*@
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">HEURE D’ARRIVEE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Date.TimeOfDay.Hours
+
+                                                            <span>h</span>
+                                                            <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° DU JOUR</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Numjour
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° PARAMETRE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Parametreid
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col">
+                                        @*<h4 class="">PARAMETRES</h4>*@
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">TEMPERATURE</th>
+                                                    <td>
+                                                        <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Temperature <span>°</span>
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.D</th>
+                                                    <td>
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tad
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.G</th>
+                                                    <td>
+                                                        <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tag
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                                    <td>
+                                                        <span class="" style="font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.FrequenceCardiaque
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">POIDS</th>
+                                                    <td colspan="3">
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Poids
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">OBSERVATION</th>
+                                                    <td colspan="5">
+                                                        @if (parametre != null)
+                                                        {
+                                                            @parametre.Observation
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-2">
+    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@dentistes"
+                TItem="Dentiste" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                SelectionMode="DataGridSelectionMode.Single">
+        <Columns>
+            <RadzenGridColumn TItem="Dentiste" Width="70px" Property="Dentisteid" Title="ID"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="Date" Title="DATE"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="Age" Width="90px" Title="AGE"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="Demande" Title="Demande"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="Type" Width="110px" Title="Type"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="numDent" Width="110px" Title="N° Dent"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Property="Diagnostiques" Title="Diagnostiques"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Dentiste" Title="" Filterable=false Sortable=false Width="90px">
+                <Template Context="data">
+                    <RadzenButton Click="@(()=>Preparation(data))" Text="Preparer" Size="ButtonSize.Small" />
+                </Template>
+            </RadzenGridColumn>
+
+        </Columns>
+    </RadzenGrid>
+</div>
+<div class="card mt-1 mb-4">
+    <div class="card-header">
+        <div class="row m-0 p-0">
+            <div class="col-auto">
+                <h4 class="d-flex justify-content-left align-content-center ">Consultation</h4>
+            </div>
+            <div class="col ">
+                <label class="float-right badge badge-info mt-1" style="font-size:15px"> ID DENTISTE :  @dentiste.Dentisteid</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body ">
+        <div class="row">
+            <div class="col">
+                <div class=" mb-3">
+                    <span class="input-group-text" style="height:35px; border-radius: 0">Demande : </span>
+                    <RadzenTextArea @bind-Value="@demande" TValue="string?" class="form-control" placeholder="Demande ou commentaire" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px; border-radius: 0">Type : </span>
+                    <RadzenDropDown TValue="string" @bind-Value="@type" Class="form-control" Data=@type_soins Placeholder="Veuillez choisir le type de soins" />
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px; border-radius: 0">N° dent : </span>
+                    <RadzenNumeric TValue="int?" @bind-Value="@numDent" Class="form-control" Placeholder="Numéro de la dent à traiter" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label class="form-label" style="font-weight:bold">Plaintes : </label><br />
+                            <RadzenTextArea Placeholder="Rediger ici les plaintes" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@dentiste.Plaintes" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-1">
+                            <label class="form-label" style="font-weight:bold">symptômes : </label><br />
+                            <RadzenTextArea Placeholder="Avis du medecin" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@dentiste.Symptomes" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-xl-6">
+                <div class="mb-1">
+                    <label class="form-label" style="font-weight:bold">Diagnostiques : </label><br />
+                    <RadzenTextArea Placeholder="Avis du medecin" class="form-comtrol w-100" Style="height:4rem; font-size:1em" @bind-Value="@dentiste.Diagnostiques" />
+                </div>
+                <hr class="p-0 m-0" />
+                <div class="row">
+                    <div class="col">
+                        <div style="margin-top: 5px">
+                            <RadzenCheckBox Name="cas" class="p-2" @bind-Value=@nouveau_cas TValue="bool?" TriState=false />
+                            <label for="cas" class="form-label mr-2" style="font-weight:bold">Nouveau cas</label>
+                        </div>
+                    </div>
+                </div>
+                <hr class="p-0 m-0" />
+                <div class="row">
+                    <div class="col">
+                        <div style="margin-top: 5px">
+                            <RadzenCheckBox Name="rdv" class="ml-1 mr-1" @bind-Value="rdvCheck" />
+                            <label for="rdv" class="form-label mr-1" style="font-weight:bold">Rendez-vous </label>
+                            <RadzenDatePicker ShowTime @bind-Value="rdv" ReadOnly=!rdvCheck />
+                        </div>
+                    </div>
+                </div>
+                <hr class="m-0 p-0" />
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="row">
+                    <div class="col float-left">
+                        <div class="col-auto">
+                            <button onclick="@(()=>creerOrdonnance())" class="btn bt-sm btn-outline-success float-left no-radius"><span class="fas fa-kit-medical"></span>&ensp; Créer ordonnance</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="row">
+                    <div class="col float-right">
+                        <div class="col-auto">
+                            <RadzenButton Click="@(()=>SaveDemtiste())" ButtonStyle="ButtonStyle.Secondary" class="float-right mr-3  no-radius" Text="Enregistrer" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="3" />
+@code {
+    [Parameter]
+    public string idFichiste { get; set; } = null!;
+    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    IEnumerable<string> type_soins = new string[] { "Soins", "Extraction", "Autre" };
+    private ToastParameters? _toastParameters;
+    string? nomDossier, plaintes, symptomes, observations, numOsiet, Nom, Etablissement, programmer, name, type, demande;
+    string[]? files;
+    string emailAddress = "";
+    bool session;
+    int Age;
+    int? numDent;
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    Dentiste dentiste = new();
+    List<Dentiste> dentistes = new List<Dentiste>();
+    bool? nouveau_cas = false;
+    DateTime rdv = DateTime.Now;
+    bool rdvCheck = false;
+
+    public async void creerOrdonnance()
+    {
+        Go.NavigateTo("/ordonnance_dentiste/" + fichiste.Fichisteid);
+    }
+
+    protected async override void OnInitialized()
+    {
+        session = await sessionStorage.GetItemAsync<bool>("session");
+
+        fichiste = await fichisteservice.getFichisteById(Convert.ToInt64(idFichiste));
+        dentistes = await dentisteService.GetDentisteListeByFichiste(fichiste.Fichisteid);
+        if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            if (employer.NomDossier != null)
+            {
+                if (employer.NomDossier != null)
+                {
+                    nomDossier = employer.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+
+            }
+        }
+        else if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            if (famille.NomDossier != null)
+            {
+                if (famille.NomDossier != null)
+                {
+                    nomDossier = famille.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+            }
+        }
+
+        if (dentiste.Cas == 0 || dentiste.Cas == null) { nouveau_cas = false; } else { nouveau_cas = true; }
+
+        emailAddress = await _localStorageService.GetItemAsync<string>("emailAddress");
+        StateHasChanged();
+    }
+
+    private void Preparation(Dentiste dentiste)
+    {
+        this.dentiste = new();
+        this.dentiste = dentiste;
+        if (this.dentiste.Cas == 1) nouveau_cas = true;
+        if (this.dentiste.Cas == 0) nouveau_cas = false;
+        if (this.dentiste.Cas == null) nouveau_cas = false;
+        numDent = dentiste.numDent;
+        demande = dentiste.Demande;
+        type = dentiste.Type;
+        if (this.dentiste.Repetition == 1)
+        {
+            rdvCheck = true;
+            rdv = dentiste.Rendez_vous.Value;
+        }
+        StateHasChanged();
+    }
+
+    private async Task SaveDemtiste()
+    {
+        if (dentiste.Dentisteid > 0)
+        {
+            if (nouveau_cas == true) dentiste.Cas = 1;
+            else dentiste.Cas = 0;
+            if (rdvCheck) { dentiste.Repetition = 1; dentiste.Rendez_vous = rdv; }
+            else { dentiste.Repetition = 0; dentiste.Terminer = "Oui"; }
+            dentiste.numDent = numDent;
+            dentiste.Demande = demande;
+            dentiste.Type = type;
+            dentiste.Age = Age;
+            dentiste.Date = DateTime.Now;
+            bool result = await dentisteService.UpdateDentiste(dentiste);
+            if (result)
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Reussi !");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Enregistrement terminer.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Erreur de l'enregistrement, contacter l'administrateur.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            dentiste = new();
+            numDent = 0;
+            demande = "";
+            type = "";
+            StateHasChanged();
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention !");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Veuillez cliquer sur preparer dans la liste du tableau.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille.Numeroosiet != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer.Numemployeur != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                if (famille.Datenaissance != null)
+                {
+                    Age = DateTime.Now.Year - famille.Datenaissance.Value.Year;
+                }
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer.Numemployeur != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            if (employer.Datenaissance != null)
+            {
+                Age = DateTime.Now.Year - employer.Datenaissance.Value.Year;
+            }
+
+        }
+    }
+
+
+
+}

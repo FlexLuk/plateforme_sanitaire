@@ -1,0 +1,39 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">OSIET SERVICE</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column h-100">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/dentiste_attente" Match="NavLinkMatch.All">
+                <i class="fas fa-kit-medical" aria-hidden="true"></i>&ensp; Liste d'attente
+            </NavLink>
+        </div>
+       <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/consultation_dentiste" Match="NavLinkMatch.All">
+                <i class="oi oi-list-rich" style="width:auto;" aria-hidden="true"></i>&ensp;Consultation
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/rapport_dentiste" Match="NavLinkMatch.All">
+                <span class="fas fa-book" aria-hidden="true"></span>&ensp; Rapport
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

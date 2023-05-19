@@ -1,0 +1,549 @@
+﻿@page "/main_page"
+@layout LoginLayout
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Data
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IToastService toastService
+@attribute [Authorize]
+
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            <div class="p-4">
+                <button class="btn btn-danger"
+                        onclick="@(()=>deconnecter())">
+                    Deconnexion
+                </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center align-content-center">
+            <div class="cards-list">
+                <div class="card 2" style="background: unset" onclick="@(()=> secretaire())">
+                    <div class="card_image">
+                        @*<img
+                        src="https://cdn.blackmilkclothing.com/media/wysiwyg/Wallpapers/PhoneWallpapers_FloralCoral.jpg"
+                        />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>SECRETAIRE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Adhésion et affiliation</p>
+                    </div>
+                </div>
+
+                <div class="card 3" style="background: unset" onclick="@(()=> fichiste())">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>FICHISTE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Vérification de la carte</p>
+                    </div>
+                </div>
+
+                <div class="card 2" style="background: unset" onclick="@(()=> parametre())">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>PARAMETRE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Enlevement du parametre</p>
+                    </div>
+                </div>
+
+                <div class="card 2" onclick="@(()=> medecin())" style="background: unset">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>MEDECIN</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Traitement du patient</p>
+                    </div>
+                </div>
+
+                @*AUTRE SERVICE*@
+                <div class="card 2" style="background: unset" onclick="@(()=> dentiste())">
+                    <div class="card_image">
+                        @*<img
+                        src="https://cdn.blackmilkclothing.com/media/wysiwyg/Wallpapers/PhoneWallpapers_FloralCoral.jpg"
+                        />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>DENTISTE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Dentisterie</p>
+                    </div>
+                </div>
+
+                <div class="card 3" style="background: unset" onclick="@(()=> laboratoire())">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>LABORATOIRE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Analyse du patient</p>
+                    </div>
+                </div>
+
+                <div class="card 3" style="background: unset" onclick="@(()=> echoecg())">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>ECHO / ECG</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Echographie</p>
+                    </div>
+                </div>
+
+                <div class="card 3" onclick="@(()=> maternite())" style="background: unset">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>MATERNITE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Pour le sage femme</p>
+                    </div>
+                </div>
+                <div class="card 3" onclick="@(()=> pharmacie())" style="background: unset">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>PHARMACIE</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Gestion d'ordonnance'</p>
+                    </div>
+                </div>
+                <div class="card 3" onclick="@(()=> soins())" style="background: unset">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>SOINS</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Gestion de soins'</p>
+                    </div>
+                </div>
+                <div class="card 3" onclick="@(()=> administration())" style="background: unset">
+                    <div class="card_image">
+                        @*<img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />*@
+                    </div>
+                    <div class="card_title title-black">
+                        <p>ADMINISTRATION</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Administration de l'application</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="6" />
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+
+<style>
+    .cards-list {
+        margin-top: 50px;
+        z-index: 0;
+        width: 70%;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        margin: 30px 0;
+        width: 200px;
+        height: 100px;
+        /*border-radius: 40px;*/
+        box-shadow: 2px 2px 30px 7px rgba(0, 0, 0, 0.2), -5px -5px 30px 7px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: 0.4s;
+    }
+
+        .card .card_image {
+            width: inherit;
+            height: inherit;
+            /*border-radius: 40px;*/
+        }
+
+            .card.card_image img {
+                width: inherit;
+                height: inherit;
+                /*border-radius: 40px;*/
+                object-fit: cover;
+            }
+
+        .card .card_title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: -90px;
+        }
+
+        .card .card-body {
+            text-align: center;
+            padding: 0;
+            padding-top: -5px !important;
+            height: 40px;
+        }
+
+        .card:hover {
+            transform: scale(0.9, 0.9);
+            box-shadow: 5px 5px 30px 15px rgba(0, 0, 0, 0.25), -5px -5px 30px 15px rgba(0, 0, 0, 0.22);
+        }
+
+    .title-white {
+        color: white;
+    }
+
+    .title-black {
+        color: black;
+    }
+
+    @@media all and (max-width: 500px) {
+        .card-list {
+            flex-direction: column;
+        }
+    }
+</style>
+@code {
+    private ToastParameters? _toastParameters;
+
+    protected async override void OnInitialized()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (!user.Identity.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task fichiste()
+    {
+        var role = await localStorage.GetItemAsync<string>("roles");
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+
+                if (user.IsInRole("Fichiste") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/Verification_fichiste");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task parametre()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("parametre") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/parametre");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task secretaire()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Secretaire") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/adhesion");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task medecin()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Medecin") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/docteurPatiant");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task administration()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/utilisateur");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task pharmacie()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Pharma") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/ordonnance");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task soins()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Soins") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/soins");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task dentiste()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Dentiste") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/dentiste_attente");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task echoecg()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("EchoEcg") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/echoecg_attente");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task laboratoire()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("laboratoire") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/laboratoire_patiant");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public async Task maternite()
+    {
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authState.User;
+
+        if (user.Identity != null)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                if (user.IsInRole("Maternite") || user.IsInRole("Admin"))
+                    NavigationManager.NavigateTo("/maternite_patiant");
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Acces denied !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Vous n'avez pas le droit de visiter ce contenu.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    public void deconnecter()
+    {
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
+    }
+}

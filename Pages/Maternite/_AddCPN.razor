@@ -1,0 +1,95 @@
+﻿@page "/cpn_add/{idMaternite}"
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Models.Maternites
+@using Microsoft.EntityFrameworkCore
+@inject MATERNITEContext materniteContext
+@inject IMaterniteService materniteService
+@inject Radzen.DialogService dialogService
+@inject Radzen.NotificationService notificationService
+@attribute [Authorize(Roles = "Admin, Maternite")]
+
+<RadzenNotification />
+<div class="row">
+    <div class="col">
+        <div class="input-group mb-3">
+            <span class="input-group-text" style="height:35px">ID Maternite : </span>
+            <RadzenNumeric TValue="long" Style="width:130px" ShowUpDown=false @bind-Value="@idMaternite" Disabled />
+        </div>
+    </div>
+    <div class="col">
+        <div class="input-group mb-3">
+            <span class="input-group-text" style="height:35px">Numero du CPN : </span>
+            <RadzenNumeric TValue="int" Style="width:130px" ShowUpDown=false @bind-Value=@nbrCPN Disabled />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="input-group mb-3">
+            <span class="input-group-text" style="height:35px">Date du CPN : </span>
+            <RadzenDatePicker TValue="DateTime" @bind-Value=@CreateDate Placeholder="Date d'enregistrement'" />
+        </div>
+
+    </div>
+</div>
+<hr />
+<RadzenButton Text="Fermer" ButtonStyle="ButtonStyle.Danger" Style="border-radius:0px" Click="@CloseDialog" />
+<RadzenButton Text="Enregistrer" ButtonStyle="ButtonStyle.Success" Style="border-radius:0px" class="float-right" Click="@SaveCpn" />
+
+@code {
+    [Inject]
+    Radzen.DialogService? DialogService { get; set; }
+    [Parameter]
+    public long idMaternite { get; set; }
+    Cpn cpn = new();
+    List<Cpn> cps = new List<Cpn>();
+    DateTime CreateDate = DateTime.Now;
+    NotificationMessage notification = new();
+    int nbrCPN = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cps = await materniteContext.Cpns.Where(c => c.MaterniteId == idMaternite).ToListAsync();
+        nbrCPN = cps.Count + 1;
+    }
+
+    private void CloseDialog()
+    {
+        dialogService.Close(true);
+        StateHasChanged();
+    }
+
+    private async Task SaveCpn()
+    {
+        cpn.Date = CreateDate;
+        cpn.MaterniteId = idMaternite;
+        cpn.NumeroCpn = nbrCPN;
+        materniteContext.Cpns.Add(cpn);
+        int i = await materniteContext.SaveChangesAsync();
+        if (i > 0)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Information.",
+                    Detail = "Enregistrement reussi.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        CloseDialog();
+    }
+}

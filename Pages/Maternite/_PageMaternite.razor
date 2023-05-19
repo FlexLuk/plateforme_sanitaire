@@ -1,0 +1,463 @@
+﻿@page "/maternite_page/{idMaternite}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models.Administration
+@using LYRA.Models.Examens
+@using LYRA.Models.Maternites
+@using LYRA.Shared.Maternites
+@using LYRA.Models
+@using LYRA.Shared.Medecin
+@using Radzen.Blazor
+@inject IFichisteService fichisteservice
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IUtilisateurService uService
+@inject IParametreService parametreService
+@inject IMedecinService medecinService
+@inject IExamenService examenService
+@inject IMaterniteService materniteService
+@inject Radzen.NotificationService notificationService
+@inject Radzen.DialogService DialogService
+@inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin, Maternite")]
+@layout MaterniteLayout
+
+<RadzenNotification />
+<RadzenDialog />
+<RadzenCard class="p-1">
+    <div class="row">
+        <div class="col-xl-4 col-md-6 m-0">
+            <div class="card-body m-0 p-0" style="margin-bottom:-10px">
+                <table class="table table-sm table-bordered mb-0">
+                    <tbody>
+                        <tr>
+                            <th scope="row">N° OSIET</th>
+                            <td style="font-weight:bold">@numOsiet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">NOM COMPLET</th>
+                            <td>@Nom</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">CATEGORIE</th>
+                            <td>
+                                @if (fichiste != null)
+                                {
+                                    @fichiste.Categorie
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if (files != null)
+                {
+                    @foreach (var file in files)
+                    {
+                        @try
+                        {
+                            @if (i == 0)
+                            {
+                                <a style="border-radius:0;" href="@file.Substring(8)" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                            }
+                            else
+                            {
+                                <a href="@file.Substring(8)" data-lightbox="roadtrip" class="d-none">@i</a>
+                            }
+                            <span class="invisible">@(i++)</span>
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-xl-8 col-md-6 mb-0">
+            <div class="row">
+                <div class="col-xl-4">
+                    <table class="table table-sm table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row">HEURE D’ARRIVEE</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Date.TimeOfDay.Hours
+
+                                        <span>h</span>
+                                        <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">N° DU JOUR</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Numjour
+                                    }
+                                </td>
+                            </tr>
+                            @* <tr>
+                            <th scope="row">N° PARAMETRE</th>
+                            <td>
+                            @if (fichiste != null)
+                            {
+                            @fichiste.Parametreid
+                            }
+                            </td>
+                            </tr>*@
+                            <tr>
+                                <th scope="row">N° FICHISTE</th>
+                                <td>
+                                    @if (fichiste != null)
+                                    {
+                                        @fichiste.Fichisteid
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pb-1">
+                    <table class="table table-sm table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row">TEMPERATURE</th>
+                                <td>
+                                    <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Temperature <span>°</span>
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">T.A.D</th>
+                                <td>
+                                    <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Tad
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">T.A.G</th>
+                                <td>
+                                    <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Tag
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">FREQUENCE CARDIAQUE</th>
+                                <td>
+                                    <span class="" style="font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.FrequenceCardiaque
+                                        }
+                                    </span>
+                                </td>
+                                <th scope="row">POIDS</th>
+                                <td colspan="3">
+                                    <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Poids
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">OBSERVATION</th>
+                                <td colspan="5">
+                                    @if (parametre != null)
+                                    {
+                                        @parametre.Observation
+                                    }
+                                </td>
+                            </tr>
+                            @* <tr>
+                            <th scope="row">MEDECIN</th>
+                            <td colspan="5">@medecin.NomMedecin @medecin.PrenomMedecin</td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</RadzenCard>
+<RadzenCard class="p-0 mt-2">
+    <div class="card-header">
+        <h6 class="float-left" style="line-height:30px; margin-bottom:0px"><span class="fas fa-user-nurse mr-1 fa-sm"></span>Information mère</h6>
+        <div class="float-right">
+            @*<RadzenButton Click="@UpdateMaternite" Icon="edit" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />*@
+            <RadzenButton Click="@SaveMaternite" Icon="save" ButtonType="Radzen.ButtonType.Button" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" />
+        </div>
+
+    </div>
+    <div class="p-2">
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Age mère : </span>
+                    <RadzenNumeric TValue="int?" class="form-control" placeholder="Age " @bind-Value="@maternite.AgeMere" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Grossesse : </span>
+                    <RadzenTextBox TValue="string?" class="form-control" placeholder="Mois de grossesse" @bind-Value="maternite.Grossesse" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Bébé numéro : </span>
+                    <RadzenNumeric TValue="int?" class="form-control" placeholder="Numéro" @bind-Value="maternite.NumeroBebe" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">DDR : </span>
+                    <RadzenDatePicker @bind-Value="@maternite.DateDernierRegle" TValue="DateTime?" DateFormat="dd/MM/yyyy" Placeholder="Date de la dernière règle" Style="Width:260px" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">DPA : </span>
+                    <RadzenDatePicker @bind-Value="@maternite.DateProbableAccouchement" TValue="DateTime?" DateFormat="dd/MM/yyyy" Placeholder="Date probable d’accouchement" Style="Width:260px" />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Date enregistrement : </span>
+                    <RadzenDatePicker @bind-Value="@maternite.Date" TValue="DateTime" DateFormat="dd/MM/yyyy" Placeholder="Date de création" Style="Width:150px" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Nombre d'accouchement : </span>
+                    <RadzenNumeric TValue="int?" Style="width:120px" @bind-Value="@maternite.NombreAccouchement" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Type d'accouchement' : </span>
+                    @if (typeMaternite != null)
+                    {
+                        <RadzenDropDownDataGrid Class="form-control " AllowFiltering="true" TValue="string" AllowClear="true"
+                                            Data="@typeMaternite" @bind-Value="@maternite.TypeAccouchement" Placeholder="Type d'accouchement"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" PageSize="3" AllowSorting=false />
+                    }
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" style="height:35px">Nombre CPN Créer : </span>
+                    <RadzenNumeric TValue="int" Style="width:130px" ShowUpDown=false @bind-Value=@countCpn Disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</RadzenCard>
+<RadzenCard class="p-0 mt-2 mb-4">
+    <div class="card-header">
+        <h6 class="float-left" style="line-height:30px; margin-bottom:0px"><span class="fas fa-list mr-1 fa-sm"></span>Liste CPN</h6>
+        <div class="float-right">
+            <RadzenButton Icon="add" ButtonStyle="ButtonStyle.Success" Click="@ShowInlineDialog" Size="ButtonSize.Small" />
+        </div>
+    </div>
+    <div class="p-2">
+        <RadzenDataGrid @ref="cpnsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="Radzen.DataGridEditMode.Single"
+                        Data="@cpns" TItem="Cpn" Responsive>
+            <Columns>
+                <RadzenDataGridColumn TItem="Cpn" Property="Date" Title="Date et Heure"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Cpn" Property="NumeroCpn" Title="Numéro du CPN">
+                    <Template Context="cpn">
+                        <h5><span class="badge bg-dark">@cpn.NumeroCpn</span></h5>
+                    </Template>
+                </RadzenDataGridColumn>
+                @*<RadzenDataGridColumn TItem="Cpn" Property="MaterniteId" Title="ID MAternité"></RadzenDataGridColumn>*@
+                <RadzenDataGridColumn TItem="Cpn" Context="cpn" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                    <Template Context="cpn">
+                        <RadzenButton Click="@(()=>navigation.NavigateTo("/cpn/" + cpn.CpnId))" Text="Détails" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Warning" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</RadzenCard>
+@code {
+    [Parameter]
+    public string idMaternite { get; set; }
+    IEnumerable<string> typeMaternite = new string[] { "Normal", "Dystocique", "Prématuré", "Avortement", "Mort né", "Referée" };
+    RadzenDataGrid<Cpn>? cpnsGrid;
+    int tdr = 3;
+    bool valider; bool avMatShow = true;
+    Models.Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    string[]? files = null;
+    string? numOsiet, Nom, Etablissement, nomDossier;
+    int i = 0, countCpn = 0;
+    AvoirMaternite avoirMaternite = new();
+    NotificationMessage notification = new();
+    bool dossierExiste;
+    AvoirLaboratoire avLab = new();
+    Laboratoire lab = new();
+    long id;
+    Maternite maternite = new();
+    Cpn _cpn = new();
+    List<Cpn> cpns = new List<Cpn>();
+
+    async Task ShowInlineDialog()
+    {
+        var result = await DialogService.OpenAsync<_AddCPN>("Creation CPN",
+        new Dictionary<string, object>() { { "idMaternite", maternite.MaterniteId } },
+            new Radzen.DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = false, Left = "20px" });
+            
+        cpns = await materniteService.GetAllCpnByMaternite(Convert.ToInt64(idMaternite));
+        StateHasChanged();
+    }
+
+    private async Task SaveMaternite()
+    {
+        maternite.FichisteId = fichiste.Fichisteid;
+        bool result = await materniteService.UpdateMaternite(maternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Succes.",
+                    Detail = "Enreigstrement reussi.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement,contacter l'administrateur.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadFirst()
+    {
+        try
+        {
+            fichiste = await fichisteservice.getFichisteById(id);
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+                if (employer.NomDossier != null)
+                {
+                    if (employer.NomDossier != null)
+                    {
+                        nomDossier = employer.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+
+                }
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+                if (famille.NomDossier != null)
+                {
+                    if (famille.NomDossier != null)
+                    {
+                        nomDossier = famille.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+                }
+            }
+
+            if (fichiste != null)
+            {
+                parametre = await parametreService.GetParametreByFichiste(id);
+                List<Cpn> cpnList = await materniteService.GetAllCpnByMaternite(maternite.MaterniteId);
+                countCpn = cpnList.Count;
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Patiant n'existe pas..",
+                    Detail = "Contacter le rsponsable.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        cpns = await materniteService.GetAllCpnByMaternite(Convert.ToInt64(idMaternite));
+        StateHasChanged();
+    }
+
+    protected async override void OnInitialized()
+    {
+        maternite = await materniteService.GetMaterniteByID(Convert.ToInt64(idMaternite));
+        id = maternite.FichisteId;
+        await LoadFirst();
+        StateHasChanged();
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+}

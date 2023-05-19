@@ -1,0 +1,679 @@
+﻿@page "/parametre/{patiantid}"
+@layout ParametreLayout
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.PatiantController
+@using LYRA.Controllers.ControllerDentiste
+@using LYRA.Controllers.Rdv_Medecin
+@using LYRA.Models
+@using LYRA.Models.Examens
+@using LYRA.Models.Administration
+@using LYRA.Models.Maternites
+@using LYRA.Pages.Medecin
+@using LYRA.Shared.Parametre
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IParametreService paramService
+@inject IUtilisateurService uService
+@inject IPatiantService patiantService
+@inject IExamenService examenService
+@inject IMedecinService medecinService
+@inject IToastService toastService
+@inject IDentisteService dentisteService
+@inject IMaterniteService materniteService
+@inject Radzen.NotificationService notificationService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Parametre, Admin")]
+
+
+<AuthorizeView Roles="Admin, Parametre">
+    <Authorized>
+        <RadzenNotification />
+        @if (ok != "ok")
+        {
+            <Loading />
+        }
+
+        @if (ok == "ok" && patiant != null)
+        {
+            <div class="card card-info mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">ENREGISTREMENT PARAMETRE</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="row g-3 align-items-center  float-right">
+                                <div class="col-auto">
+                                    <label for="inputPassword6" class="col-form-label">Date et heure : </label>
+                                </div>
+                                <div class="col-auto">
+                                    <RadzenDatePicker TValue="DateTime" ShowTimeOkButton ShowTime Placeholder="Date et heure" value="@patiant.Datepassage" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row g-2 align-items-center  float-right">
+                                <div class="col-auto">
+                                    <label for="inputPassword6" class="col-form-label">Numero du jour: </label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number" disabled class="form-control" aria-describedby="dateParametre" value="@patiant.Numjour">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="row g-2 align-items-center float-right">
+                                <div class="col-auto">
+                                    <label for="inputPassword6" class="col-form-label">Numero OSIET : </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="badge bg-success text-wrap" style="width: 11rem; font-size:0.9rem">
+                                        @if (patiant.Categorie.Trim() == "Travailleur")
+                                        {
+                                            @employer.Numeroosiet
+                                        }
+                                        else if (patiant.Categorie.Trim() == "Famille")
+                                        {
+                                            @famille.Numeroosiet
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-4">
+                            <div class="row g-3 align-items-center  float-right">
+                                <div class="col-auto">
+                                    <label for="inputPassword6" class="col-form-label">Nom complet : </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="badge bg-primary text-wrap" style="width: 11.5rem; font-size:0.9rem">
+                                        @if (patiant.Categorie.Trim() == "Travailleur")
+                                        {
+                                            @(employer.Nom + " " + employer.Prenom)
+
+                                        }
+                                        else if (patiant.Categorie.Trim() == "Famille")
+                                        {
+                                            @(famille.Nom + " " + famille.Prenom)
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 ml-0">
+                            <div class="row g-3 align-items-center  float-right">
+                                <div class="col-auto">
+                                    <label for="inputPassword6" class="col-form-label">Societe : </label>
+                                </div>
+                                <div class="col-auto">
+                                    <input value="@employeur.Raisonsociale" type="text" disabled class="form-control  float-right" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 ml-0">
+                            <div class="row g-3 align-items-center float-right">
+                                <div class="col-auto  float-right">
+                                    <label for="inputPassword6" class="col-form-label">Categorie : </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="badge bg-dark text-wrap" style="width: 11rem; font-size:0.9rem">
+                                        @patiant.Categorie
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-auto">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">T.A.G : </label>
+                                <RadzenMask Mask="** / **" @bind-Value="@parametre.Tag" CharacterPattern="[0-9]" Placeholder="00 / 00" Style="width: 100%;" />
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">T.A.D : </label>
+                                <RadzenMask Mask="** / **" @bind-Value="@parametre.Tad" CharacterPattern="[0-9]" Placeholder="00 / 00" Style="width: 100%;" />
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Temperature : </label>
+                                <RadzenTextBox @bind-Value="@parametre.Temperature" class="form-control" placeholder="Temperature" />
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Poids : </label>
+                                <RadzenTextBox @bind-Value="@parametre.Poids" class="form-control" placeholder="Poids" />
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Frequence cardiaque : </label>
+                                <RadzenTextBox @bind-Value="@parametre.FrequenceCardiaque" class="form-control" placeholder="Frequence cardiaque" />
+                            </div>
+                        </div>
+                        <div class="col-auto w-75">
+                            <div class="mb-3 w-100">
+                                <label for="exampleFormControlInput1" class="form-label">Observations : </label><br />
+                                <RadzenTextArea class="form-comtrol w-100" Style="height:3rem;" @bind-Value="@parametre.Observation" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-0" />
+                </div>
+                <div class="col-md-12">
+                    <h4 class="">Selectionner le passage : </h4>
+                    <div class="p-2" style="background-color: #f0f0f0">
+                        <RadzenRadioButtonList @bind-Value=@passage TValue="int" Change=@((args) => Changed(args)) Name="radioPassage">
+                            <Items>
+                                <RadzenRadioButtonListItem Text="Medecin" Value="1" TValue="int" />
+                                <RadzenRadioButtonListItem Text="Dentiste" Value="2" TValue="int" />
+                                <RadzenRadioButtonListItem Text="Maternité" Value="3" TValue="int" />
+                                @*<RadzenRadioButtonListItem Text="Echo/ECG" Value="4" TValue="int" />*@
+                                <RadzenRadioButtonListItem Text="Laboratoire" Value="5" TValue="int" />
+                                @*<RadzenRadioButtonListItem Text="Radio" Value="6" TValue="int" Disabled />*@
+                            </Items>
+                        </RadzenRadioButtonList>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-12 mb-3 " style="height:30px;">
+                    <RadzenButton Click="@(()=>OnSaveClicked())" class="float-right" Text="Enregistrer" ButtonStyle="ButtonStyle.Success" />
+                    @*<button onclick=" class="btn btn-success float-right " style="position:unset"><span class="fas fa-save"></span> Enregistrer</button>*@
+                </div>
+            </div>
+        }
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    [Parameter]
+    public string patiantid { get; set; } = null!;
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
+    string? tag, tad, poids, temperature, cardiaque, observation;
+    Parametre parametre = new();
+    Patiant patiant = new();
+    Famille famille = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Fichiste fichiste = new();
+    Consultation consultation = new();
+    string? ok = null;
+    Utilisateur utilisateur = new();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    private ToastParameters? _toastParameters;
+    int? valuePassage = 1;
+    int passage = 1;
+    int fichisteId;
+    int affiliationId;
+    AvoirMaternite avoirMaternite = new();
+    NotificationMessage notification = new();
+
+    public void Changed(Object args)
+    {
+        int? passe = (int?)args;
+        valuePassage = passe;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        fichiste = await fichisteService.getFichisteById(Convert.ToInt64(patiantid));
+        await LoadPatiant();
+        await LoadFichiste();
+        await LoadEmployeur();
+        await getUserActif();
+        await LoadParametre();
+        await LoadConsultation();
+        ok = "ok";
+        valuePassage = 1;
+        StateHasChanged();
+    }
+
+    private async Task LoadParametre()
+    {
+        if (patiant.Fichisteid > 0)
+        {
+            try
+            {
+                Parametre? param;
+
+                param = await paramService.GetParametreByFichiste(fichiste.Fichisteid);
+                if (param != null) parametre = param;
+                if (param != null && param.Passage > 0) passage = param.Passage.Value;
+            }
+            catch (InvalidOperationException)
+            { }
+        }
+    }
+
+    private async Task LoadConsultation()
+    {
+        if (patiant.Fichisteid > 0)
+        {
+            try
+            {
+                Consultation? cons;
+                cons = await medecinService.GetConsultationByFichisteId(patiant.Fichisteid);
+                if (cons != null) { consultation = cons; valuePassage = cons.Passage; }
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+        }
+    }
+
+    public async Task LoadPatiant()
+    {
+        try
+        {
+            patiant = await patiantService.GetPatiantByIdFichiste(fichiste.Fichisteid);
+            if (patiant != null)
+            {
+                fichisteId = Convert.ToInt32(patiant.Fichisteid);
+                affiliationId = Convert.ToInt32(patiant.Affiliationid);
+            }
+        }
+        catch (Exception ex)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Il y a eu une erreur. reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    public async Task LoadFichiste()
+    {
+        if (patiant != null && patiant.Categorie != null)
+        {
+            fichiste = await fichisteService.getFichisteById(patiant.Fichisteid);
+            if (patiant.Categorie.Trim() == "Famille")
+            {
+                famille = await affiliService.GetFamilleById(Convert.ToInt32(patiant.Affiliationid));
+                if (famille != null)
+                {
+                    if (famille.Numeroosiet != null)
+                        employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+                }
+            }
+            else if (patiant.Categorie.Trim() == "Travailleur")
+            {
+                employer = await affiliService.GetEmployerById(Convert.ToInt32(patiant.Affiliationid));
+
+            }
+        }
+    }
+
+    public async Task LoadEmployeur()
+    {
+        if (employer.Numemployeur != null)
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+    }
+
+    public async Task getUserActif()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+    }
+
+    int age;
+    public async void OnSaveClicked()
+    {
+        if (valuePassage == 1 || valuePassage == 2 || valuePassage == 3 || valuePassage == 4 || valuePassage == 5 || valuePassage == 6)
+        {
+            parametre.Datecreation = DateTime.Now;
+            parametre.Fichisteid = fichiste.Fichisteid;
+            parametre.Patiantid = patiant.Patiantid;
+            if (valuePassage == 1)
+            {
+                var parameters = new ModalParameters();
+                parameters.Add(nameof(Fichiste), fichiste);
+                parameters.Add(nameof(Famille), famille);
+                parameters.Add(nameof(Employer), employer);
+                parameters.Add(nameof(Employeur), employeur);
+                parameters.Add(nameof(Parametre), parametre);
+                parameters.Add(nameof(Patiant), patiant);
+                parameters.Add(nameof(valuePassage), valuePassage);
+                try
+                {
+                    var result = await Modal.Show<_DialogMedecin>("Liste des medecin disponibles", parameters).Result;
+                    if ((bool)result.Data == true)
+                    {
+                        await patiantService.UpdatePatiantStatut(patiant.Patiantid);
+                        _toastParameters = new ToastParameters();
+                        _toastParameters.Add(nameof(MyToast.Title), "Success !");
+                        _toastParameters.Add(nameof(MyToast.Level), "Success");
+                        _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+                        toastService.ShowToast<MyToast>(_toastParameters);
+                        await Task.Delay(2000);
+                        NavigationManager.NavigateTo("/parametre");
+
+                    }
+                }
+                catch (Exception)
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Info !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Information");
+                    _toastParameters.Add(nameof(MyToast.Message), "Action annuler par l'utilisateur.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else if (valuePassage == 4 || valuePassage == 6)
+            {
+                Medecin entityMedecin = await medecinService.GetMedecinByIdUtilisateur(utilisateur.Utilisateurid);
+
+                if (entityMedecin != null)
+                {
+                    bool created;
+                    try
+                    {
+                        Consultation consul = await medecinService.GetConsultationById(consultation.Consultationid);
+                        consultation.Passage = valuePassage;
+                        created = await medecinService.UpdateConsultation(consultation);
+                        if (created)
+                        {
+                            await patiantService.UpdatePatiantStatut(patiant.Patiantid);
+                            _toastParameters = new ToastParameters();
+                            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+                            _toastParameters.Add(nameof(MyToast.Level), "Success");
+                            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+                            toastService.ShowToast<MyToast>(_toastParameters);
+                            await Task.Delay(2000);
+                            NavigationManager.NavigateTo("/parametre");
+                        }
+                        else
+                        {
+                            _toastParameters = new ToastParameters();
+                            _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                            _toastParameters.Add(nameof(MyToast.Level), "Error");
+                            _toastParameters.Add(nameof(MyToast.Message), "Erreur mise a jours consultation, reessayer plus tard.");
+                            toastService.ShowToast<MyToast>(_toastParameters);
+                        }
+                    }
+                    catch (Exception exs)
+                    {
+                        created = await medecinService.CreerConsultation(consultation);
+                        if (created)
+                        {
+                            _toastParameters = new ToastParameters();
+                            _toastParameters.Add(nameof(MyToast.Title), "Success !");
+                            _toastParameters.Add(nameof(MyToast.Level), "Success");
+                            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+                            toastService.ShowToast<MyToast>(_toastParameters);
+                            await Task.Delay(2000);
+                            NavigationManager.NavigateTo("/parametre");
+                        }
+                        else
+                        {
+                            _toastParameters = new ToastParameters();
+                            _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                            _toastParameters.Add(nameof(MyToast.Level), "Error");
+                            _toastParameters.Add(nameof(MyToast.Message), "Erreur creation consultation, reessayer plus tard.");
+                            toastService.ShowToast<MyToast>(_toastParameters);
+                        }
+                    }
+                }
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Erreur recuperation medecin, reessayer plus tard.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else if (valuePassage == 3)
+            {
+                parametre.Datecreation = DateTime.Now;
+                parametre.Fichisteid = fichiste.Fichisteid;
+                parametre.Patiantid = patiant.Patiantid;
+                parametre.Passage = Convert.ToInt32(valuePassage);
+                parametre.Status = "Terminer";
+                bool result = await paramService.AddParametre(parametre);
+
+                if (result)
+                {
+                    bool retour = await EnregistrementMAterniteMedecin();
+                    if (retour)
+                    {
+                        await patiantService.UpdatePatiantStatut(patiant.Patiantid);
+                        notification = new NotificationMessage
+                            {
+                                Style = "position: absolute; top: -50px",
+                                Severity = NotificationSeverity.Success,
+                                Summary = "Enregistrement reussi.",
+                                Detail = "L'enregistrement a été fait avec succès.",
+                                Duration = 4000
+                            };
+                        notificationService.Notify(notification);
+                        await Task.Delay(1000);
+                        NavigationManager.NavigateTo("/parametre");
+                    }
+                }
+                else
+                {
+                    notification = new NotificationMessage
+                        {
+                            Style = "position: absolute; top: -50px",
+                            Severity = NotificationSeverity.Error,
+                            Summary = "Erreur d'enregistrement.",
+                            Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                            Duration = 4000
+                        };
+                    notificationService.Notify(notification);
+                }
+
+            }
+            else if (valuePassage == 2)
+            {
+                parametre.Datecreation = DateTime.Now;
+                parametre.Fichisteid = fichiste.Fichisteid;
+                parametre.Patiantid = patiant.Patiantid;
+                parametre.Passage = Convert.ToInt32(valuePassage);
+                parametre.Status = "Terminer";
+                bool result = await paramService.AddParametre(parametre);
+                if (result)
+                {
+                    Dentiste dentiste = new();
+                    dentiste.Fichisteid = fichiste.Fichisteid;
+                    dentiste.Date = DateTime.Now;
+                    dentiste.Age = age;
+                    bool resultat = await dentisteService.CreateDentiste(dentiste);
+                    if (resultat)
+                    {
+                        await patiantService.UpdatePatiantStatut(patiant.Patiantid);
+                        notification = new NotificationMessage
+                            {
+                                Style = "position: absolute; top: -50px",
+                                Severity = NotificationSeverity.Success,
+                                Summary = "Enregistrement reussi.",
+                                Detail = "L'enregistrement a été fait avec succès.",
+                                Duration = 4000
+                            };
+                        notificationService.Notify(notification);
+                    }
+                    else
+                    {
+                        notification = new NotificationMessage
+                            {
+                                Style = "position: absolute; top: -50px",
+                                Severity = NotificationSeverity.Error,
+                                Summary = "Erreur.",
+                                Detail = "Erreur d'enregistrement.",
+                                Duration = 4000
+                            };
+                        notificationService.Notify(notification);
+                    }
+                }
+            }
+            else if (valuePassage == 5)
+            {
+                await saveLabo();
+                await patiantService.UpdatePatiantStatut(patiant.Patiantid);
+            }
+            NavigationManager.NavigateTo("/parametre");
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Warning,
+                    Summary = "Attention.",
+                    Detail = "veuillez selectionner le passage.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+
+    private async Task<bool> EnregistrementMAterniteMedecin()
+    {
+        avoirMaternite.Date = DateTime.Now;
+        avoirMaternite.Etat = "En cours";
+        avoirMaternite.Validation = 0;
+        avoirMaternite.FichisteId = fichiste.Fichisteid;
+        avoirMaternite.Commentaire = "Demande de passer à la maternité";
+        bool result = await materniteService.CreateAvoirMaternite(avoirMaternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Enregistrement reussi.",
+                    Detail = "L'enregistrement a été fait avec succès.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur d'enregistrement.",
+                    Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        await Task.Delay(3000);
+        return result;
+    }
+
+    public async Task<bool> SaveConsultation(int idMedecin)
+    {
+        bool result;
+        try
+        {
+            parametre.Medecinid = idMedecin;
+            result = await paramService.AddParametre(parametre);
+            consultation = null;
+            consultation = new();
+            consultation.Fichisteid = fichiste.Fichisteid;
+            consultation.Medecinid = idMedecin;
+            consultation.ListeAttente = "Oui";
+            consultation.Numjour = fichiste.Numjour;
+            consultation.Passage = valuePassage;
+            bool created = await medecinService.UpdateConsultation(idMedecin, consultation);
+        }
+        catch (Exception ex)
+        {
+            result = false;
+        }
+
+        return result;
+    }
+
+
+    Laboratoire laboratoire = new();
+    AvoirLaboratoire avoirLaboratoire = new();
+
+    public async Task<bool> CreateAvoirLAboratoire(AvoirLaboratoire avoirLabo)
+    {
+        return await examenService.CreateAvoirLaboratoire(avoirLabo);
+    }
+
+    public async Task saveLabo()
+    {
+        bool avoirCreated = false;
+        avoirLaboratoire.Statut = "En cours";
+        avoirLaboratoire.Date = DateTime.Now;
+        avoirLaboratoire.FichisteId = fichiste.Fichisteid;
+        avoirCreated = await CreateAvoirLAboratoire(avoirLaboratoire);
+        if (avoirCreated == true)
+        {
+            bool result = await CreateLaboratoire();
+            if (result == true)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Information.",
+                        Detail = "Enregistrement réussi.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error.",
+                        Detail = "Erreur d'enregistrement, veuillez réessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task<bool> CreateLaboratoire()
+    {
+        bool result = false;
+        laboratoire.Date = DateTime.Now;
+        laboratoire.Statut = "En cours";
+        laboratoire.Commentaire = "Passage directe au LAboratoire";
+        laboratoire.FichisteId = fichiste.Fichisteid;
+        result = await examenService.CreateLaboratoire(laboratoire);
+        return result;
+    }
+
+}

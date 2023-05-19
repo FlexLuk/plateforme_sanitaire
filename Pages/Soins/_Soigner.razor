@@ -1,0 +1,620 @@
+﻿@page "/soins/{idFichiste}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared.Soins
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@using LYRA.Models.Pharmacie
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using Radzen
+@using Radzen.Blazor
+@layout SoinsLayout
+@inject IExamenService examenService
+@inject IToastService toastService
+@inject ISoinsService soinsService
+@inject IFichisteService fichisteService
+@inject IMedecinService medecinService
+@inject IAffiliationService affiliationService
+@inject IAdhesionService adhesionService
+@inject IParametreService parametreService
+@inject NavigationManager Go
+@inject Radzen.NotificationService notificationService
+@attribute [Authorize(Roles = "Soins, Admin")]
+
+<PageTitle>Soins</PageTitle>
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+
+<AuthorizeView Roles="Soins, Admin">
+    <Authorized Context="Flex">
+        <RadzenNotification />
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-1">
+                <div class="card border-left-primary shadow  py-2">
+                    <div class="card-body m-0">
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">N° OSIET</th>
+                                    <td style="font-weight:bold">
+                                        @if (numOsiet != null)
+                                        {
+                                            @numOsiet
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">NOM COMPLET</th>
+                                    <td>
+                                        @if (Nom != null)
+                                        {
+                                            @Nom
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">AGE</th>
+                                    <td><span>@age</span>&ensp;<i>ans</i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card border-left-primary shadow  py-2">
+                    <div class="card-body m-0">
+                        @*<h6 class="">PATIANT</h6>*@
+                        <table class="table table-sm table-bordered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">TEMPERATURE</th>
+                                    <td>
+                                        <span class="" style="color: #fd7e14; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Temperature
+                                            }°
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.D</th>
+                                    <td>
+                                        <span class="" style="color: #0d6efd; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tad
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">T.A.G</th>
+                                    <td>
+                                        <span class="" style="color: #6f42c1; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Tag
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                    <td>
+                                        <span class="" style="font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.FrequenceCardiaque
+                                            }
+                                        </span>
+                                    </td>
+                                    <th scope="row">POIDS</th>
+                                    <td colspan="3">
+                                        <span class="" style="color: #0d6efd; font-weight:bold">
+                                            @if (parametre != null)
+                                            {
+                                                @parametre.Poids
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">OBSERVATION</th>
+                                    <td colspan="5">
+                                        @if (parametre != null)
+                                        {
+                                            @parametre.Observation
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Liste de soins a faire</h6>
+            </div>
+            <div class="ard-body ">
+                @if (getRepListSoins == false)
+                {
+                    <Loading />
+                }
+                else
+                {
+                    <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                            AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="true" Data="@listSoins"
+                            TItem="AvoirSoins" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                            FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page" EmptyText="Aucune information"
+                            SelectionMode="DataGridSelectionMode.Single" class="mt-0">
+                        <Columns>
+                            <RadzenGridColumn TItem="AvoirSoins" Property="TypeSoins" Title="TYPE"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="AvoirSoins" Property="Demande" Title="Demande"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="AvoirSoins" Property="DemandeSup" Title="Demande supplementaire"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="AvoirSoins" Property="Resultat" Title="Resultat"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="AvoirSoins" Title="Date" Width="90px">
+                                <Template Context="data">
+                                    @data.Date.GetValueOrDefault().ToShortDateString()
+                                </Template>
+                            </RadzenGridColumn>
+                            @*<RadzenGridColumn TItem="AvoirSoins" Property="Commentaire" Title="Commentaire"></RadzenGridColumn>*@
+                            <RadzenGridColumn TItem="AvoirSoins" Property="Presence" Title="Presence"></RadzenGridColumn>
+                            <RadzenGridColumn TItem="AvoirSoins" Title="" Width="100px" Filterable="false" Sortable="false">
+                                <Template Context="data">
+                                    <RadzenButton style="border-radius:0px;" Text="" Click="@(args=>Set_Soins(data))" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Secondary" class="oi oi-eye" />
+                                </Template>
+                            </RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-1 mb-4">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="mb-0" style="margin-top:8px">Enregistrement de soins</h6>
+                    </div>
+                    <div class="col ">
+                        <RadzenButton Disabled=@boolEnreg Text="Enregistrer" Click="@(()=>EnregistrementSoins())" class="btn btn-secondary btn-sm float-right" style="border-radius:0" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body ">
+                <div class="row">
+                    <div class="col">
+                        <div class="row pb-2">
+                            <div class="col-3 pr-0">
+                                <div class="input-group ">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="height:35px; border-radius:0px;" id="basic-addon1">Frequence &nbsp; :</span>
+                                    </div>
+                                    @if (avoir_soins != null && avoir_soins.Frequence > 0)
+                                    {
+                                        <RadzenNumeric class="form-control" TValue="int?" Value="@avoir_soins.Frequence" Style="border-radius:0px" ShowUpDown=false Disabled />
+                                    }
+                                    else if (avoir_soins != null)
+                                    {
+                                        <RadzenNumeric class="form-control" TValue="int?" @bind-Value="@avoir_soins.Frequence" Style="border-radius:0px" ShowUpDown=false />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-3 pl-0" style="margin-left:-23px;">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="height:35px; border-radius:0px" id="basic-addon1">par </span>
+                                    </div>
+
+                                    @if (avoir_soins != null && avoir_soins.Unitefrequence != null)
+                                    {
+                                        <RadzenTextBox TValue="string" class="form-control" @bind-Value="@avoir_soins.Unitefrequence" style="border-radius:0px" Disabled />
+                                    }
+                                    else if (avoir_soins != null)
+                                    {
+                                        <RadzenDropDown class="form-control" TValue="string" Data="@unitFrequence" TextProperty="unite" ValueProperty="id" @bind-Value="@Unitefrequence" style="border-radius:0px" Placeholder="Choisissez ici" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-3 pr-0" style="margin-left:-30px;">
+                                <div class="input-group ">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="height:35px; border-radius:0px" id="basic-addon1">Nombre presence &nbsp; :</span>
+                                    </div>
+                                    @if (avoir_soins != null)
+                                    {
+                                        <RadzenLabel Text="@nbrPresence" class="form-control" style="border-radius:0px" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="m-1 mb-3" />
+                    </div>
+                   
+                    <div>
+                        <div class="row pl-1">
+                            <div class="col">
+                                Dernier passage : &ensp;
+                                <i>
+                                    @if (passageSoins == null)
+                                    {
+                                        <span></span>
+                                    }
+                                    else if (passageSoins != null && passageSoins.Count > 0)
+                                    {
+                                        <h6><span>@passageSoins[passageSoins.Count - 1].Date.ToString("dd MMMM yyyy")</span></h6>
+                                    }
+                                </i>
+                            </div>
+                            <div class="col">
+                                 <div >
+                                        Passage : &ensp;
+                                        <RadzenDatePicker ShowTime="true" @bind-Value="@datePassage" />
+                                    </div>
+                            </div>
+                        </div>
+                        <hr class="m-1 mb-3" />
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-bordered table-responsive ">
+                            <tbody>
+                                <tr style="vertical-align:middle">
+                                    <td width="50px" class="p-2">
+                                        <b>SOINS</b>
+                                    </td>
+                                    <td>
+                                        <span class="bg-info p-2">
+                                            @if (avoir_soins != null)
+                                            {
+                                                @avoir_soins.TypeSoins
+                                            }
+                                        </span>
+                                    </td>
+                                    <td><b>TYPE</b></td>
+                                    <td><b>RESULTAT</b></td>
+                                </tr>
+                                <tr style="vertical-align:middle">
+                                    <td width="50px"><b>DEMANDE</b></td>
+                                    <td>
+                                        <b class="bg-warning p-2">
+                                            @if (avoir_soins != null)
+                                            {
+                                                @avoir_soins.Demande
+                                            }
+                                        </b>
+                                    </td>
+                                    <td class="">
+                                        @if (avoir_soins != null)
+                                        {
+                                            @avoir_soins.TypeSoins
+                                        }
+                                    </td>
+                                    <td class="">
+                                        @if (avoir_soins != null)
+                                        {
+                                            <RadzenDropDown @bind-Value="@avoir_soins.Resultat" Data="@resultDopDown" Placeholder="Choisissez ici" />
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr class="m-1 mb-3" />
+                        <div class="row m-2">
+                            <div class="col" style="width:150px">
+                                <h8 width="20px"><b>DEMANDE SUPPLEMENTAIRE :</b></h8><br />
+                                @if (avoir_soins != null)
+                                {
+                                    @avoir_soins.DemandeSup
+                                }
+                            </div>
+                            <div class="col" style="width:120px">
+                                <h8 width="20px"><b>COMMENTAIRE :</b></h8>
+                                @if (avoir_soins != null)
+                                {
+                                    <RadzenTextArea Placeholder="Votre commentaire ici" class="" style="width:100%; " @bind-Value="@avoir_soins.Commentaire"></RadzenTextArea>
+                                }
+                            </div>
+                            <div class="col">
+                                <h8 width="20px"><b>CONSOMMABLES :</b></h8>
+                                @if (avoir_soins != null)
+                                {
+                                    <RadzenTextArea Placeholder="Entre le consommables ici" class="" style="width:100%; " @bind-Value="@avoir_soins.Consommables"></RadzenTextArea>
+                                }
+                            </div>
+                        </div>
+                        <hr class="m-1 mb-3" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <RadzenButton Click="@(()=>Go.NavigateTo("/soins"))" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Text="Retour à la liste patient" />
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    <div class="col">
+                        <RadzenButton Click="@(()=>TerminerSoins())" Text="Terminer" Style="border-radius:0" class="float-right" />
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+    </Authorized>
+    <NotAuthorized>
+        <LoginRedirect />
+    </NotAuthorized>
+</AuthorizeView>
+@*NOMBRE DE PRESENCE DOIT AUGMENTER*@
+@code {
+    [Parameter]
+    public string idFichiste { get; set; } = null!;
+    bool loaded = false;
+    string? numOsiet, Nom, Etablissement, categorie, nbrPresence, Unitefrequence;
+    int age;
+    RadzenGrid<SoinsModel>? grid;
+    NotificationMessage notification = new();
+    ToastParameters? _toastParameters;
+    List<string> unitFrequence = new List<string>();
+    List<string> resultDopDown = new List<string>();
+    Soins soins = new();
+    PassageSoin? passageSoin = new();
+    Employer employer = new();
+    Famille famille = new();
+    Employeur employeur = new();
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    bool getRepListSoins = false;
+    List<AvoirSoins> listSoins = new List<AvoirSoins>();
+    AvoirSoins? avoir_soins;
+    Consultation consultation = new();
+    DateTime datePassage;
+    bool boolEnreg = false;
+    List<PassageSoin> passageSoins = new List<PassageSoin>();
+    class ListBox
+    {
+        public ListBox() { }
+        public int id { get; set; }
+        public int unite { get; set; }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        datePassage = DateTime.Now;
+        //passageSoin = null;
+        avoir_soins = null;
+        fichiste = await fichisteService.getFichisteById(Convert.ToInt64(idFichiste));
+        if (fichiste != null)
+        {
+            soins = await soinsService.GetSoinsByFichisteId(fichiste.Fichisteid);
+
+            if (soins != null)
+                listSoins = await soinsService.GetAvoirSoinsBySoins(soins.Soinsid);
+
+            if (fichiste.Fichisteid > 0)
+            {
+                parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+            }
+
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            }
+        }
+
+        unitFrequence.Add("heure");
+        unitFrequence.Add("jour");
+        unitFrequence.Add("semaine");
+        unitFrequence.Add("mois");
+        resultDopDown.Add("Negatif");
+        resultDopDown.Add("Positif");
+        resultDopDown.Add("Fait");
+        resultDopDown.Add("Annuler");
+        getRepListSoins = true;
+        nbrPresence = "0";
+        StateHasChanged();
+    }
+
+    private async void Set_Soins(AvoirSoins avSoins)
+    {
+        avoir_soins = avSoins;
+        if (avoir_soins.NombrePresence == null) nbrPresence = "0";
+        else
+            nbrPresence = "" + avoir_soins.NombrePresence;
+
+        if (avoir_soins.Etat != null)
+        {
+            if (avoir_soins.Etat.Trim() == "Terminer") boolEnreg = true;
+            else boolEnreg = false;
+        }
+
+        passageSoins = await soinsService.GetPassageSoinsBySoin(avSoins.Soinsid.Value);
+        StateHasChanged();
+    }
+
+    private async Task GetFamille(int familleID)
+    {
+        famille = await affiliationService.GetFamilleById(familleID);
+        if (famille != null && famille.Numeroosiet != null)
+        {
+            employer = await affiliationService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null && employer.Datenaissance != null && employer.Numemployeur != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                categorie = fichiste.Categorie;
+                int dateNaissance = employer.Datenaissance.Value.Year;
+                int currentDate = DateTime.Now.Year;
+                age = currentDate - dateNaissance;
+            }
+
+        }
+    }
+
+    private async Task GetEmployer(int employerID)
+    {
+        employer = await affiliationService.GetEmployerById(employerID);
+        if (employer != null && employer.Numemployeur != null && employer.Datenaissance != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            categorie = fichiste.Categorie;
+            int dateNaissance = employer.Datenaissance.Value.Year;
+            int currentDate = DateTime.Now.Year;
+            age = currentDate - dateNaissance;
+        }
+    }
+
+    private async Task EnregistrementSoins()
+    {
+        if (avoir_soins != null && avoir_soins.Avoirsoinsid > 0)
+        {
+            bool resultPassageSoins = await AddPassageDateSoins(soins.Soinsid, datePassage, avoir_soins.Avoirsoinsid);
+            if (resultPassageSoins)
+            {
+                avoir_soins.Date = datePassage;
+                if (avoir_soins.NombrePresence == null) avoir_soins.NombrePresence = 1;
+                else avoir_soins.NombrePresence = Convert.ToInt32(nbrPresence) + 1;
+                avoir_soins.Presence = "Oui";
+                avoir_soins.Etat = "Terminer";
+                if (avoir_soins.Unitefrequence != "")
+                    avoir_soins.Unitefrequence = Unitefrequence;
+                bool result = await UpdateAvoirSoins(avoir_soins);
+                if (result)
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Information !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Success");
+                    _toastParameters.Add(nameof(MyToast.Message), "Enregistrement reussi.");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+                else
+                {
+                    _toastParameters = new ToastParameters();
+                    _toastParameters.Add(nameof(MyToast.Title), "Error !");
+                    _toastParameters.Add(nameof(MyToast.Level), "Error");
+                    _toastParameters.Add(nameof(MyToast.Message), "Une erreur se produit, veuiller reessayer plus tard. ");
+                    toastService.ShowToast<MyToast>(_toastParameters);
+                }
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Error !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Une erreur se produit, veuiller reessayer plus tard. ");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Error !");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "SVP, Veuillez sélectionner le soins à faire. ");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+    }
+
+    private async Task<bool> UpdateSoinsFin(Soins soins)
+    {
+        bool result = false;
+        result = await soinsService.UpdateSoinsFin(soins);
+        return result;
+    }
+
+    private async Task<bool> UpdateAvoirSoins(AvoirSoins avSoins)
+    {
+        bool result = false;
+        result = await soinsService.UpdateAvoirSoins(avSoins);
+        return result;
+    }
+
+    private async Task<bool> AddPassageDateSoins(long idSoins, DateTime date, long avoir_soins_id)
+    {
+        PassageSoin passageSoin = new();
+        passageSoin.SoinsId = idSoins;
+        passageSoin.Date = date;
+        passageSoin.AvoirSoinsId = avoir_soins_id;
+        bool result = false;
+        result = await soinsService.CreatePassageSoins(passageSoin);
+        return result;
+    }
+
+    public async Task TerminerSoins()
+    {
+        soins.Fin = "Terminer";
+        try
+        {
+            bool result = await soinsService.UpdateSoinsFin(soins);
+            if (result)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Enregistrement reussi.",
+                        Detail = "L'enregistrement a été fait avec succès.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur d'enregistrement.",
+                        Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur d'enregistrement.",
+                    Detail = "L'enregistrement a eu une erreur. reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+    }
+}

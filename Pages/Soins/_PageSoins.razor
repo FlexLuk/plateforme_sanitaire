@@ -1,0 +1,501 @@
+﻿@page "/medecin_soins/{idConsultation}"
+@layout MedecinLayout
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.PharmacieController
+@using LYRA.Controllers.SoinsController
+@using LYRA.Models
+@using LYRA.Models.Pharmacie
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using Radzen
+@using Radzen.Blazor
+@using LYRA.Shared.Medecin
+@inject NavigationManager Go
+@inject IToastService toastService
+@inject ISoinsService soinsService
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject IMedecinService medecinService
+@inject ISoinsService pharmaService
+@inject IParametreService parametreService
+@attribute [Authorize(Roles = "Soins, Admin")]
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="d-flex justify-content-left align-content-center p-0 m-0">Création soins pour le patient</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 m-0">
+                    <div class="card border-left-primary shadow  py-2">
+                        <div class="card-body m-0">
+                            <h4 class="">PATIANT</h4>
+                            @*<hr />*@
+                            <table class="table table-sm table-bordered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">N° OSIET</th>
+                                        <td style="font-weight:bold">
+                                            @if (numOsiet != null)
+                                            {
+                                                @numOsiet
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">NOM COMPLET</th>
+                                        <td>
+                                            @if (Nom != null)
+                                            {
+                                                @Nom
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">ETABLISSEMENT</th>
+                                        <td>
+                                            @if (Etablissement != null)
+                                            {
+                                                @Etablissement
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CARACTERISTIQUE</th>
+                                        <td>
+                                            @if (fichiste != null)
+                                            {
+                                                @fichiste.Categorie
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card border-left-primary shadow  py-2">
+                        <div class="card-body m-0">
+                            <div class="col">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Type de soins : </span>
+                                    <RadzenDropDown TValue="string" Name="typeDropBox" @bind-Value="@type_soins_selected" Class="form-control" Data=@type_soins Change="@((args) => OnChange(args))"
+                                                    Placeholder="Veuillez choisir le type de soins ici" style="border-radius:0" />
+
+                                </div>
+
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text w-25" id="inputGroup-sizing-sm" style="border-radius:0">Demande : </span>
+                                    <RadzenDropDown Name="demandeDropBox" TValue="Demande" Class="form-control" Data=@demandes Change="@((args) => OnChanging(args))"
+                                                    TextProperty="demande" Placeholder="Veuillez choisir le type de soins ici" style="border-radius:0" />
+
+                                </div>
+                                <div class="input-group input-group-sm mb-3">
+                                    <RadzenTextArea Name="commentRadzen" @bind-Value="@demande_sup" class="w-100" style="height: 50px" Placeholder="Demande supplémentaire" />
+                                </div>
+                                <RadzenCheckBox @bind-Value="@urgence" TValue="bool" Placeholder="Urgence" Name="urgRadzen" /> <label for="urgRadzen" class="mt-1">Urgence</label>
+                                <RadzenButton Click="@(()=>CreerSoins())" class="float-right ml-4" Text="Enregistrer soins" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" />
+                                <RadzenButton Click="@(()=>Go_Back())" class="float-right" Text="Consultation" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-2 mb-4">
+        <div class="card-header">
+            Liste soins du patiant
+        </div>
+        <div class="ard-body" style="border-radius: 0">
+            @if (avoirSoins == null)
+            {
+                <Loading />
+            }
+            else
+            {
+                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                        AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@avoirSoins"
+                        TItem="AvoirSoins" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                        ApplyFilterText="appliquer" PageSizeText="Page" ColumnWidth="100%"
+                        SelectionMode="DataGridSelectionMode.Single">
+                    <Columns>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Date" Title="Date" Width="90px">
+                            <Template Context="data">
+                                @data.Date.GetValueOrDefault().ToShortDateString()
+                            </Template>
+                        </RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Demande" Title="Demande"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="DemandeSup" Title="Demande supplementaire"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Resultat" Title="Resultat"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Frequence" Title="Frequence"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Unitefrequence" Width="90px" Title="Unite"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Presence" Title="Presence"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Commentaire" Title="Commentaire" Width="200px" TextAlign="TextAlign.Left"></RadzenGridColumn>
+                        <RadzenGridColumn TItem="AvoirSoins" Property="Etat" Title="Etat">
+                            <Template Context="data">
+                                @if (data.Etat == "Encours")
+                                {
+                                    <span class="bg-warning p-2">@data.Etat</span>
+                                }
+                                else
+                                {
+                                    <span class="bg-info">@data.Etat</span>
+                                }
+                            </Template>
+                        </RadzenGridColumn>
+                    </Columns>
+                </RadzenGrid>
+            }
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [Parameter]
+    public string idConsultation { get; set; } = null!;
+    IEnumerable<string> type_soins = new string[] { "Siture", "Pansement", "TDR", "Surveillance", "Aerosol", "Urgences", "Injection", "Referes", "Autres" };
+    IEnumerable<string>? type_;
+    string? soins_selected;
+    string? demande_sup;
+    RadzenDropDown<Demande>? demandeDropBox;
+    RadzenDropDown<string>? typeDropBox;
+    RadzenTextArea? commentRadzen;
+    RadzenCheckBox<bool>? urgRadzen;
+    string? type_soins_selected;
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    Soins soins = new();
+    Consultation consultation = new();
+    List<AvoirSoins> soinss = new List<AvoirSoins>();
+    List<TypeTdr> typeTdrs = new List<TypeTdr>();
+    TypeTdr typeTdr = new();
+    Demande demande = new();
+    Demande demandeChoisi = new();
+    List<Demande> demandes = new List<Demande>();
+    List<AvoirSoins> avoirSoins = new List<AvoirSoins>();
+    bool urgence;
+    string? numOsiet = null, Nom = null, Etablissement = null;
+    private ToastParameters? _toastParameters;
+
+    protected async override void OnInitialized()
+    {
+        consultation = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+        fichiste = await fichisteservice.getFichisteById(consultation.Fichisteid);
+        if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        else if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt32(fichiste.Affiliationid));
+        }
+        soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        await GetAvoirSoins();
+
+        if (fichiste.Fichisteid != null)
+        {
+            parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+        }
+        completeTypeTdr();
+
+        StateHasChanged();
+    }
+
+    public async Task GetAvoirSoins()
+    {
+        if (soins != null)
+            avoirSoins = await pharmaService.GetAvoirSoinsBySoins(soins.Soinsid);
+    }
+
+    public void completeTypeTdr()
+    {
+        TypeTdr ttdr1 = new();
+        TypeTdr ttdr2 = new();
+        ttdr1.id = 1;
+        ttdr1.test = "HIV";
+        ttdr2.id = 2;
+        ttdr2.test = "Paludisme";
+        typeTdrs.Add(ttdr1);
+        typeTdrs.Add(ttdr2);
+    }
+
+    public void OnChange(Object value)
+    {
+        string type = (string)value;
+        if (type == "Siture")
+        {
+            demandes = new List<Demande>();
+            Demande dSiture = new();
+            dSiture.id = 1;
+            dSiture.demande = "Siture";
+            demandes.Add(dSiture);
+        }
+        else if (type == "Pansement")
+        {
+            demandes = new List<Demande>();
+            Demande dPansement = new();
+            dPansement.id = 1;
+            dPansement.demande = "Pansement";
+            demandes.Add(dPansement);
+        }
+        else if (type == "TDR")
+        {
+            demandes = new List<Demande>();
+            Demande dHIV = new();
+            Demande dPalu = new();
+            dHIV.id = 1;
+            dHIV.demande = "HIV";
+            dPalu.id = 2;
+            dPalu.demande = "Paludisme";
+            demandes.Add(dHIV);
+            demandes.Add(dPalu);
+        }
+        else if (type == "Surveillance")
+        {
+            demandes = new List<Demande>();
+            Demande dTemp = new();
+            Demande dTA = new();
+            Demande dFC = new();
+            Demande dSPO2 = new();
+            Demande dAutres = new();
+            dTemp.id = 1;
+            dTemp.demande = "T°";
+            dTA.id = 2;
+            dTA.demande = "TA";
+            dFC.id = 3;
+            dFC.demande = "FC";
+            dSPO2.id = 4;
+            dSPO2.demande = "SPO2";
+            dAutres.id = 5;
+            dAutres.demande = "Autres";
+            demandes.Add(dTemp);
+            demandes.Add(dTA);
+            demandes.Add(dFC);
+            demandes.Add(dSPO2);
+            demandes.Add(dAutres);
+        }
+        else if (type == "Injection")
+        {
+            demandes = new List<Demande>();
+            Demande im = new();
+            Demande sc = new();
+            Demande ivd = new();
+            Demande ivdl = new();
+            Demande ivdr = new();
+            im.id = 1;
+            im.demande = "IM";
+            sc.id = 2;
+            sc.demande = "S.C";
+            ivd.id = 3;
+            ivd.demande = "IVD";
+            ivdl.id = 4;
+            ivdl.demande = "IVDL";
+            ivdr.id = 5;
+            ivdr.demande = "IVDR";
+            demandes.Add(im);
+            demandes.Add(sc);
+            demandes.Add(ivd);
+            demandes.Add(ivdl);
+            demandes.Add(ivdr);
+        }
+        else if (type == "Aerosol")
+        {
+            demandes = new List<Demande>();
+            Demande humide = new();
+            Demande salbutamol = new();
+            Demande autres = new();
+            humide.id = 1;
+            humide.demande = "Humide";
+            salbutamol.id = 2;
+            salbutamol.demande = "Salbutamol";
+            autres.id = 3;
+            autres.demande = "Autres";
+            demandes.Add(humide);
+            demandes.Add(salbutamol);
+            demandes.Add(autres);
+        }
+        StateHasChanged();
+    }
+
+    public void OnChanging(Object value)
+    {
+        Demande dem = (Demande)value;
+        soins_selected = dem.demande;
+        StateHasChanged();
+    }
+
+    class TypeTdr
+    {
+        public int id { get; set; }
+        public string test { get; set; }
+    }
+
+    class Demande
+    {
+        public int id { get; set; }
+        public string demande { get; set; }
+    }
+
+    public void Go_Back()
+    {
+        Go.NavigateTo("/docteurPatiant/" + idConsultation);
+    }
+
+    public async Task CreerSoins()
+    {
+        //consultation = await medecinService.GetConsultationById(Convert.ToInt64(idConsultation));
+
+        Soins soinsExiste = new();
+        soinsExiste = await soinsService.GetSoinsByFichisteId(fichiste.Fichisteid);
+
+        if (soinsExiste.Soinsid == null)
+        {
+            await CreerNouveauSoins();
+        }
+        else if (soinsExiste.Soinsid != null && soinsExiste.Soinsid > 0)
+        {
+            await AjoutNouveauSoins();
+        }
+        await GetAvoirSoins();
+        StateHasChanged();
+    }
+
+    public async Task<bool> CreerNouveauSoins()
+    {
+        bool resultat = false;
+        bool reponse = false;
+        bool rep = false;
+        Soins s = new();
+        AvoirSoins avSoins = new();
+        s.Fichisteid = consultation.Fichisteid;
+        s.Affiliationid = Convert.ToInt64(fichiste.Affiliationid);
+        s.Categorie = fichiste.Categorie;
+        if (urgence) s.Urgence = "Oui";
+        else s.Urgence = "Non";
+        s.Date = DateTime.Now;
+        s.Fin = "non";
+        reponse = await soinsService.CreateSoins(s);
+        if (reponse)
+        {
+            DateTime da = DateTime.Now;
+            soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+            avSoins.Date = da;
+            avSoins.TypeSoins = type_soins_selected;
+            avSoins.Demande = soins_selected;
+            avSoins.Resultat = "En attente";
+            avSoins.Etat = "Encours";
+            avSoins.Soinsid = soins.Soinsid;
+            avSoins.DemandeSup = demande_sup;
+            rep = await soinsService.CreateAvoirSoins(avSoins);
+            if (rep)
+            {
+                resultat = true;
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Ajout reussi !");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Soins envoyer, en attente du resultat.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+                demandes = null;
+                StateHasChanged();
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Enregistrement erreur, Reessayer plus tard.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement erreur, Reessayer plus tard.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+        return resultat;
+    }
+
+    public async Task<bool> AjoutNouveauSoins()
+    {
+        bool resultat = false;
+        bool rep = false;
+        AvoirSoins avSoins = new();
+        DateTime da = DateTime.Now;
+        soins = await pharmaService.GetSoinsByFichisteId(fichiste.Fichisteid);
+        avSoins.Date = da;
+        avSoins.TypeSoins = type_soins_selected;
+        avSoins.Demande = soins_selected;
+        avSoins.Resultat = "En attente";
+        avSoins.Etat = "Encours";
+        avSoins.Soinsid = soins.Soinsid;
+        avSoins.DemandeSup = demande_sup;
+        rep = await soinsService.CreateAvoirSoins(avSoins);
+        if (rep)
+        {
+            resultat = true;
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Ajout reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Soins envoyer, en attente du resultat.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            demandes = null;
+            StateHasChanged();
+        }
+        else
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Erreur");
+            _toastParameters.Add(nameof(MyToast.Level), "Error");
+            _toastParameters.Add(nameof(MyToast.Message), "Enregistrement erreur, Reessayer plus tard.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+        }
+        return resultat;
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur.Trim());
+            }
+            numOsiet = famille.Numeroosiet;
+            Nom = famille.Nom + " " + famille.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur.Trim());
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+}

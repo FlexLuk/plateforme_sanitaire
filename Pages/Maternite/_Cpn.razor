@@ -1,0 +1,637 @@
+﻿@page "/cpn/{idCpn}"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models.Examens
+@using LYRA.Pages.Vaccin
+@using LYRA.Shared.Maternites
+@using Models
+@using LYRA.Models.Maternites
+@layout MaterniteLayout
+@inject IFichisteService fichisteservice
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IUtilisateurService uService
+@inject IParametreService paramArial
+@inject IMedecinService medecinService
+@inject IExamenService examenService
+@inject IMaterniteService materniteService
+@inject IParametreService parametreService
+@inject Radzen.NotificationService notificationService
+@inject Radzen.DialogService DialogService
+@inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin, Maternite")]
+
+<RadzenNotification />
+<RadzenDialog />
+<RadzenCard class="mt-0 ">
+    <div class="row">
+        <div class="col">
+            <RadzenButton Click="@(()=>navigation.NavigateTo("/maternite_page/"+maternite.MaterniteId))" Text="<= retour" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Light" Style="margin-left:-10px" />
+        </div>
+        <div class="col">
+            <RadzenButton Click="@SaveCPN" class="float-end ml-4" Style="margin-right:-10px " Text="Enregistrer" Icon="save" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-md-4 p-0 m-1">
+            <RadzenCard class="m-0 p-1">
+                <h4 class="m-1">BEBE</h4>
+                <hr class="m-0 mb-1" />
+                <div class="m-1">
+                    <div class="row">
+                        <div class="col">
+                            <span class="input-group" id="inputGroup-sizing-sm">Battements de cœur</span>
+                            <RadzenSwitch class="form-check-label ml-3 float-end" @bind-value=@checkBatement Style="height:20px; width:30px;top: -20px; margin-right: 6px" />
+                        </div>
+                        <div class="col-1">
+                            <div class="form-check form-switch  float-end" style="margin-bottom: -10px;">
+                                <label for="battement">@(checkBatement == true ? "Oui" : "Non")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-0" />
+                    <div class="row mt-1">
+                        <div class="col">
+                            <span class="input-group" id="inputGroup-sizing-sm">Mouvement actif du foetus</span>
+                            <RadzenSwitch class="form-check-label ml-3 float-end" @bind-value=@checkMouvement Style="height:20px; width:30px;top: -20px; margin-right: 6px" />
+                        </div>
+                        <div class="col-1">
+                            <div class="form-check form-switch  float-end" style="margin-bottom: -10px;">
+                                <label for="mouvement">@(checkMouvement == true ? "Oui" : "Non")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-0" />
+                    <div class="row mt-1">
+                        <div class="col">
+                            <span class="input-group" id="inputGroup-sizing-sm">Etat du Bébé</span>
+                            <RadzenSwitch class="form-check-label ml-3 float-end" @bind-value=@checkEtat Style="height:20px; width:30px;top: -20px; margin-right:5px" />
+                        </div>
+                        <div class="col-1">
+                            <div class="form-check form-switch  float-end">
+                                <label for="batement">@(checkEtat == true ? "Vivant" : "Mort")</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-0" />
+                    <div class="row mt-2">
+                        <div class="col">
+                            <h6 class="mb-0">RESULTAT ECHO</h6>
+                            <hr class="m-0 mb-2" />
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre crânienne : </span>
+                                    <RadzenTextBox class="form-control" Style="background-color:white; " @bind-Value=@PerimetreCranienne />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre Brachiale : </span>
+                                    <RadzenTextBox class="form-control" Style="background-color:white" @bind-Value=@PerimetreBrachiale />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre Thoracique : </span>
+                                    <RadzenTextBox class="form-control" Style="background-color:white" @bind-Value=@PerimetreThoracique />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Type de liquide amniotique : </span>
+                                    <RadzenTextBox class="form-control" Style="background-color:white" @bind-Value=@TypeLiquideAmniotique />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Quantité du liquide amniotique : </span>
+                                    <RadzenTextBox class="form-control" Style="background-color:white" @bind-Value=@QuantiteLiquideAmniotique ReadOnly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+        </div>
+        <div class="col p-0 m-1">
+            <RadzenCard class="m-0 p-1">
+                <h4 class="m-1">MERE</h4>
+                <hr class="m-1" />
+                <div class="m-1">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Ictère : </span>
+                                <RadzenTextBox class="form-control" placeholder="Ictère" @bind-Value=@mere.Ictere />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Taille : </span>
+                                <RadzenTextBox class="form-control" placeholder="Taille" @bind-Value=@mere.Taille />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Mamelon : </span>
+                                <RadzenTextBox class="form-control" placeholder="Mamelon" @bind-Value=@mere.Mamelon />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Hauteur uterine : </span>
+                                <RadzenTextBox class="form-control" placeholder="Hauteur uterine" @bind-Value=@mere.HauteurUterine />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Bassin pelivienne : </span>
+                                <RadzenTextBox class="form-control" placeholder="Bassin pelivienne" @bind-Value=@mere.BassinPelvienne />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Œdème : </span>
+                                <RadzenTextBox class="form-control" placeholder="Œdème" @bind-Value=@mere.Oeoedeme />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Varice : </span>
+                                <RadzenTextBox class="form-control" placeholder="Varice" @bind-Value=@mere.Varice />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">Leucorrhée : </span>
+                                <RadzenTextBox class="form-control" placeholder="Leucorrhée" @bind-Value=@mere.Leucorrhee />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <RadzenCard class="m-0 mt-2 p-1">
+                <div class="p-1">
+                    <table class="table table-bordered table-responsive table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td>Echographie : </td>
+                                <td class=" m-0 p-0">
+                                    @if (echoMat != null)
+                                    {
+                                        <h4 class="mt-1 ml-2 m-0"><span class="badge bg-info">@echoMat.Statut</span></h4>
+                                    }
+                                    else
+                                    {
+                                        <h4 class="mt-1 ml-2 m-0"><span class="badge bg-warning">A faire</span></h4>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Laboratoire (TPHA) : </td>
+                                <td>
+                                    <RadzenTextBox @bind-Value=@res class="form-control " ReadOnly />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Vaccin mère</td>
+                                <td>
+                                    <table class="table table-bordered table-sm mb-0">
+                                        <tr>
+                                            <td>VAT 1</td>
+                                            <td>VAT 2</td>
+                                            <td>VAT 3</td>
+                                            <td>VAT 4</td>
+                                            <td>VAT 5</td>
+                                        </tr>
+                                        <tr>
+                                            @foreach (var item in vccMere)
+                                            {
+                                                <td>
+                                                    @if (item != null)
+                                                    {
+                                                        @(item.Date.ToShortDateString())
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mb-2 mt-0">
+                    <div class="col">
+                        <RadzenButton class="" Disabled="@activLab0" Text="Demande labo" Icon="autorenew" Click=@ShowConfirmDialogLabo Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" />
+                    </div>
+                    <div class="col">
+                        <RadzenButton class="" Disabled="@activEcho" Text="Demande echo" Icon="link" Click=@ShowConfirmDialogEcho Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Success" />
+                    </div>
+                    <div class="col">
+                        <RadzenButton class="" Disabled="@activVac" Text="Vaccin mère" Icon="add" Size="ButtonSize.Small" Click=@CreateVaccinMere ButtonStyle="ButtonStyle.Warning" />
+                    </div>
+                </div>
+            </RadzenCard>
+
+        </div>
+
+    </div>
+</RadzenCard>
+@code {
+    [Parameter]
+    public string idCpn { get; set; }
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    string res = "", PerimetreCranienne, PerimetreBrachiale, PerimetreThoracique, TypeLiquideAmniotique, QuantiteLiquideAmniotique;
+    Famille famille = new();
+    string[]? files = null;
+    string? numOsiet, Nom, Etablissement, nomDossier;
+    NotificationMessage notification = new();
+    bool dossierExiste;
+    AvoirLaboratoire avLab = new();
+    Laboratoire? lab = new();
+    Laboratoire? labs = new();
+    Maternite maternite = new();
+    Cpn? cpn = new();
+    List<Cpn> cpns = new List<Cpn>();
+    long id;
+    Bebe bebe = new();
+    Mere mere = new();
+    EchoEcg echo = new();
+    AvoirEcho avoirEcho = new();
+    EchoMaternite echoMat = new();
+    bool activLab0 = false, activEcho = false, activVac = false;
+    bool checkBatement, checkMouvement, checkEtat;
+    List<VaccinMere> vccMere = new List<VaccinMere>();
+
+    string bat, mouv, et;
+
+    private async Task LoadFirst()
+    {
+        id = Convert.ToInt64(idCpn);
+        try
+        {
+            cpn = await materniteService.GetCpnByID(id);
+            maternite = await materniteService.GetMaterniteByID(cpn.MaterniteId);
+            fichiste = await fichisteservice.getFichisteById(maternite.FichisteId);
+            if (fichiste.Categorie == "Travailleur")
+            {
+                await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+                if (employer.NomDossier != null)
+                {
+                    if (employer.NomDossier != null)
+                    {
+                        nomDossier = employer.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+
+                }
+            }
+            else if (fichiste.Categorie == "Famille")
+            {
+                await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+                if (famille.NomDossier != null)
+                {
+                    if (famille.NomDossier != null)
+                    {
+                        nomDossier = famille.NomDossier.Trim();
+                        if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                            files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                    }
+                }
+            }
+
+            if (fichiste != null)
+            {
+                parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+                try
+                {
+                    labs = await examenService.GetLaboratoireByCpnId(id);
+                    if (labs != null)
+                        if (labs.LaboratoireId > 0) activLab0 = true;
+                }
+                catch (InvalidOperationException) { }
+                try
+                {
+                    echoMat = new();
+                    echoMat = await materniteService.GetEchoMaterniteByCpnId(id);
+                    if (echoMat != null)
+                        if (echoMat.EhoMaterniteId > 0) activEcho = true;
+                }
+                catch (InvalidOperationException) { }
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Patiant n'existe pas..",
+                        Detail = "Contacter le rsponsable.",
+                        Duration = 4000
+                    };
+            notificationService.Notify(notification);
+        }
+        labs = await examenService.GetLaboratoireByCpnId(id);
+        if (labs != null)
+            if (labs.Resultat != null)
+                res = labs.Resultat;
+
+        //echoMat = await materniteService.GetEchoMaterniteByCpnId(id);
+        if (echoMat != null)
+        {
+            if (echoMat.BatementCoeur != null && echoMat.BatementCoeur.Trim() == "Oui")
+                checkBatement = true;
+            else checkBatement = false;
+
+            if (echoMat.MouvementActif != null && echoMat.MouvementActif.Trim() == "Oui")
+                checkMouvement = true;
+            else checkMouvement = false;
+
+            if (echoMat.EtatBebe != null && echoMat.EtatBebe.Trim() == "Vivant")
+                checkEtat = true;
+            else
+                checkEtat = false;
+
+            if (echoMat.PerimetreBrachiale != null)
+                PerimetreBrachiale = echoMat.PerimetreBrachiale;
+            if (echoMat.PerimetreCranienne != null)
+                PerimetreCranienne = echoMat.PerimetreCranienne;
+            if (echoMat.PerimetreThoracique != null)
+                PerimetreThoracique = echoMat.PerimetreThoracique;
+            if (echoMat.TypeLiquideAmniotique != null)
+                TypeLiquideAmniotique = echoMat.TypeLiquideAmniotique;
+            if (echoMat.QuantiteLiquideAmniotique != null)
+                QuantiteLiquideAmniotique = echoMat.QuantiteLiquideAmniotique;
+
+        }
+        await LoadVccMere();
+        StateHasChanged();
+    }
+
+    private async Task LoadVccMere()
+    {
+        vccMere = await materniteService.GetAllVaccinMereByIdMaternite(maternite.MaterniteId);
+    }
+
+    protected async override void OnInitialized()
+    {
+        mere = await materniteService.GetMereByCpn(Convert.ToInt64(idCpn));
+        await LoadFirst();
+        StateHasChanged();
+    }
+
+    private async void ShowConfirmDialogEcho()
+    {
+        var result = await DialogService.OpenAsync("Confirmation.", ds =>
+    @<div>
+        <p Style="margin-bottom: 1rem">Voullez vous creer une demande echographie ?</p>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <RadzenButton Click="@CreateEcho" class="float-end" Text="Oui" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+                <RadzenButton Click="()=>ds.Close(true)" Text="Nom" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+            </div>
+        </div>
+    </div>
+    ,
+    new Radzen.DialogOptions() { Width = "400px", Height = "170px", Resizable = true, Draggable = false, Left = "200px" });
+    }
+
+    private async void ShowConfirmDialogLabo()
+    {
+        var result = await DialogService.OpenAsync("Confirmation.", ds =>
+    @<div>
+        <p Style="margin-bottom: 1rem">Voullez vous creer une demande au laboratoire ?</p>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <RadzenButton Click="@CreateLaboratoire" class="float-end" Text="Oui" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
+                <RadzenButton Click="()=>ds.Close(true)" Text="Nom" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+            </div>
+        </div>
+    </div>
+    ,
+    new Radzen.DialogOptions() { Width = "400px", Height = "170px", Resizable = true, Draggable = false, Left = "200px" });
+
+    }
+
+    private async Task CreateLaboratoire()
+    {
+        avLab = new();
+        avLab.FichisteId = fichiste.Fichisteid;
+        avLab.Statut = "En cours";
+        avLab.Date = DateTime.Now;
+        bool result = await examenService.CreateAvoirLaboratoire(avLab);
+        if (result)
+        {
+            lab = new();
+            lab.Date = DateTime.Now;
+            lab.FichisteId = fichiste.Fichisteid;
+            lab.TypeTest = "SEROLOGIE";
+            lab.Test = "TPHA";
+            lab.Commentaire = "Demande par le service maternite";
+            lab.Statut = "En cours";
+            lab.Prescripteur = "Maternité";
+            lab.Resultat = "En attente";
+            lab.CpnId = cpn.CpnId;
+            Laboratoire laboratoire = new();
+            laboratoire = await examenService.CreateLaboratoireLabo(lab);
+            labs = laboratoire;
+            avoirEcho.Date = DateTime.Now;
+            avoirEcho.CpnId = cpn.CpnId;
+            avoirEcho.LaboratoireId = laboratoire.LaboratoireId;
+            bool res = await materniteService.UpdateAvoirEchoLabo(avoirEcho);
+            if (res)
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Succes.",
+                        Detail = "Demande envoyer au laboratoire.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+                activLab0 = true;
+            }
+            else
+            {
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Reessayer plus tard.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+
+        DialogService.Close(true);
+
+        StateHasChanged();
+    }
+
+    private async Task CreateEcho()
+    {
+        echoMat = new();
+        EchoMaternite echoMt = new();
+        EchoMaternite echoM = new();
+        echoMat.Date = DateTime.Now;
+        echoMat.FichisteId = fichiste.Fichisteid;
+        echoMat.Statut = "En cours";
+        echoMat.CpnId = cpn.CpnId;
+        echoMat.MaterniteId = maternite.MaterniteId;
+
+        echoM = await materniteService.CreateEchoMaternite(echoMat);
+        echoMt = echoM;
+        avoirEcho.Date = DateTime.Now;
+        avoirEcho.CpnId = cpn.CpnId;
+        avoirEcho.MaterniteId = maternite.MaterniteId;
+        avoirEcho.EchoId = echoMt.EhoMaterniteId;
+        bool res = await materniteService.UpdateAvoirEchoEcho(avoirEcho);
+        if (res)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Succes.",
+                    Detail = "Demande envoyer au service echographie.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+            activEcho = true;
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Reessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        DialogService.Close(true);
+        StateHasChanged();
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+            }
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+        }
+    }
+
+    private async Task CreateVaccinMere()
+    {
+
+        var result = await DialogService.OpenAsync<_DialogVaccinMere>("Création Vaccin mère",
+            new Dictionary<string, object>() { { "idCpn", "" + cpn.CpnId }, { "idFichiste", "" + fichiste.Fichisteid }, { "idMAternite", "" + maternite.MaterniteId } },
+                new Radzen.DialogOptions() { Width = "700px", Height = "300", Style = "position: fixed;top: 30%;left: 50%;margin-left: -227px;margin-top: -10px;", Resizable = true, Draggable = false, CloseDialogOnOverlayClick = true });
+        await LoadVccMere();
+        StateHasChanged();
+    }
+
+    private async Task SaveCPN()
+    {
+        echoMat.MouvementActif = (checkMouvement == true) ? "Oui" : "Non";
+        echoMat.BatementCoeur = (checkBatement == true) ? "Oui" : "Non";
+        echoMat.EtatBebe = (checkEtat == true) ? "Vivant" : "Mort";
+
+        bool result = await materniteService.UpdateEchoMaternite(echoMat);
+        bool final = false;
+        if (result)
+        {
+            if (mere.MereId > 0)
+            {
+                final = await materniteService.UpdateMere(mere);
+            }
+            else
+            {
+                mere.CpnId = Convert.ToInt64(idCpn);
+                final = await materniteService.CreateMere(mere);
+            }
+        }
+        if (final)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Succes.",
+                    Detail = "Enregistrement a été fait avec succès.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement, Réessayer plus tard.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        StateHasChanged();
+    }
+}

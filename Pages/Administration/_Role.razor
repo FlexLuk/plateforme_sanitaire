@@ -1,0 +1,284 @@
+﻿@page "/role"
+@layout UtilisateurLayout
+
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Controllers.ControllerRole
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Shared.Utilisateur
+@inject IUtilisateurService uService
+@inject IAvoirRoleService uAvRole
+@inject IURoleService uRole
+@inject NavigationManager navigation
+@inject IToastService toastService
+@inject NavigationManager go
+@attribute [Authorize(Roles = "Admin")]
+
+<AuthorizeView Roles="Admin">
+	<Authorized Context="Flex">
+		<RadzenTabs>
+			<Tabs>
+				<RadzenTabsItem Text="Gestion de rôle">
+					<RadzenCard class="mb-3">
+
+						<div class="row">
+							<div class="col text-secondary">
+								<h5 class="float-left">Enregistrement d'utilisateur dans un rôle</h5>
+							</div>
+							<div class="col">
+								<RadzenButton Size="ButtonSize.Small" Text="Ajouter rôle" Style="float:right"
+											  ButtonStyle="ButtonStyle.Secondary" />
+							</div>
+
+						</div>
+						<hr class="m-0 mb-2" />
+						@if (users == null)
+						{
+							<Loading />
+						}
+						else
+						{
+							<div class="row">
+								<div class="col-8">
+									<RadzenDataGrid AllowFiltering="true" @ref="grid" AllowColumnResize="true"
+												FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="10" Responsive="false"
+												Data="@users" TItem="Utilisateur" OrOperatorText="Ou" ContainsText="contient"
+												StartsWithText="commencer par" EndsWithText="terminer par" EqualsText="égal à"
+												NotEqualsText="différent de" AndOperatorText="et" FilterText="Filtre"
+												ClearFilterText="effacer" ApplyFilterText="appliquer" RowSelect="@OnRowSelectRole"
+												@bind-Value="@selectedUsers">
+										<Columns>
+											<RadzenDataGridColumn TItem="Utilisateur" Property="Nom" Title="Nom">
+											</RadzenDataGridColumn>
+											<RadzenDataGridColumn TItem="Utilisateur" Property="Prenom" Title="Prenom">
+											</RadzenDataGridColumn>
+											<RadzenDataGridColumn TItem="Utilisateur" Property="Email" Title="Email">
+											</RadzenDataGridColumn>
+											<RadzenDataGridColumn TItem="Utilisateur" Property="Status" Title="Status">
+											</RadzenDataGridColumn>
+											<RadzenDataGridColumn TItem="Utilisateur" Property="Fonction" Title="Fonction">
+											</RadzenDataGridColumn>
+										</Columns>
+									</RadzenDataGrid>
+								</div>
+
+								<RadzenCard class="col" style="height:250px;  border:1px solid grey; ">
+									<h5 class="text-secondary">Selectionner les rôles de l'utilisateur</h5>
+									<hr class="m-0 mb-2" />
+
+									@if (loading == false)
+									{
+										<div class="pl-1" style="overflow: scroll">
+											@if (avRole != null)
+											{
+												if (uroles != null)
+													@foreach (var item in uroles)
+													{
+														bool on = false;
+														foreach (var av in avRole)
+														{
+
+															if (av.Roleid == item.Roleid)
+															{
+																on = true;
+																break;
+															}
+
+														}
+														<RadzenCheckBox @ref="refer" TriState="false" TValue="bool" Value="on"
+													Change="args => { CheckboxClicked(item,args); }" />
+														@item.Rolename
+														;
+														i++;
+														<br />
+													}
+											}
+										</div>
+									}
+									else
+									{
+										<Loading />
+									}
+
+
+								</RadzenCard>
+							</div>
+						}
+					</RadzenCard>
+				</RadzenTabsItem>
+				<RadzenTabsItem Text="Ajouter un rôle">
+					<RadzenCard class="mb-3">
+						<div class="row">
+							<div class="col-4">
+								<h5 class="text-info">Ajouter le rôle</h5>
+								<hr class="m-0 mb-2" />
+								@if (LastSubmitResult != null)
+								{
+									<h2>
+										Derniere ajout de rôle: @LastSubmitResult
+									</h2>
+								}
+								<EditForm Model="@urole" OnValidSubmit="FormSubmitted">
+									<DataAnnotationsValidator />
+									<div class="input-group-sm mb-2" style="font-size:small">
+										<span class="" id="inputGroup-sizing-x-sm">Rôle : </span>
+										<RadzenTextBox class="form-control" @bind-Value="@urole.Rolename"
+													   Placeholder="" />
+										<ValidationMessage For="() => urole.Rolename" />
+									</div>
+
+
+									<div>
+										<RadzenButton Size="ButtonSize.Small" Text="Enregistrer" Icon="save"
+													  ButtonStyle="ButtonStyle.Success" class="float-right mt-2"
+													  ButtonType="Radzen.ButtonType.Submit" />
+										@*<hr class="m-2" />*@
+									</div>
+
+								</EditForm>
+							</div>
+
+							<div class="col">
+								<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowPaging="true"
+												PageSize="3" Data="@uroles" TItem="Urole" OrOperatorText="Ou"
+												ContainsText="contient" StartsWithText="commencer par" EndsWithText="terminer par"
+												EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+												FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer"
+												@bind-Value="@selectedRoles">
+
+									<Columns>
+										<RadzenDataGridColumn Width="90px" TItem="Urole" Property="Roleid" Title="Id">
+										</RadzenDataGridColumn>
+										<RadzenDataGridColumn TItem="Urole" Property="Rolename" Title="Rôle">
+										</RadzenDataGridColumn>
+										<RadzenDataGridColumn Width="90px" TItem="Urole" Property="Roleid"
+															  Title="Action" Filterable="false">
+											<Template Context="data">
+												<div class="row" style="margin: 0">
+													<div class="col d-flex justify-content-center" style="padding: 0">
+														<RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
+																	  Class="m-1" Click=@(() => deleteRole(data.Roleid)) />
+														@**@
+													</div>
+												</div>
+											</Template>
+										</RadzenDataGridColumn>
+									</Columns>
+
+								</RadzenDataGrid>
+							</div>
+						</div>
+
+					</RadzenCard>
+				</RadzenTabsItem>
+			</Tabs>
+		</RadzenTabs>
+		<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="6" />
+	</Authorized>
+	<NotAuthorized>
+		@{
+			go.NavigateTo("main_page");
+		}
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+	RadzenCheckBox<bool> refer;
+	IEnumerable<Utilisateur>? users;
+	List<Urole>? uroles;
+	List<AvoirRole>? avRole;
+	IList<Utilisateur>? selectedUsers { get; set; }
+	IList<Urole>? selectedRoles { get; set; }
+	Utilisateur? user;
+	Int16 userId;
+	Int16 roleId;
+	Urole urole = new();
+	bool loading = false;
+	List<bool>? checkCheck = new List<bool>();
+	RadzenDataGrid<Utilisateur>? grid;
+	int i;
+
+	string? fonction;
+	string? roleName;
+	EditContext _editForm = null!;
+	string LastSubmitResult = null!;
+	protected override async void OnInitialized()
+	{
+		_editForm = new EditContext(urole);
+		await LoadTableUtilisateur();
+		await LoadTableRole();
+		StateHasChanged();
+	}
+
+	public async Task LoadTableUtilisateur()
+	{
+		users = await uService.GetAllUtilisateur();
+	}
+
+	public async Task LoadTableRole()
+	{
+		uroles = await uRole.GetAllRole();
+	}
+
+	public void OnRowSelect(Utilisateur user)
+	{
+		var id = user.Utilisateurid;
+	}
+	public void OnRowSelectRole(Utilisateur user)
+	{
+		avRole = uAvRole.GetUtilisateurRole(user.Utilisateurid);
+		userId = user.Utilisateurid;
+	}
+	private ToastParameters? _toastParameters;
+	public async void FormSubmitted()
+	{
+		
+		await uRole.InsertRole(urole);
+		_toastParameters = new ToastParameters();
+		_toastParameters.Add(nameof(MyToast.Title), "Ajout reussi !");
+		_toastParameters.Add(nameof(MyToast.Level), "Success");
+		_toastParameters.Add(nameof(MyToast.Message), "Rôle " + roleName + " a ete ajoute avec success.");
+		toastService.ShowToast<MyToast>(_toastParameters);
+		await LoadTableRole();
+		if (roleName != null)
+			LastSubmitResult = roleName;
+		StateHasChanged();
+
+	}
+
+	public async void CheckboxClicked(Urole urole, object Checked)
+	{
+		if ((bool)Checked)
+		{
+			loading = true;
+			var back = await uAvRole.CreateRoleUser(urole.Roleid, userId);
+			await LoadTableRole();
+			loading = false;
+			refer.Dispose();
+			await InvokeAsync(StateHasChanged);
+		}
+		else if (!(bool)Checked)
+		{
+			loading = true;
+			await uAvRole.DeleteRoleUser(urole.Roleid, userId);
+			await LoadTableRole();
+			loading = false;
+			await InvokeAsync(StateHasChanged);
+
+		}
+		else
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+		//navigation.NavigateTo("role");
+
+
+	}
+
+	public void deleteRole(int id)
+	{
+	}
+}

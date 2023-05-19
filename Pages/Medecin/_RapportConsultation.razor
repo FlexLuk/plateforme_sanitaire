@@ -1,0 +1,255 @@
+﻿@page "/rapport_consultation"
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@using LYRA.Shared.Medecin
+@inject IMedecinService medecinService
+@inject IFichisteService fichisteService
+@inject IAffiliationService affiliationService
+@inject NavigationManager go
+@layout MedecinLayout
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@attribute [Authorize(Roles = "Medecin, Admin")]
+
+<AuthorizeView Roles="Medecin, Admin">
+    <Authorized>
+        <div class="card card-info mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">CONSULTATION LISTE</h5>
+            </div>
+            <div class="card-body">
+                @if (consultationListes != null)
+                {
+                    <RadzenGrid style="height: 215px" AllowColumnResize="true" AllowPaging="true" PageSize="6" Data="@consultationListes"
+                            TItem="ConsultationListe" PageSizeText="Page" EmptyText="Aucune information" class="mt-0"
+                            PagerHorizontalAlign="HorizontalAlign.Center" AllowFiltering FilterMode="FilterMode.Advanced" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+                        <Columns>
+                            <RadzenGridColumn Width="150px" TItem="ConsultationListe" Property="Dateconsultation" Title="Date" Filterable=false Sortable=false></RadzenGridColumn>
+                            <RadzenGridColumn Width="80px" TItem="ConsultationListe" Property="Programmer" Title="RDV" Filterable=false Sortable=false></RadzenGridColumn>
+                            <RadzenGridColumn Width="150px" TItem="ConsultationListe" Property="DateRdv" Title="Date RDV" Filterable=false Sortable=false></RadzenGridColumn>
+                            <RadzenGridColumn TItem="ConsultationListe" Property="Nom" Title="Nom" ></RadzenGridColumn>
+                            <RadzenGridColumn Width="90px" TItem="ConsultationListe" Property="Passage" Title="Passage DOC" Filterable=false Sortable=false>
+                                <Template Context=data>
+                                    @if (data.Passage == 0)
+                                    {
+                                        <span>Oui</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Non</span>
+                                    }
+                                </Template>
+                            </RadzenGridColumn>
+                            <RadzenGridColumn Width="90px" TItem="ConsultationListe" Property="Fichisteid" Title="Fichiste ID" Filterable=false Sortable=false></RadzenGridColumn>
+                            <RadzenGridColumn Width="90px" TItem="ConsultationListe" Filterable=false Sortable=false>
+                                <Template Context=data>
+                                    <RadzenButton Click="@(()=>Traiter(data.Consultationid))" ButtonStyle="ButtonStyle.Secondary" Text="Consulter" Size="ButtonSize.Small" title="Consulter" />
+                                </Template>
+                            </RadzenGridColumn>
+                        </Columns>
+                    </RadzenGrid>
+                }
+            </div>
+        </div>
+
+        <div class="card card-info mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">RAPPORT CONSULTATION</h5>
+            </div>
+            <div class="card-body">
+                <RadzenCard class="mb-4">
+                    <h5 class="text-center font-weight-bold text-muted text-uppercase small">Rapport journalier</h5>
+                    <hr class="m-0 mb-2" />
+                    <div class="row">
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Total passage :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">200</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Employers :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">50</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light p-2 fa-border" style="font-size:1.5em">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Familles :</span>
+                                    <span class="info-box-number text-center text-muted mb-0">150</span>
+                                </div>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Text="Exporter en excel" Style="border-radius:0px; width:100%" />
+                            </div>
+                        </div>
+                    </div>
+                </RadzenCard>
+                <RadzenCard>
+                    <h5 class="text-center font-weight-bold text-muted text-uppercase small ">Rapport personnaliser</h5>
+                    <hr class="m-0 mb-2" />
+                    <div class="row">
+                        <div class="col">
+                            <div style="padding:10px;" class="bg-light">
+
+                                @*<div class="row">*@
+                                <div class="form-check form-switch ml-5">
+                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="@checkedJournalier" onchange="@(()=>ChangeRapportType())">
+                                    <label class="form-check-label mt-1" for="flexSwitchCheckChecked">@textTwoDate</label>
+                                </div>
+                                @*</div*@
+                                <div class="w-100">
+                                    @if (checkedJournalier == true)
+                                    {
+                                        <div class="mt-2 mb-2">
+                                            <RadzenDatePicker AllowClear="true" class="w-100 " @bind-Value="@dateRapport1" DateFormat="d"
+                                                          Placeholder="Date debut" />
+                                        </div>
+                                        <div class="mt-2 mb-2">
+                                            <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport2" DateFormat="d"
+                                                          Placeholder="Date fin" />
+                                        </div>
+                                    }
+                                    else if (checkedJournalier == false)
+                                    {
+                                        <div class="mt-2 mb-2">
+                                            <RadzenDatePicker AllowClear="true" class="w-100" @bind-Value="@dateRapport" DateFormat="d"
+                                                          Placeholder="Specifier la date a exporter" />
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col bg-light" style="padding:10px;">
+                            <div class="form-check form-switch ml-5 mb-3">
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Travailleur</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Famille</label>
+                                </div>
+                                <div class="col">
+                                    <RadzenCheckBox TValue="bool" />
+                                    <label>Par etablissement</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 mb-2 w-100">
+                        <button class="btn btn-sm btn-outline-success" type="button"><span class="fas fa-file-excel"></span> &ensp; Exporter en excel</button>
+                    </div>
+                </RadzenCard>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    List<Consultation> consultations = new List<Consultation>();
+    List<ConsultationListe> consultationListes = new List<ConsultationListe>();
+    string textTwoDate = "";
+    DateTime? dateRapport1;
+    DateTime? dateRapport2;
+    DateTime? dateRapport;
+    bool checkedJournalier = false;
+
+    protected async override void OnInitialized()
+    {
+        consultations = await medecinService.GetConsultationFinishOrLoad();
+        foreach (var item in consultations)
+        {
+
+            ConsultationListe cListe = new();
+            cListe.Consultationid = item.Consultationid;
+            cListe.Fichisteid = item.Fichisteid;
+            cListe.Dateconsultation = item.Dateconsultation;
+            cListe.DateRdv = item.DateRdv;
+            cListe.Programmer = item.Programmer;
+            cListe.Passage = item.Passage;
+            cListe.Nom = await GetName(item.Fichisteid);
+            consultationListes.Add(cListe);
+        }
+        StateHasChanged();
+    }
+
+    public async Task Traiter(long idConsultation)
+    {
+        try
+        {
+            await sessionStorage.RemoveItemAsync("diagsFromList");
+            await sessionStorage.RemoveItemAsync("plaintes");
+            await sessionStorage.RemoveItemAsync("rdvCheck");
+            await sessionStorage.RemoveItemAsync("symptomes");
+            await sessionStorage.RemoveItemAsync("observations");
+        }
+        catch (Exception ex)
+        {
+
+        }
+        go.NavigateTo("/docteurPatiant/" + idConsultation);
+    }
+
+    public void ChangeRapportType()
+    {
+        if (checkedJournalier == true)
+        {
+            textTwoDate = "Rapport journalier a une date";
+            checkedJournalier = false;
+        }
+        else if (checkedJournalier == false)
+        {
+            textTwoDate = "Rapport entre deux date";
+            checkedJournalier = true;
+        }
+        StateHasChanged();
+    }
+
+    private async Task<string> GetName(long id)
+    {
+
+        Fichiste fichiste = await fichisteService.getFichisteById(id);
+        string nom = "";
+        if (fichiste != null)
+        {
+            @if (fichiste.Categorie.Trim() == "Famille")
+            {
+                Famille fam = new();
+                fam = await affiliationService.GetFamilleById(Convert.ToInt32(fichiste.Affiliationid));
+                if (fam != null)
+                    nom = fam.Nom + " " + fam.Prenom;
+            }
+            else if (fichiste.Categorie.Trim() == "Travailleur")
+            {
+                Employer emp = new();
+                emp = await affiliationService.GetEmployerById(Convert.ToInt32(fichiste.Affiliationid));
+                if (emp != null)
+                    nom = emp.Nom + " " + emp.Prenom;
+            }
+            else
+            {
+                nom = "";
+            }
+        }
+        else
+        {
+            nom = "";
+        }
+        return nom;
+    }
+}

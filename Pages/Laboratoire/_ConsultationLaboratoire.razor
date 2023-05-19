@@ -1,0 +1,136 @@
+﻿@page "/laboratoire_consultation"
+@using LYRA.Shared.Laboratoire
+@layout LaboratoireLayout
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@using LYRA.Models.Examens
+@using LYRA.Shared.Laboratoire
+@inject ILocalStorageService _localStorageService
+@inject IFichisteService fichisteservice
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IExamenService examenService
+@inject NavigationManager go
+@attribute [Authorize(Roles = "Laboratoire, Admin")]
+
+<RadzenCard >
+    <h5>LISTE TOUS LABORATOIRE</h5>
+    <hr class="mt-1"/>
+    @if (ready == false)
+    {
+        <Loading />
+    }
+    else
+    {
+        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                AllowPaging="true" PageSize="9" AllowSorting="true" Responsive="true" Data="@avLAbosListPrecedent"
+                TItem="AvoirLaboratoireList" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                ApplyFilterText="appliquer" PageSizeText="Page" 
+                SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+            <Columns>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Property="FichisteId" Title="Fichiste ID" Width="30px" Sortable=false>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Title="Date" Width="35px" Sortable=false >
+                    <Template Context="data">
+                        @data.Date.ToString("dd MMMM yyyy")
+                    </Template>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Property="Name" Title="Nom" Width="70px"></RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Property="TypeTest" Title="Type test" Width="35px"></RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Property="Test" Title="Test" Width="40px"></RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Property="Resultat" Title="Résultat" Width="25px" Sortable=false>
+                </RadzenGridColumn>
+                <RadzenGridColumn TItem="AvoirLaboratoireList" Width="25px" Filterable=false Sortable=false>
+                    <Template Context="datas">
+                        <button onclick="@(()=>Traiter(datas.FichisteId))" class="btn btn-sm btn-outline-success">Traiter</button>
+                    </Template>
+                </RadzenGridColumn>
+            </Columns>
+        </RadzenGrid>
+    }
+</RadzenCard>
+
+@code {
+    string nom = null!;
+    bool ready = false;
+    Famille famille = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    List<AvoirLaboratoire> avLabos = new List<AvoirLaboratoire>();
+    List<AvoirLaboratoireList> avLAbosList = new List<AvoirLaboratoireList>();
+
+
+    List<AvoirLaboratoire> avLabosPrecedent = new List<AvoirLaboratoire>();
+    List<AvoirLaboratoireList> avLAbosListPrecedent = new List<AvoirLaboratoireList>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        await LoadAvoirLaboratoirePrecedente();
+        ready = true;
+        StateHasChanged();
+    }
+
+    private async Task LoadAvoirLaboratoirePrecedente()
+    {
+        avLabosPrecedent = await examenService.GetAllAvoirLaboratoire();
+        if (avLabos != null)
+        {
+            foreach (var item in avLabosPrecedent)
+            {
+                AvoirLaboratoireList avs = new();
+                Fichiste fichiste = new();
+                Laboratoire labs = new();
+                labs = await examenService.GetLaboratoireByFichiste(item.FichisteId);
+                avs.Statut = item.Statut;
+                avs.Date = item.Date;
+                avs.FichisteId = item.FichisteId;
+                fichiste = await fichisteservice.getFichisteById(item.FichisteId);
+                await LoadFichiste(fichiste);
+                avs.Name = nom;
+                avs.TypeTest = labs.TypeTest;
+                avs.Test = labs.Test;
+                avs.Resultat = labs.Resultat;
+                avLAbosListPrecedent.Add(avs);
+            }
+        }
+    }
+
+    public async Task LoadFichiste(Fichiste fichee)
+    {
+        if (fichee != null)
+        {
+            if (fichee.Categorie.Trim() == "Famille")
+            {
+                famille = await affiliService.GetFamilleById(Convert.ToInt32(fichee.Affiliationid));
+                if (famille != null)
+                {
+                    nom = famille.Nom + " " + famille.Prenom;
+                    employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+                    if (employer != null)
+                    {
+                        employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                    }
+                }
+            }
+            else if (fichee.Categorie.Trim() == "Travailleur")
+            {
+                employer = await affiliService.GetEmployerById(Convert.ToInt32(fichee.Affiliationid));
+                if (employer != null)
+                {
+                    employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                    nom = employer.Nom + " " + employer.Prenom;
+                }
+            }
+        }
+    }
+
+    public void Traiter(long idFichiste)
+    {
+        go.NavigateTo("/laboratoire/" + idFichiste);
+    }
+}

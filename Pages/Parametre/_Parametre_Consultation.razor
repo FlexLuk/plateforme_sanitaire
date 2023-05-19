@@ -1,0 +1,184 @@
+﻿@page "/consultation_parametre"
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Shared.Parametre
+@layout ParametreLayout
+
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Shared.Fichiste
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IParametreService parametreService
+@inject IFichisteService fichisteService
+@inject IToastService toastService
+@inject IJSRuntime JsRuntime
+@attribute [Authorize(Roles = "Parametre, Admin")]
+
+<AuthorizeView Roles="Parametre, Admin">
+    <Authorized>
+        @if (full == false)
+        {
+            <Loading />
+        }
+        else
+        {
+            <div class="card card-info mb-2">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">LISTE PARAMETRE</h5>
+                </div>
+                <div class="card-body">
+                    @if (parametresCustoms == null)
+                    {
+                        <Loading />
+                    }
+                    else
+                    {
+                        <RadzenGrid FilterMode="FilterMode.Advanced" AllowFiltering=true AllowColumnResize=true
+                            PageSize="9" AllowSorting="true" Data="@parametresCustoms" AllowPaging=true
+                            TItem="ParametreList" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                            EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                            AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                            ApplyFilterText="appliquer" PageSizeText="Page" Responsive=false
+                            SelectionMode="DataGridSelectionMode.Single" EmptyText="Aucune donnée trouvée"
+                            ColumnWidth="200px">
+                            <Columns>
+                                <RadzenGridColumn TItem="ParametreList" Property="Parametreid" Title="Param ID" Width="70px">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Fichisteid" Title="Fichiste ID" Width="70px">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Datecreation" Title="Date" Width="100px">
+                                    <Template Context="data">
+                                        <span>@data.Datecreation</span>
+                                    </Template>
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Nom_Prenom" Title="Nom et prenom">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Etablissement" Title="Etablissement">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="NumOsiet" Title="N° OSIET">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="categorie" Title="Categorie">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Tag" Title="TAG">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Tad" Title="TAD">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Temperature" Title="T°">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Poids" Title="Poids">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="FrequenceCardiaque" Title="Frequence cardiaque">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Property="Passage" Title="Passage">
+                                    <Template Context="data">
+                                        @data.Passage
+                                    </Template>
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="ParametreList" Width="70px" Filterable="false" Sortable=false>
+                                    <Template Context=data>
+                                        <RadzenButton Size="ButtonSize.Small" Text="Voir" Click="@(()=>NavigationManager.NavigateTo("/parametre/" + data.Fichisteid))" />
+                                    </Template>
+                                </RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+                    }
+                    <!-- /input-group -->
+                </div>
+                <!-- /.card-body -->
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Parametre parametre = new();
+    List<Parametre> parametres = new List<Parametre>();
+    List<ParametreList> parametresCustoms = new List<ParametreList>();
+    bool full = false;
+    protected override async Task OnInitializedAsync() { await LoadFichisteListes(); full = true; StateHasChanged(); }
+
+    public async Task LoadFichisteListes()
+    {
+        parametres = await parametreService.GetAllParametre();
+        List<FichisteModel> fModels = new List<FichisteModel>();
+        foreach (var param in parametres)
+        {
+            Fichiste fichiste = new();
+            fichiste = await fichisteService.getFichisteById(param.Fichisteid);
+            Employer emp = new();
+            Famille fam = new();
+            Employeur empr = new();
+            ParametreList paramList = new();
+
+            if (fichiste.Categorie == "Famille")
+            {
+                fam = await affiliService.GetFamilleById(Convert.ToInt32(fichiste.Affiliationid));
+                if (fam.Numeroosiet != null)
+                {
+                    emp = await affiliService.GetEmployerByNumOsiet(fam.Numeroosiet);
+                    if (emp.Numemployeur != null)
+                    {
+                        empr = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+                        paramList.Parametreid = param.Parametreid;
+                        paramList.Fichisteid = param.Fichisteid;
+                        paramList.Nom_Prenom = fam.Nom + " " + fam.Prenom;
+                        paramList.Etablissement = empr.Raisonsociale;
+                        paramList.NumOsiet = emp.Numeroosiet;
+                        paramList.categorie = fichiste.Categorie;
+                        paramList.Tag = param.Tag;
+                        paramList.Tad = param.Tad;
+                        paramList.Temperature = param.Temperature;
+                        paramList.Poids = param.Poids;
+                        paramList.FrequenceCardiaque = param.FrequenceCardiaque;
+                        paramList.Medecinid = param.Medecinid;
+                        paramList.Status = param.Status;
+                        paramList.Datecreation = param.Datecreation;
+                        paramList.Patiantid = param.Patiantid;
+                        paramList.Passage = param.Passage;
+                    }
+                }
+            }
+            else
+            {
+
+                emp = await affiliService.GetEmployerById(Convert.ToInt32(fichiste.Affiliationid));
+                if (emp.Numemployeur != null)
+                {
+                    empr = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+                    empr = await adhesionService.GetEmployeurByEmployer(emp.Numemployeur);
+                    paramList.Parametreid = param.Parametreid;
+                    paramList.Fichisteid = param.Fichisteid;
+                    paramList.Nom_Prenom = emp.Nom + " " + emp.Prenom;
+                    paramList.Etablissement = empr.Raisonsociale;
+                    paramList.NumOsiet = emp.Numeroosiet;
+                    paramList.categorie = fichiste.Categorie;
+                    paramList.Tag = param.Tag;
+                    paramList.Tad = param.Tad;
+                    paramList.Temperature = param.Temperature;
+                    paramList.Poids = param.Poids;
+                    paramList.FrequenceCardiaque = param.FrequenceCardiaque;
+                    paramList.Medecinid = param.Medecinid;
+                    paramList.Status = param.Status;
+                    paramList.Datecreation = param.Datecreation;
+                    paramList.Patiantid = param.Patiantid;
+                    paramList.Passage = param.Passage;
+                }
+
+            }
+            parametresCustoms.Add(paramList);
+        }
+        StateHasChanged();
+    }
+}

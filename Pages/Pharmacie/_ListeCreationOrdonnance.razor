@@ -1,0 +1,133 @@
+﻿@page "/liste_creation_ordonnance"
+@layout PharmacieLayout
+
+@using LYRA.Controllers.ComtrollerMedecin
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Controllers.PatiantController
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Shared.Parametre
+@using LYRA.Shared.Pharmacie
+@inject IParametreService paramService
+@inject IPatiantService patiantService
+@inject IUtilisateurService uService
+@inject IMedecinService medecinService
+@inject IAffiliationService affiliService
+@inject NavigationManager go
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Authorize(Roles = "Admin, Pharmacie")]
+
+<AuthorizeView Roles="Admin, Parametre">
+    <Authorized>
+        <div class="card">
+            <div class="card-header">
+                <h4>Liste passage du fichiste</h4>
+            </div>
+            <div class="card-body">
+                @*<div class="container">*@
+                <div class="row">
+                    <div class="col">
+                        @if (full == false)
+                        {
+                            <Loading />
+                        }
+                        else if (full == true)
+                        {
+                            @if (patiants != null)
+                            {
+                                <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                    AllowPaging="true" PageSize="7" AllowSorting="true" Responsive="false" Data="@listAttentes"
+                                    TItem="PatiantModel" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                                    FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                                    SelectionMode="DataGridSelectionMode.Single">
+                                    <Columns>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="Numjour" Title="Numero du jour">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="FichisteId" Title="ID Fichiste">
+                                        </RadzenGridColumn>
+                                        <RadzenGridColumn TItem="PatiantModel" Property="NomPrenom" Title="Nom patiant"></RadzenGridColumn>
+                                        <RadzenGridColumn Width="100px" TItem="PatiantModel" Property="Fichisteid" Title="" Filterable=false Sortable=false>
+                                            <Template Context="data">
+                                                <button style="float: right" class="btn btn-sm btn-outline-success" onclick="@(()=>GoToOrdonnance(data.Patiantid))">Créer</button>
+                                            </Template>
+                                        </RadzenGridColumn>
+                                    </Columns>
+                                </RadzenGrid>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+            @*</div>*@
+        </div>
+    </Authorized>
+</AuthorizeView>
+@code {
+
+    Patiant patiant = new();
+    ListeParametre listParam = new();
+    List<Patiant> patiants = new List<Patiant>();
+    Utilisateur utilisateur = new();
+    List<PatiantModel> listAttente = new List<PatiantModel>();
+    IEnumerable<Utilisateur> utilisateurs = new List<Utilisateur>();
+    IEnumerable<PatiantModel> listAttentes = new List<PatiantModel>();
+    bool? full;
+    protected override async void OnInitialized()
+    {
+        full = false;
+        await LoadUtilisateurByEmail();
+        await LoadPatiants();
+        full = true;
+        StateHasChanged();
+    }
+
+    public void GoToOrdonnance(int id)
+    {
+        go.NavigateTo("/creation_ordonnance/" + id);
+    }
+
+    public async Task LoadPatiants()
+    {
+        if (listParam != null)
+            patiants = await patiantService.GetListPassageFichiste();
+        if (patiants != null)
+        {
+            foreach (var item in patiants)
+            {
+                Consultation cons = await medecinService.GetConsultationByFichisteId(item.Fichisteid);
+                if (cons.Passage == 1 && cons.ListeAttente == "Oui")
+                {
+                    PatiantModel model = new();
+                    model.Numjour = item.Numjour;
+                    if (item.Categorie.Trim() == "Famille")
+                    {
+                        Famille famille = await affiliService.GetFamilleById(Convert.ToInt32(item.Affiliationid));
+                        model.NomPrenom = famille.Nom + " " + famille.Prenom;
+                    }
+                    else if (item.Categorie.Trim() == "Travailleur")
+                    {
+                        Employer employer = await affiliService.GetEmployerById(Convert.ToInt32(item.Affiliationid));
+                        model.NomPrenom = employer.Nom + " " + employer.Prenom;
+                    }
+                    model.Patiantid = Convert.ToInt32(item.Patiantid);
+                    model.FichisteId = item.Fichisteid;
+                    listAttente.Add(model);
+                }
+
+            }
+            listAttentes = listAttente;
+            StateHasChanged();
+        }
+    }
+
+    public async Task LoadUtilisateurByEmail()
+    {
+        var email = await localStorage.GetItemAsync<string>("emailAddress");
+        utilisateur = await uService.GetUtilisateurByEmail(email);
+        listParam = await paramService.GetListParamByUser(Convert.ToInt32(utilisateur.Utilisateurid));
+    }
+}

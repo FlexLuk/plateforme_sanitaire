@@ -1,0 +1,148 @@
+﻿@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models.Administration
+@using LYRA.Shared
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Globalization
+@using System.Web
+@using LYRA.Data
+@using LYRA.Shared.Fichiste
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@inject NavigationManager NavigationManager
+@inject IAdhesionService adhesionService
+@inject IAffiliationService affiliService
+@inject IFichisteService fichisteService
+@inject IParametreService paramService
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<hr class="mb-2 mt-0" />
+<style>
+
+</style>
+@if (listParametres != null)
+{
+    <div class="row" style="overflow-x:auto">
+        @foreach (var item in paramModels)
+        {
+            <div class="col">
+                <div class=" card">
+                    <div class="card-header">
+                        Parametre @item.NumeroParam
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Liste d'attente : &ensp; <label class="bdge badge-info p-2">@item.NombreAttente</label></p>
+                        <RadzenButton Text="Envoyer le patiant" Click="@(()=>saveFichisteParam(@item.NumeroParam))" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+@code {
+
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = null!;
+
+    [Parameter] public Fichiste fichiste { get; set; } = new();
+    [Parameter] public Employer employer { get; set; } = new();
+    [Parameter] public Famille famille { get; set; } = new();
+    [Parameter] public bool? famCateg { get; set; }
+
+    IEnumerable<Affiliation>? affiliations;
+    IEnumerable<Employer>? employers;
+    IEnumerable<Fichiste>? fichistes;
+    IEnumerable<Employeur>? employeurs;
+    IEnumerable<Famille>? familles;
+    Patiant patiant = new();
+    Utilisateur utilisateur = new();
+    List<ListeParametre> listParametres = new List<ListeParametre>();
+    List<ListParamModel> paramModels = new List<ListParamModel>();
+
+    protected async override void OnInitialized()
+    {
+        await LoadParamListe();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task LoadParamListe()
+    {
+        listParametres = await paramService.getParametreActif();
+
+
+        foreach (var item in listParametres)
+        {
+            ListParamModel paramModel = new();
+            paramModel.NumeroParam = item.Numero;
+            List<Patiant> ps = await paramService.getListPatiantInParam(item.Numero);
+            paramModel.NombreAttente = ps.Count();
+            paramModels.Add(paramModel);
+        }
+    }
+
+    void SaveParametre()
+    {
+
+    }
+
+    //Miampy manao ajout patiant av eo
+    public async void saveFichisteParam(int param)
+    {
+        int numParametre = param;
+        string nom = await localStorage.GetItemAsync<string>("loginNom");
+        string prenom = await localStorage.GetItemAsync<string>("loginPrenom");
+        string name = nom.Trim() + " " + prenom.Trim();
+
+        if (famCateg == true)
+        {
+            fichiste.Categorie = "Famille";
+            fichiste.Numjour = await fichisteService.GetNumJour();
+            fichiste.Frequencemois = await fichisteService.GetFrequenceMonth("Famille", employer.Employerid.ToString());
+            fichiste.Frequenceannee = await fichisteService.GetFrequenceYear("Famille", employer.Employerid.ToString());
+            fichiste.Parametreid = numParametre;
+            fichiste.Affiliationid = famille.Familleid.ToString();
+            //fichiste.Date = DateTime.Now;
+            fichiste.Username = name;
+            long result = await fichisteService.InsertFichiste(fichiste);
+            patiant.Categorie = "Famille"; patiant.Affiliationid = fichiste.Affiliationid;
+            patiant.Datepassage = DateTime.Now; patiant.Fichisteid = result; patiant.Numeroparametre = param;
+            patiant.Numjour = fichiste.Numjour; patiant.Nomparametre = utilisateur.Nom + " " + utilisateur.Prenom;
+            await addPatiant(patiant);
+            toastService.ShowSuccess("Enregistrement reussi !");
+            employer = null; famille = null; fichiste = null;
+            await ModalInstance.CloseAsync(ModalResult.Ok<bool>(true));
+            StateHasChanged();
+        }
+        else if (famCateg == false)
+        {
+            fichiste.Categorie = "Travailleur";
+            fichiste.Numjour = await fichisteService.GetNumJour();
+            fichiste.Frequencemois = await fichisteService.GetFrequenceMonth("Travailleur", employer.Employerid.ToString());
+            fichiste.Frequenceannee = await fichisteService.GetFrequenceYear("Travailleur", employer.Employerid.ToString());
+            fichiste.Parametreid = numParametre;
+            fichiste.Affiliationid = employer.Employerid.ToString();
+            fichiste.Date = DateTime.Now;
+            fichiste.Username = name;
+            long result = await fichisteService.InsertFichiste(fichiste);
+            patiant.Categorie = "Travailleur"; patiant.Affiliationid = fichiste.Affiliationid;
+            patiant.Datepassage = DateTime.Now; patiant.Fichisteid = result; patiant.Numeroparametre = param;
+            patiant.Numjour = fichiste.Numjour; patiant.Nomparametre = utilisateur.Nom + " " + utilisateur.Prenom;
+            await addPatiant(patiant);
+            toastService.ShowSuccess("Enregistrement reussi !");
+            employer = null; famille = null; fichiste = null;
+            await ModalInstance.CloseAsync(ModalResult.Ok<bool>(true));
+            StateHasChanged();
+        }
+
+    }
+
+    public async Task addPatiant(Patiant patiant)
+    {
+        await paramService.AddPatiant(patiant);
+    }
+}

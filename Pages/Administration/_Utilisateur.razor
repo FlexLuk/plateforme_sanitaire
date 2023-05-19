@@ -1,0 +1,230 @@
+﻿@page "/utilisateur"
+@layout UtilisateurLayout
+
+@using System.Configuration
+@using LYRA.Controllers.ControllerUtilisateur
+@using LYRA.Models
+@using LYRA.Models.Administration
+@using LYRA.Shared.Utilisateur
+@using Radzen
+@using Radzen.Blazor
+@using Blazored.Toast
+@using Blazored.Toast.Configuration
+@using Blazored.Toast.Services
+@inject IUtilisateurService uService
+@inject IToastService toastService
+@using BC = BCrypt.Net.BCrypt
+@inject NavigationManager go
+@attribute [Authorize(Roles = "Admin")]
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div class="card card-info mb-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0">AJOUT UTILISATEUR</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span>Nom : </span>
+                            <RadzenTextBox class="form-control" @bind-Value="@nom" Placeholder="Nom" />
+                        </div>
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span>Email : </span>
+                            <RadzenTextBox class="form-control " @bind-Value="@email" Placeholder="Adresse e-mail" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span>Prenom : </span>
+                            <RadzenTextBox class="form-control " @bind-Value="@prenom" Placeholder="Prenom" />
+                        </div>
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span id="">Fonction : </span>
+                            <RadzenDropDown @bind-Value="@fonction" Class="form-control"
+                                            Data=@asa Change="@(args=>OnChange(args))"
+                                            Placeholder="Choisissez ici" Name="fonction" />
+                            <RadzenRequiredValidator Component="fonction" Text="Vous devez choisir ici." />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span>Mot de passe : </span>
+                            <RadzenPassword class="form-control" @bind-Value="@password1" Placeholder="Mot de passe" />
+                        </div>
+                        <div class="input-group-sm mb-2" style="font-size:small">
+                            <span>Comfirmer mot de passe : </span>
+                            <RadzenPassword class="form-control" @bind-Value="@password2"
+                                            Placeholder="Confirmation du mot de passe" />
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div style="height: 30px">
+                    <RadzenButton Text="Annuler" Icon="highlight_off" ButtonStyle="ButtonStyle.Warning"
+                                  class="float-right ml-2" Click="ClearField" />
+                    <RadzenButton Text="Enregistrer" Icon="save" ButtonStyle="ButtonStyle.Success" class="float-right"
+                                  Click="SaveUtilisateur" />
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-info mb-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0">LISTE DES UTILISATEURS</h5>
+            </div>
+            <div class="card-body">
+                <div>
+                    @if (users == null)
+                    {
+                        <Loading />
+                    }
+                    else
+                    {
+
+                        <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
+                                AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@users"
+                                TItem="Utilisateur" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de" AndOperatorText="et"
+                                FilterText="Filtre" ClearFilterText="effacer" ApplyFilterText="appliquer" PageSizeText="Page"
+                                SelectionMode="DataGridSelectionMode.Single" @bind-Value="@u">
+                            <Columns>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Email" Title="Email"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Nom" Title="Nom"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Prenom" Title="Prenom"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Passwordhash" Title="Password">
+                                </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Type" Title="Type"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Status" Title="Status"> </RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Property="Fonction" Title="Fonction"></RadzenGridColumn>
+                                <RadzenGridColumn TItem="Utilisateur" Title="Action">
+                                    <Template Context="data">
+                                        <div class="row" style="margin: 0">
+                                            <div class="col d-flex justify-content-center" style="padding: 0">
+                                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
+                                                          Click="(()=>deleteUser(data.Utilisateurid))" />
+                                            </div>
+                                        </div>
+                                    </Template>
+                                </RadzenGridColumn>
+                            </Columns>
+                        </RadzenGrid>
+
+                    }
+                </div>
+            </div>
+        </div>
+        <BlazoredToasts Position="ToastPosition.TopRight" Timeout="5" />
+    </Authorized>
+    <NotAuthorized>
+        @{
+            go.NavigateTo("/main_page");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@functions {
+    IEnumerable<Utilisateur> users = null!;
+    Object u = null!;
+    Utilisateur user = null!;
+    string? nom;
+    string? prenom;
+    string? email;
+    string? fonction;
+    string? password1;
+    string? password2;
+    List<string> fonctions = new List<string>();
+    private ToastParameters? _toastParameters;
+    IEnumerable<string> asa = new string[] { "Secretaire", "Fichiste", "Infirmier(e)", "Medecin", "Laboratin", "Echographe", "Sage-femme", "Gestionnaire", "Medecin-chef", "Administrateur" };
+
+    public void OnChange(object args) { }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTableUtilisateur();
+    }
+
+    public async Task<bool> SaveUtilisateur()
+    {
+        bool retour = false;
+        user = new Utilisateur();
+        if (email == "" || email != null)
+        {
+            user.Email = email;
+        }
+
+        if (password1 == null || password2 == null)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention !");
+            _toastParameters.Add(nameof(MyToast.Level), "Info");
+            _toastParameters.Add(nameof(MyToast.Message), "Les mots de passes ne sont pas identiques ou incorrectes.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            return retour;
+        }
+        if (prenom == "" || prenom == null)
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention !");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Il faut renseigner le prenom.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            return retour;
+        }
+        else if ((email == "") && (password1 != password2 || password1 == null || password2 == null))
+        {
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Attention !");
+            _toastParameters.Add(nameof(MyToast.Level), "Warning");
+            _toastParameters.Add(nameof(MyToast.Message), "Veuillez entrer tous les champs necessaires a l'authentification.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+
+            return retour;
+        }
+        else
+        {
+            user.Nom = nom;
+            user.Prenom = prenom;
+            user.Passwordhash = BC.HashPassword(password1);
+            user.Fonction = fonction;
+            await uService.InsertUtilisateur(user);
+            _toastParameters = new ToastParameters();
+            _toastParameters.Add(nameof(MyToast.Title), "Creation reussi !");
+            _toastParameters.Add(nameof(MyToast.Level), "Success");
+            _toastParameters.Add(nameof(MyToast.Message), "Utilisateur a été ajouter avec succès.");
+            toastService.ShowToast<MyToast>(_toastParameters);
+            await LoadTableUtilisateur();
+            ClearField();
+            retour = true;
+            return retour;
+        }
+    }
+
+    public async Task LoadTableUtilisateur()
+    {
+        users = await uService.GetAllUtilisateur();
+    }
+
+    public void ClearField()
+    {
+        email = string.Empty;
+        nom = string.Empty;
+        prenom = string.Empty;
+        password1 = string.Empty;
+        password2 = string.Empty;
+        fonction = string.Empty;
+
+    }
+
+    public async void deleteUser(int iduser)
+    {
+        await uService.DeleteUtilisateur(iduser);
+        await LoadTableUtilisateur();
+        StateHasChanged();
+    }
+
+}

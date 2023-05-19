@@ -1,0 +1,141 @@
+﻿@page "/dialog_vaccin_mere/{idCpn}"
+@using LYRA.Controllers.ControllerMaternite
+@using Models
+@using LYRA.Models.Maternites
+@using LYRA.Shared.Maternites
+@layout MaterniteLayout
+@inject IMaterniteService materniteService
+@inject NavigationManager navigation
+@inject Radzen.NotificationService notificationService
+@inject Radzen.DialogService DialogService
+@attribute [Authorize(Roles = "Admin, Maternite")]
+<style>
+    .rz-dialog-content {
+        padding: 0px
+    }
+</style>
+<RadzenNotification />
+<RadzenDialog />
+<RadzenCard class="m-0" Style="border:none">
+    <div class="row">
+        <div class="col">
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Fichiste ID : </span>
+                <input type="text" class="form-control" placeholder="Numéro fichiste" @bind-value="@idFichiste" disabled>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Numéro CPN : </span>
+                <input type="text" class="form-control" placeholder="Numéro CPN" @bind-value=@numCpn disabled>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Nom vaccin : </span>
+                <RadzenDropDownDataGrid Class="form-control " AllowFiltering="true" TValue="string" AllowClear="true"
+                                        Data="@vat" @bind-Value="@vccMere.NomVaccin" Placeholder="Nom du vaccin"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" PageSize="3" AllowSorting=false />
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Date du vaccin : </span>
+                <RadzenDatePicker TValue="DateTime" @bind-Value=@date />
+            </div>
+        </div>
+    </div>
+    <hr class="m-0 mb-2" />
+    <div class="row float-end">
+        <div class="col">
+            <RadzenButton Text="Annuler" Size="ButtonSize.Small" Style="border-radius:0px" ButtonStyle="ButtonStyle.Danger" />
+        </div>
+        <div class="col">
+            <RadzenButton Click="@SaveVaccMere" Class=" float-end" Text="Enregistrer" Size="ButtonSize.Small" Style="border-radius:0px" ButtonStyle="ButtonStyle.Success" />
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public string idCpn { get; set; }
+    [Parameter]
+    public string idFichiste { get; set; }
+    [Parameter]
+    public string idMaternite { get; set; }
+    long id, numCpn;
+    VaccinMere vccMere = new();
+    Cpn cpn = new();
+    DateTime date = DateTime.Now;
+    NotificationMessage notification = new();
+    AvoirEcho avoirEcho = new();
+    IEnumerable<string> vat = new string[] { "VAT 1", "VAT 2", "VAT 3", "VAT 4", "VAT 5" };
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        id = Convert.ToInt64(idCpn);
+        await LoadFirst();
+        StateHasChanged();
+    }
+
+    private async Task LoadFirst()
+    {
+        cpn = await materniteService.GetCpnByID(id);
+        if (cpn != null)
+            numCpn = cpn.NumeroCpn;
+    }
+
+    private async Task SaveVaccMere()
+    {
+        vccMere.FichisteId = Convert.ToInt64(idFichiste);
+        vccMere.Etat = "En cours";
+        vccMere.Date = date;
+        vccMere.MaterniteId = Convert.ToInt64(idMaternite); // DISO
+        VaccinMere vac = await materniteService.CreateVaccinMere(vccMere);
+        if (vac != null)
+        {
+            avoirEcho.Date = DateTime.Now;
+            avoirEcho.CpnId = cpn.CpnId;
+            avoirEcho.VaccinMereId = vac.VaccinMereId;
+            bool res = await materniteService.UpdateAvoirEchoLabo(avoirEcho);
+            if(res){
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Succès.",
+                        Detail = "Enregistrement du vaccin mère a été fait avec succès.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }else{
+                notification = new NotificationMessage
+                    {
+                        Style = "position: absolute; top: -50px",
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Erreur.",
+                        Detail = "Erreur ajout vaccin a la base 'AVOIR_ECHO', contacter l'administrateur.",
+                        Duration = 4000
+                    };
+                notificationService.Notify(notification);
+            }
+            DialogService.Close(true);
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement, contacter l'administrateur.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+            DialogService.Close(false);
+        }
+    }
+
+}

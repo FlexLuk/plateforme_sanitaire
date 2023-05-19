@@ -1,0 +1,100 @@
+﻿@page "/"
+@using System.Security.Claims
+@using LYRA.Data
+@using Microsoft.AspNetCore.Authorization
+
+<PageTitle>PLATEFORME DE TRAVAIL</PageTitle>
+
+<!-- Sale & Revenue Start -->
+<div class="container pt-1 pb-0">
+    <h1 class="mb-2">BIENVENUE SUR LE PLATEFORME D'OSIET</h1>
+    <div class="row">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-line fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Total societe adherer</p>
+                    <h6 class="mb-0">1234</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Total personne affilier</p>
+                    <h6 class="mb-0">$1234</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-area fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Societe suspendu</p>
+                    <h6 class="mb-0">34</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Personne inactif</p>
+                    <h6 class="mb-0">234</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sale & Revenue End -->
+<!-- Sales Chart Start -->
+<div class="container pt-4 mb-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Cotisation en retard</h6>
+                </div>
+                <hr class="m-0 p-0" />
+                <RadzenChart>
+                    <RadzenColumnSeries Data="@revenue" CategoryProperty="Quarter" ValueProperty="Revenue" />
+                    <RadzenValueAxis Min="0" Max="400000" Step="100000" />
+                </RadzenChart>
+            </div>
+        </div>
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Etablissement en état de grâce</h6>
+                </div>
+                <hr />
+                <RadzenChart>
+                    <RadzenColumnSeries Data="@revenue" CategoryProperty="Quarter" ValueProperty="Revenue" />
+                    <RadzenValueAxis>
+                        <RadzenAxisTitle Text="Revenue" />
+                    </RadzenValueAxis>
+                    <RadzenCategoryAxis>
+                        <RadzenAxisTitle Text="Quarter" />
+                    </RadzenCategoryAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    class DataItem
+    {
+        public string Quarter { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    DataItem[] revenue = new DataItem[]
+    {
+      new DataItem { Quarter = "Q1", Revenue = 234000 },
+      new DataItem { Quarter = "Q2", Revenue = 284000 },
+      new DataItem { Quarter = "Q3", Revenue = 274000 },
+      new DataItem { Quarter = "Q4", Revenue = 294000 }
+    };
+}

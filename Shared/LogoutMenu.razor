@@ -1,0 +1,40 @@
+﻿@using LYRA.Data
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<div class="dropdown" style="z-index: 3 !important">
+    <button class="dropbtn"  style="z-index: 3 !important">@nameEmail</button>
+    <div class="dropdown-content w-100"  style="z-index: 3 !important">
+        <li  onclick="@(()=>profile())" class="dropdown-item" style="cursor:pointer; z-index: 3 !important"><i class="oi oi-cog"></i>&ensp;&ensp;Profile</li>
+        <li onclick="@(()=>mainPage())" class="dropdown-item" style="cursor:pointer; z-index: 3 !important"><i class="oi oi-monitor"></i>&ensp;&ensp;Page demarrage</li>
+        @*<li class="dropdown-divider mb-0"></li>*@
+        <hr class="m-0"/>
+        <li class="dropdown-item" onclick="@(()=> Logout())" style="cursor:pointer; z-index: 3 !important"><i class="oi oi-account-logout"></i>&ensp;&ensp;Deconnexion</li>
+    </div>
+</div>
+@code {
+    string? nameEmail;
+
+    protected override async void OnInitialized()
+    {
+        nameEmail = await localStorage.GetItemAsync<string>("emailAddress");
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Logout()
+    {
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
+        NavigationManager.NavigateTo("/login");
+    }
+
+    public void mainPage()
+    {
+        NavigationManager.NavigateTo("/main_page");
+    }
+
+    public void profile()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
+}

@@ -1,0 +1,139 @@
+﻿@page "/historique_famille/{idFamille}"
+@using LYRA.Shared.Secretaire
+@layout SecretaireLayout
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@using System.IO
+
+@attribute [Authorize(Roles = "Admin, Secretaire")]
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+</style>
+<div class="col-md-12">
+    <RadzenCard class="mb-3">
+        <h4>Enregistrement des historiques précédents</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card border-left-secondary shadow py-2">
+                    <div class="card-body" style="font-size: 14px">
+                        <div>Numero OSIET : <b>@employer.Numeroosiet</b></div>
+                        <div>
+                            Etablissement :
+                            @if (employeur != null)
+                            {
+                                <span class="text-success"><b>@employeur.Raisonsociale</b></span>
+                            }
+                        </div>
+                        <div>Nom : <b>@employer.Nom</b></div>
+                        <div>Prenom : <b>@employer.Prenom</b></div>
+                        <div>Fonction : <b>@employer.Fonction</b></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="input-groupe">
+                    <span class="input-group-text">Enregistrement des documents images</span>
+                    <RadzenUpload ChooseText="Parcourir les images" class="" Multiple="true" Url="@lien" Accept="Image/*" Progress="@((args=>OnProgress(args,"envoie des documents")))" Complete="@UploadComplete" />
+                    <RadzenProgressBar Value="@progress" Unit="@info" Visible="@(progress>0)"></RadzenProgressBar>
+                </div>
+
+            </div>
+        </div>
+    </RadzenCard>
+    <RadzenCard>
+        @if (listFile != null)
+        {
+            <RadzenGrid AllowColumnResize="true" AllowPaging="true" PageSize="6" Data="@listFile"
+                    TItem="ListFile" PageSizeText="Page" EmptyText="Aucune information" class="mt-0"
+                    PagerHorizontalAlign="HorizontalAlign.Center">
+                <Columns>
+                    <RadzenGridColumn TItem="ListFile" Property="name" Title="Nom du fichier">
+                        <Template Context=data>
+                            <a href="archives/@nomDossier.Trim()/@Path.GetFileName(data.name)" data-lightbox="roadtrip" class="">@Path.GetFileName(data.name).Trim()</a>
+                        </Template>
+                    </RadzenGridColumn>
+                    <RadzenGridColumn Width="110px" TItem="ListFile" Property="Effacer" Filterable=false Sortable=false>
+                        <Template Context=data>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Text="Supprimer" Size="ButtonSize.Small" title="Effacer" />
+                        </Template>
+                    </RadzenGridColumn>
+                </Columns>
+            </RadzenGrid>
+        }
+    </RadzenCard>
+</div>
+
+@code {
+    [Parameter]
+    public string? idFamille { get; set; }
+    int progress;
+    string info;
+    string nomDossier;
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    string lien;
+    List<ListFile> listFile = new List<ListFile>();
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        int id = Convert.ToInt32(idFamille);
+        famille = await affiliService.GetFamilleById(id);
+        nomDossier = famille.NomDossier;
+        lien = "upload/" + nomDossier;
+        await getListFilesInFolderPatiant();
+        StateHasChanged();
+    }
+
+    private async Task getListFilesInFolderPatiant()
+    {
+        //string path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\archives\" + nomDossier);
+        string path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\archives\" + nomDossier);
+        string[] filesInFolder = Directory.GetFiles(path);
+        int i = 1;
+        foreach (var item in filesInFolder)
+        {
+            ListFile lf = new();
+            lf.id = i;
+            lf.name = Path.GetFileName(item);
+            listFile.Add(lf);
+            Console.WriteLine(">>> FICHIER : " + i + " Nom : " + Path.GetFileName(item));
+            i++;
+        }
+        StateHasChanged();
+    }
+
+    private void OnProgress(UploadProgressArgs args, string name)
+    {
+        this.info = $"%'{name}' / {args.Loaded} of {args.Total} bytes.";
+        this.progress = args.Progress;
+        StateHasChanged();
+    }
+
+    public void UploadComplete()
+    {
+        StateHasChanged();
+    }
+
+    class ListFile
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+    }
+}

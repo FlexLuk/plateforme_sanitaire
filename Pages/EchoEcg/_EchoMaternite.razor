@@ -1,0 +1,449 @@
+﻿@page "/echo_maternite/{idCpn}"
+@using LYRA.Controllers.ControllerExamens
+@using LYRA.Controllers.ControllerFichiste
+@using LYRA.Controllers.ControllerMaternite
+@using LYRA.Controllers.ControllerParametre
+@using LYRA.Models.Examens
+@using LYRA.Models
+@using LYRA.Models.Maternites
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Controllers.ControllerUtilisateur
+@using Blazored.Toast
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using LYRA.Shared.EchoEcg
+@using LYRA.Shared.Maternites
+@inject NavigationManager Go
+@inject IAffiliationService affiliService
+@inject IAdhesionService adhesionService
+@inject IFichisteService fichisteservice
+@inject ILocalStorageService _localStorageService
+@inject IUtilisateurService uService
+@inject IExamenService examenService
+@inject IToastService toastService
+@inject IMaterniteService materniteService
+@inject IParametreService parametreService
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Radzen.NotificationService notificationService
+@layout MaterniteLayout
+@attribute [Authorize(Roles = "EchoEcg, Admin")]
+
+<style type="text/css">
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+
+    .border-left-secondary {
+        border-left: 0.25rem solid #ffc107 !important;
+    }
+
+    .pb-2, .py-2 {
+        padding-bottom: 0.5rem !important;
+    }
+
+    .lineSwitch {
+        margin-bottom: 0px;
+        line-height: initial;
+    }
+
+    .rz-switch-circle {
+        border-radius: initial !important;
+        height: 31px !important;
+    }
+</style>
+<RadzenNotification />
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h4 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <b>N° OSIET </b>&ensp;<i>@numOsiet</i>&ensp;<b>Nom du patiant </b>&ensp;<i>@Nom </i>&ensp;<b>Etablissement </b>&ensp;<i>@Etablissement</i>
+            </button>
+        </h4>
+        <div id="collapseOne" class="accordion-collapse collapse hide" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="row">
+                    <div class="col-xl-4 col-md-6 m-0">
+                        <div class="card border-left-primary shadow  py-2">
+                            <div class="card-body m-0">
+                                <table class="table table-sm table-bordered mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">N° OSIET</th>
+                                            <td style="font-weight:bold">@numOsiet</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">NOM COMPLET</th>
+                                            <td>@Nom</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">CARACTERISTIQUE</th>
+                                            <td>
+                                                @if (fichiste != null)
+                                                {
+                                                    @fichiste.Categorie
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                @if (files != null)
+                                {
+                                    foreach (var file in files)
+                                    {
+                                        Console.WriteLine("<<<<<<>>>>> 0 000000" + file);
+                                    }
+                                }
+                                <a style="border-radius:0;" href="historiques/DSC_0033.JPG" data-lightbox="roadtrip" class="btn btn-sm btn-primary w-100">Historiques de patiant</a>
+                                <a href="historiques/DSC_0040_1 (2).JPG" data-lightbox="roadtrip" class="d-none">Open popup 2</a>
+                                <a href="historiques/DSC_0040_1.JPG" data-lightbox="roadtrip" class="d-none">Open popup 3</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-md-6 mb-0">
+                        <div class="card border-left-secondary shadow py-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">HEURE D’ARRIVEE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Date.TimeOfDay.Hours
+
+                                                            <span>h</span>
+                                                            <span>@fichiste.Date.TimeOfDay.Minutes</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° DU JOUR</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Numjour
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">N° PARAMETRE</th>
+                                                    <td>
+                                                        @if (fichiste != null)
+                                                        {
+                                                            @fichiste.Parametreid
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col">
+                                        @*<h4 class="">PARAMETRES</h4>*@
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">TEMPERATURE</th>
+                                                    <td>
+                                                        <span class="" style="color: #fd7e14; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Temperature <span>°</span>
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.D</th>
+                                                    <td>
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tad
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">T.A.G</th>
+                                                    <td>
+                                                        <span class="" style="color: #6f42c1; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Tag
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">FREQUENCE CARDIAQUE</th>
+                                                    <td>
+                                                        <span class="" style="font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.FrequenceCardiaque
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <th scope="row">POIDS</th>
+                                                    <td colspan="3">
+                                                        <span class="" style="color: #0d6efd; font-weight:bold; font-size:1.1em">
+                                                            @if (parametre != null)
+                                                            {
+                                                                @parametre.Poids
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">OBSERVATION</th>
+                                                    <td colspan="5">
+                                                        @if (parametre != null)
+                                                        {
+                                                            @parametre.Observation
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-2">
+</div>
+<div class="card mt-1 mb-4">
+    <div class="card-header m-0">
+        <h6 class="m-0">ECHO MATERNITE</h6>
+    </div>
+
+    <div class="card-body ">
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre crânienne : : </span>
+                    <RadzenTextBox class="form-control" placeholder="Périmètre crânienne" @bind-value=@echoMAternite.PerimetreCranienne />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre Brachiale :  </span>
+                    <RadzenTextBox class="form-control" placeholder="Périmètre Brachiale" @bind-value=@echoMAternite.PerimetreBrachiale />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Périmètre Thoracique  : </span>
+                    <RadzenTextBox class="form-control" placeholder="Périmètre Thoracique" @bind-value=@echoMAternite.PerimetreThoracique />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Type de liquide amniotique : </span>
+                    <RadzenTextBox class="form-control" placeholder="Type" @bind-value=@echoMAternite.TypeLiquideAmniotique />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Quantité du liquide amniotique : </span>
+                    <RadzenTextBox class="form-control" placeholder="Quantité" @bind-value=@echoMAternite.QuantiteLiquideAmniotique />
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Date : </span>
+                    <RadzenDatePicker class="form-control p-0" TValue="DateTime?" ShowTime @bind-Value=@echoMAternite.Date Placeholder="Date d'enregistrement" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row pb-1">
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Battements de cœur : </span>
+                    <RadzenSwitch @bind-Value="@BatCoeur" />
+                    <span class="h5 lineSwitch badge @((BatCoeur==true) ? "bg-success" : "bg-danger")">@((BatCoeur == true) ? "Oui" : "Non")</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Mouvement actif du foetus:</span>
+                    <RadzenSwitch @bind-Value="@MvmtFoetus" />
+                    <span class="h5 lineSwitch badge @((MvmtFoetus==true) ? "bg-success" : "bg-danger")">@((MvmtFoetus == true) ? "Oui" : "Non")</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Etat du Bébé : </span>
+                    <RadzenSwitch @bind-Value="@EtatBebe" />
+                    <span class="h5 lineSwitch badge @((EtatBebe==true) ? "bg-success" : "bg-danger")">@((EtatBebe == true) ? "Vivant" : "Mort")</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-xl-6">
+                </div>
+                <div class="col-xl-6">
+                    <div class="row">
+                        <div class="col float-right">
+                            <div class="col-auto">
+                                <RadzenButton Click="@(()=>SaveEchoMaternite())" ButtonStyle="ButtonStyle.Success" class="float-right mr-3  no-radius" Text="Enregistrer" />
+                            </div>
+                            <div class="col-auto">
+                                <RadzenButton Click="@(()=>Go.NavigateTo("/echoecg_attente"))" ButtonStyle="ButtonStyle.Danger" class="float-right mr-3  no-radius" Text="Annuler" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<BlazoredToasts Position="ToastPosition.TopRight" Timeout="4" />
+@code {
+    [Parameter]
+    public string idCpn { get; set; } = null!;
+    long cpnID;
+    string[]? files;
+    string? numOsiet, Nom, Etablissement, nomDossier;
+    string? name;
+    bool BatCoeur = true, EtatBebe = true, MvmtFoetus = true;
+    string bat_coeur, etat_bebe, mvmt_foetus, emailAddress = "";
+    int Age;
+    Fichiste fichiste = new();
+    Parametre parametre = new();
+    Employer employer = new();
+    Employeur employeur = new();
+    Famille famille = new();
+    bool? nouveau_cas = false;
+    DateTime rdv = DateTime.Now;
+    bool rdvCheck = false;
+    Cpn cpn = new();
+    Maternite maternite = new();
+    EchoMaternite echoMAternite = new();
+    NotificationMessage notification = new();
+
+    protected async override void OnInitialized()
+    {
+        cpnID = Convert.ToInt64(idCpn);
+
+        cpn = await materniteService.GetCpnByID(cpnID);
+        emailAddress = await _localStorageService.GetItemAsync<string>("emailAddress");
+        maternite = await materniteService.GetMaterniteByID(cpn.MaterniteId);
+        echoMAternite = await materniteService.GetEchoMaterniteByCpnId(cpnID);
+        fichiste = await fichisteservice.getFichisteById(maternite.FichisteId);
+        parametre = await parametreService.GetParametreByFichiste(fichiste.Fichisteid);
+        if (fichiste.Categorie == "Travailleur")
+        {
+            await GetEmployer(Convert.ToInt16(fichiste.Affiliationid));
+            if (employer.NomDossier != null)
+            {
+                if (employer.NomDossier != null)
+                {
+                    nomDossier = employer.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+
+            }
+        }
+        else if (fichiste.Categorie == "Famille")
+        {
+            await GetFamille(Convert.ToInt16(fichiste.Affiliationid));
+            if (famille.NomDossier != null)
+            {
+                if (famille.NomDossier != null)
+                {
+                    nomDossier = famille.NomDossier.Trim();
+                    if (Directory.Exists("wwwroot/archives/" + nomDossier))
+                        files = Directory.GetFiles("wwwroot/archives/" + nomDossier);
+                }
+                if (famille != null)
+                {
+                    maternite = await materniteService.CheckMaterniteExistByEmployer(famille.Employerid);
+                }
+            }
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+    //ATAO UPDATE FA TSY CREATE
+    private async Task SaveEchoMaternite()
+    {
+        echoMAternite.Statut = "Terminer";
+        echoMAternite.EtatBebe = (EtatBebe == true) ? "Vivant" : "Mort";
+        echoMAternite.BatementCoeur = (BatCoeur == true) ? "Oui" : "Non";
+        echoMAternite.MouvementActif = (MvmtFoetus == true) ? "Oui" : "Non";
+        bool result = await materniteService.UpdateEchoMaternite(echoMAternite);
+        if (result)
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Succès.",
+                    Detail = "Enregistrement écho a été fait avec succès.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+            Go.NavigateTo("/echoecg_attente");
+        }
+        else
+        {
+            notification = new NotificationMessage
+                {
+                    Style = "position: absolute; top: -50px",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erreur.",
+                    Detail = "Erreur d'enregistrement,contacter l'administrateur.",
+                    Duration = 4000
+                };
+            notificationService.Notify(notification);
+        }
+        
+    }
+
+    public async Task GetFamille(int familleID)
+    {
+        famille = await affiliService.GetFamilleById(familleID);
+        if (famille.Numeroosiet != null)
+        {
+            employer = await affiliService.GetEmployerByNumOsiet(famille.Numeroosiet);
+            if (employer.Numemployeur != null)
+            {
+                employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+                numOsiet = famille.Numeroosiet;
+                Nom = famille.Nom + " " + famille.Prenom;
+                Etablissement = employeur.Raisonsociale;
+                if (famille.Datenaissance != null)
+                {
+                    Age = DateTime.Now.Year - famille.Datenaissance.Value.Year;
+                }
+            }
+
+        }
+    }
+
+    public async Task GetEmployer(int employerID)
+    {
+        employer = await affiliService.GetEmployerById(employerID);
+        if (employer.Numemployeur != null)
+        {
+            employeur = await adhesionService.GetEmployeurByEmployer(employer.Numemployeur);
+            numOsiet = employer.Numeroosiet;
+            Nom = employer.Nom + " " + employer.Prenom;
+            Etablissement = employeur.Raisonsociale;
+            if (employer.Datenaissance != null)
+            {
+                Age = DateTime.Now.Year - employer.Datenaissance.Value.Year;
+            }
+
+        }
+    }
+}
