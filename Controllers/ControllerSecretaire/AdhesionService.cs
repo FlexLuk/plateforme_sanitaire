@@ -51,7 +51,6 @@ namespace LYRA.Controllers.ControllerSecretaire
                     return null;
                 }
             }
-
         }
 
         public async Task<Employeur> GetEmployeurByEmployer(string numEmployeur)
