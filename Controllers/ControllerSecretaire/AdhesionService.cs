@@ -1,5 +1,6 @@
 ﻿using LYRA.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LYRA.Controllers.ControllerSecretaire
 {
@@ -28,19 +29,29 @@ namespace LYRA.Controllers.ControllerSecretaire
 
         public async Task<Employeur?> InsertAdhesion(Employeur employeur)
         {
-            Employeur? empl = new();
-            empl = employeur;
-            await context.Employeurs.AddAsync(empl);
-            int i = context.SaveChanges();
-            if(i > 0)
+            Employeur? employeurChecker = new();
+
+            try
             {
-                return empl;
-            }
-            else
-            {
+                employeurChecker = await context.Employeurs.Where(x => x.Numemployeur.Trim() == employeur.Numemployeur.Trim()).FirstAsync();
                 return null;
             }
-            
+            catch (InvalidOperationException)
+            {
+                Employeur? empl = new();
+                empl = employeur;
+                await context.Employeurs.AddAsync(empl);
+                int i = context.SaveChanges();
+                if (i > 0)
+                {
+                    return empl;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
         }
 
         public async Task<Employeur> GetEmployeurByEmployer(string numEmployeur)

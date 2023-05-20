@@ -229,7 +229,7 @@
             _toastParameters = new ToastParameters();
             _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
             _toastParameters.Add(nameof(MyToast.Level), "Error");
-            _toastParameters.Add(nameof(MyToast.Message), "Erreur d'enregistrement.");
+            _toastParameters.Add(nameof(MyToast.Message), "Numéro employeur existe déjà.");
             toastService.ShowToast<MyToast>(_toastParameters);
         }
 
