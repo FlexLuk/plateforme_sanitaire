@@ -331,7 +331,7 @@
 
     protected async void GoBack()
     {
-        consultation = await medecinService.GetConsultationByFichisteId(Convert.ToInt64(idFichiste));
-        Go.NavigateTo("dentiste/" + consultation.Fichisteid);
+        //consultation = await medecinService.GetConsultationByFichisteId(Convert.ToInt64(idFichiste));
+        Go.NavigateTo("dentiste/" + idFichiste);
     }
 }
