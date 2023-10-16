@@ -10,9 +10,9 @@ namespace LYRA.Models
         public string? Numemployeur { get; set; }
         public string? Nom { get; set; }
         [Required(ErrorMessage = "Ce champs est obligatoire.")]
-        public string Prenom { get; set; } = null!;
+        public string? Prenom { get; set; } = null!;
         [Required(ErrorMessage = "Ce champs est obligatoire.")]
-        public string Sexe { get; set; } = null!;
+        public string? Sexe { get; set; } = null!;
         public string? Cin { get; set; } = null!;
         public string? Adresse { get; set; }
         public string? Contact { get; set; }
@@ -21,10 +21,10 @@ namespace LYRA.Models
         public DateTime? Datenaissance { get; set; }
         public string? Lieunaissance { get; set; }
         public string? Situationmatrimoniale { get; set; }
-        public string Categorie { get; set; } = null!;
+        public string? Categorie { get; set; } = null!;
 
         [Required(ErrorMessage = "Il faut assigner un numero OSIET.")]
-        public string Numeroosiet { get; set; } = null!;
+        public string? Numeroosiet { get; set; } = null!;
         public string? Statut { get; set; }
         public string? Fonction { get; set; }
         public string? NomDossier { get; set; }
