@@ -2,3 +2,4 @@
 *.CACHE
 *.cache
 *.suo
+appsettings.json
