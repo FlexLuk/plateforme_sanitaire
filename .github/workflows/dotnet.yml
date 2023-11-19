@@ -32,6 +32,8 @@ jobs:
     - name: Connect on WinRM
       shell: pwsh
       run: |
+        Enable-PSRemoting -Force
+        Set-Item WSMan:\localhost\Client\TrustedHosts -Value plateforme.osiet.net
         $userName = 'Flex'
         $password = 'Richgang12'
         [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
