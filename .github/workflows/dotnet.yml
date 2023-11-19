@@ -38,3 +38,5 @@ jobs:
         [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
         Enter-PSSession -ComputerName plateforme.osiet.net -Credential $credential
+        dir
+        exit
