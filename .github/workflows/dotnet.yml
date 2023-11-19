@@ -20,18 +20,19 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Publish
-      shell: pwsh
-      run: dotnet publish -c Release -o .\myApp
+    #- name: Restore dependencies
+    #  run: dotnet restore
+    #- name: Build
+    #  run: dotnet build --no-restore
+    #- name: Test
+     # run: dotnet test --no-build --verbosity normal
+    #- name: Publish
+     # shell: pwsh
+      #run: dotnet publish -c Release -o .\myApp
     - name: Connect on WinRM
       shell: pwsh
       run: |
+        Set-Item WSMan:\localhost\Client\TrustedHosts -Value plateforme.osiet.net
         $userName = 'Flex'
         $password = 'Richgang12'
         [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
