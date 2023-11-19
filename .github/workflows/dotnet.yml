@@ -26,3 +26,14 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      shell: pwsh
+      run: dotnet publish -c Release -o .\myApp
+    - name: Deploy to IIS
+      shell: pwsh
+      run: |
+        iisresset /stop
+        New-Item exclude.txt
+        echo "appsettings.json" "web.config" > exclude.txt
+        xcopy /s /y /exclude:exclude.txt .\myApp\* .
+        iisreset /start
