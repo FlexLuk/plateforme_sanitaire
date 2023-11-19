@@ -29,11 +29,12 @@ jobs:
     - name: Publish
       shell: pwsh
       run: dotnet publish -c Release -o .\myApp
-    - name: Deploy to IIS
+    - name: Connect on WinRM
       shell: pwsh
       run: |
-        iisresset /stop
-        New-Item exclude.txt
-        echo "appsettings.json" "web.config" > exclude.txt
-        xcopy /s /y /exclude:exclude.txt .\myApp\* .
-        iisreset /start
+        $userName = 'Flex'
+        $password = 'Richgang12'
+        [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
+        $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
+        Enter-PSSession -ComputerName plateforme.osiet.net -Credential $credential
+        dir
