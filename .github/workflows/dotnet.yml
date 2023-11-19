@@ -37,6 +37,6 @@ jobs:
         $password = 'Richgang12'
         [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
-        Enter-PSSession -ComputerName plateforme.osiet.net -Credential $credential
-        dir
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { ipconfig } -credential $credential
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
         exit
