@@ -39,7 +39,8 @@ jobs:
         $PSSession = New-PSSession -ComputerName plateforme.osiet.net -Credential $credential
         $source = '.\myApp\'
         $dest = 'C:\inetpub\osiet\'
-        Robocopy.exe $source $dest /MIR /E /XF *appsettings.json *web.config /TEE -ToSession $PSSession
+        Robocopy.exe $source $dest /MIR /E /XF *appsettings.json *web.config /TEE
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
+        Remove-PSSession -Session $PSSession
         exit
