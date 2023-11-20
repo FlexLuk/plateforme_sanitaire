@@ -13,8 +13,6 @@ jobs:
   build:
 
     runs-on: windows-latest
-    env:
-        SUPER_SECRET: ${{ secrets.LOGIN_PWD }}
         
     steps:
     - uses: actions/checkout@v3
@@ -33,9 +31,11 @@ jobs:
       #run: dotnet publish -c Release -o .\myApp
     - name: Connect on WinRM
       shell: pwsh
+      env:
+        SUPER_SECRET: ${{ secrets.LOGIN_PWD }}
       run: |
         winrm set winrm/config/client ‘@{TrustedHosts="*"}’
-        [SecureString]$securepassword = ${{ env.SUPER_SECRET }} | ConvertTo-SecureString -AsPlainText -Force 
+        [SecureString]$securepassword = $Env:SUPER_SECRET | ConvertTo-SecureString -AsPlainText -Force 
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList Administrator, $securepassword
         pwd
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
