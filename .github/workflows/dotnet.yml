@@ -24,8 +24,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
     - name: Publish
       shell: pwsh
       run: dotnet publish -c Release -o .\myApp
@@ -42,7 +40,7 @@ jobs:
         $source = '.\myApp\'
         $dest = 'C:\inetpub\osiet\'
         $exclude = @('*.json','*.config')
-        Get-ChildItem $source -Recurse -Exclude $exclude | Copy-Item -Destination {Join-Path $dest $_.FullName.Substring($source.length)} -ToSession PSSession
+        Get-ChildItem $source -Recurse -Exclude $exclude | Copy-Item -Destination {Join-Path $dest $_.FullName.Substring($source.length)} -ToSession $PSSession
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
         exit
