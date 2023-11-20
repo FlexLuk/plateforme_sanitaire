@@ -16,18 +16,18 @@ jobs:
         
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
+    - name: ===> Setup .NET...
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
+    - name: ===> Restore dependencies...
       run: dotnet restore
-   # - name: Build
-    #  run: dotnet build --no-restore
-    - name: Publish
+    - name: ===> Building...
+      run: dotnet build --no-restore
+    - name: ===> Publishing...
       shell: pwsh
       run: dotnet publish -c Release -o .\myApp
-    - name: Connect on WinRM
+    - name: ===> Syncronisation with server
       shell: pwsh
       env:
         SUPER_SECRET: ${{ secrets.LOGIN_PWD }}
@@ -37,10 +37,8 @@ jobs:
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList Administrator, $securepassword
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
         $PSSession = New-PSSession -ComputerName plateforme.osiet.net -Credential $credential
-        $source = '.\myApp\'
         $dest = 'C:\inetpub\osiet\'
-        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { Robocopy.exe $source $dest /MIR /E /XF *appsettings.json *web.config /TEE } -credential $credential
+        Copy-Item .\myApp\LYRA.exe,.\myApp\LYRA.dll,.\myApp\LYRA.pdb -Destination $dest -ToSession $PSSession
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
-        Remove-PSSession -Session $PSSession
         exit
