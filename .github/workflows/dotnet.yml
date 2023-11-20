@@ -38,6 +38,7 @@ jobs:
         [SecureString]$securepassword = $password | ConvertTo-SecureString -AsPlainText -Force 
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
         pwd
-        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { pwd } -credential $credential
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
         exit
