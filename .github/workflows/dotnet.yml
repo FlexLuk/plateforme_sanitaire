@@ -33,8 +33,8 @@ jobs:
       shell: pwsh
       run: |
         winrm set winrm/config/client ‘@{TrustedHosts="*"}’
-        [SecureString]$securepassword = {{ secret.LOGIN_PWD }} | ConvertTo-SecureString -AsPlainText -Force 
-        $credential = New-Object System.Management.Automation.PSCredential -ArgumentList {{ secret.LOGIN_USER }}, $securepassword
+        [SecureString]$securepassword = ${{ secrets.LOGIN_PWD }} | ConvertTo-SecureString -AsPlainText -Force 
+        $credential = New-Object System.Management.Automation.PSCredential -ArgumentList ${{ secrets.LOGIN_USER }}, $securepassword
         pwd
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
