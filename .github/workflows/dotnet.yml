@@ -16,19 +16,19 @@ jobs:
         
     steps:
     - uses: actions/checkout@v3
-    #- name: Setup .NET
-     # uses: actions/setup-dotnet@v3
-      #with:
-       # dotnet-version: 6.0.x
-    #- name: Restore dependencies
-    #  run: dotnet restore
-    #- name: Build
-    #  run: dotnet build --no-restore
-    #- name: Test
-     # run: dotnet test --no-build --verbosity normal
-    #- name: Publish
-     # shell: pwsh
-      #run: dotnet publish -c Release -o .\myApp
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      shell: pwsh
+      run: dotnet publish -c Release -o .\myApp
     - name: Connect on WinRM
       shell: pwsh
       env:
@@ -37,8 +37,12 @@ jobs:
         winrm set winrm/config/client ‘@{TrustedHosts="*"}’
         [SecureString]$securepassword = $Env:SUPER_SECRET | ConvertTo-SecureString -AsPlainText -Force 
         $credential = New-Object System.Management.Automation.PSCredential -ArgumentList Administrator, $securepassword
-        pwd
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
+        $PSSession = New-PSSession -ComputerName plateforme.osiet.net -Credential $credential
+        $source = '.\myApp\'
+        $dest = 'C:\inetpub\osiet\'
+        $exclude = @('*.json','*.config')
+        Get-ChildItem $source -Recurse -Exclude $exclude | Copy-Item -Destination {Join-Path $dest $_.FullName.Substring($source.length)} -ToSession PSSession
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
         Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
         exit
