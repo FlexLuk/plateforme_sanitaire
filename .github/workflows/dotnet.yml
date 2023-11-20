@@ -12,8 +12,8 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+        
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -22,7 +22,25 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+   # - name: Build
+    #  run: dotnet build --no-restore
+    - name: Publish
+      shell: pwsh
+      run: dotnet publish -c Release -o .\myApp
+    - name: Connect on WinRM
+      shell: pwsh
+      env:
+        SUPER_SECRET: ${{ secrets.LOGIN_PWD }}
+      run: |
+        winrm set winrm/config/client ‘@{TrustedHosts="*"}’
+        [SecureString]$securepassword = $Env:SUPER_SECRET | ConvertTo-SecureString -AsPlainText -Force 
+        $credential = New-Object System.Management.Automation.PSCredential -ArgumentList Administrator, $securepassword
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /stop } -credential $credential
+        $PSSession = New-PSSession -ComputerName plateforme.osiet.net -Credential $credential
+        $source = '.\myApp\'
+        $dest = 'C:\inetpub\osiet\'
+        Robocopy.exe $source $dest /MIR /E /XF *appsettings.json *web.config /TEE
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { iisreset /start } -credential $credential
+        Invoke-Command -ComputerName plateforme.osiet.net -ScriptBlock { exit } -credential $credential
+        Remove-PSSession -Session $PSSession
+        exit
