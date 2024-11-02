@@ -40,10 +40,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Data\" />
-		<Folder Include="Models\Rendez_vous\" />
-		<Folder Include="wwwroot\css\" />
-		<Folder Include="wwwroot\images\" />
+		<Folder Include="Data\"/>
+		<Folder Include="Models\Rendez_vous\"/>
+		<Folder Include="wwwroot\css\"/>
+		<Folder Include="wwwroot\images\"/>
 	</ItemGroup>
-
 </Project>
