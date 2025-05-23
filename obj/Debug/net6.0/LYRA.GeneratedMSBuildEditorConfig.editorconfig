@@ -9,459 +9,473 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = LYRA
 build_property.RootNamespace = LYRA
-build_property.ProjectDir = C:\Users\Flex\source\repos\LYRA\
+build_property.ProjectDir = C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\Flex\source\repos\LYRA
+build_property.MSBuildProjectDirectory = C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 6.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/Flex/source/repos/LYRA/App.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Administration/_Role.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Administration/_Role.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cX1JvbGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Administration/_Utilisateur.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Administration/_Utilisateur.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5pc3RyYXRpb25cX1V0aWxpc2F0ZXVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Component.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Component.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcG9uZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Counter.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dashboard.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dashboard.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGFzaGJvYXJkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Demarrage.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Demarrage.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVtYXJyYWdlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_ConsultationDentiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_ConsultationDentiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX0NvbnN1bHRhdGlvbkRlbnRpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_Dentiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_Dentiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX0RlbnRpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_DentisteAttente.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_DentisteAttente.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX0RlbnRpc3RlQXR0ZW50ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_DentisteMedecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_DentisteMedecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX0RlbnRpc3RlTWVkZWNpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_DentisteRapprt.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_DentisteRapprt.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX0RlbnRpc3RlUmFwcHJ0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Dentiste/_OrdonnanceDentiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Dentiste/_OrdonnanceDentiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudGlzdGVcX09yZG9ubmFuY2VEZW50aXN0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_EchoEcg.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_EchoEcg.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfRWNob0VjZy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_EchoEcgAttente.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_EchoEcgAttente.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfRWNob0VjZ0F0dGVudGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_EchoEcgList.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_EchoEcgList.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfRWNob0VjZ0xpc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_EchoEcgMedecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_EchoEcgMedecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfRWNob0VjZ01lZGVjaW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_EchoMaternite.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_EchoMaternite.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfRWNob01hdGVybml0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/EchoEcg/_RapportEchoEcg.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/EchoEcg/_RapportEchoEcg.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRWNob0VjZ1xfUmFwcG9ydEVjaG9FY2cucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Fichiste/_ConsultationFichiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Fichiste/_ConsultationFichiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmljaGlzdGVcX0NvbnN1bHRhdGlvbkZpY2hpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Fichiste/_DialogFichiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Fichiste/_DialogFichiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmljaGlzdGVcX0RpYWxvZ0ZpY2hpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Fichiste/_Fichiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Fichiste/_Fichiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmljaGlzdGVcX0ZpY2hpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Fichiste/_RapportFichiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Fichiste/_RapportFichiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmljaGlzdGVcX1JhcHBvcnRGaWNoaXN0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Fonts.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Fonts.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9udHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Index.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Laboratoire/_ConsultationLaboratoire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Laboratoire/_ConsultationLaboratoire.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGFib3JhdG9pcmVcX0NvbnN1bHRhdGlvbkxhYm9yYXRvaXJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Laboratoire/_Laboratoire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Laboratoire/_Laboratoire.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGFib3JhdG9pcmVcX0xhYm9yYXRvaXJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Laboratoire/_Laboratoire_Medecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Laboratoire/_Laboratoire_Medecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGFib3JhdG9pcmVcX0xhYm9yYXRvaXJlX01lZGVjaW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Laboratoire/_Laboratoire_Patiant.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Laboratoire/_Laboratoire_Patiant.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGFib3JhdG9pcmVcX0xhYm9yYXRvaXJlX1BhdGlhbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Laboratoire/_RapportLaboratoire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Laboratoire/_RapportLaboratoire.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGFib3JhdG9pcmVcX1JhcHBvcnRMYWJvcmF0b2lyZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Login.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_AddCPN.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_AddCPN.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9BZGRDUE4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Cpn.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Cpn.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9DcG4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Maternite.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Maternite.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_MaterniteListe.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_MaterniteListe.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGVMaXN0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Maternite_consultation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Maternite_consultation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGVfY29uc3VsdGF0aW9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Maternite_Medecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Maternite_Medecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGVfTWVkZWNpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Maternite_Patiant.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Maternite_Patiant.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGVfUGF0aWFudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_Maternite_rapport.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_Maternite_rapport.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9NYXRlcm5pdGVfcmFwcG9ydC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Maternite/_PageMaternite.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Maternite/_PageMaternite.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0ZXJuaXRlXF9QYWdlTWF0ZXJuaXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_DialogMedecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_DialogMedecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfRGlhbG9nTWVkZWNpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_DocteurPrescription - Copier.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_DocteurPrescription - Copier.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfRG9jdGV1clByZXNjcmlwdGlvbiAtIENvcGllci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_DocteurPrescription.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_DocteurPrescription.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfRG9jdGV1clByZXNjcmlwdGlvbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_Medecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_Medecin.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfTWVkZWNpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_MedecinConsulte.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_MedecinConsulte.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfTWVkZWNpbkNvbnN1bHRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_MedecinManage.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_MedecinManage.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfTWVkZWNpbk1hbmFnZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_PageDentiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_PageDentiste.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfUGFnZURlbnRpc3RlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Medecin/_RapportConsultation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Medecin/_RapportConsultation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVkZWNpblxfUmFwcG9ydENvbnN1bHRhdGlvbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Parametre/RapportParametre.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Parametre/RapportParametre.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFyYW1ldHJlXFJhcHBvcnRQYXJhbWV0cmUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Parametre/_Parametre.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Parametre/_Parametre.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFyYW1ldHJlXF9QYXJhbWV0cmUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Parametre/_ParametreManage.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Parametre/_ParametreManage.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFyYW1ldHJlXF9QYXJhbWV0cmVNYW5hZ2UucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Parametre/_Parametre_Consultation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Parametre/_Parametre_Consultation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFyYW1ldHJlXF9QYXJhbWV0cmVfQ29uc3VsdGF0aW9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Parametre/_patiant.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Parametre/_patiant.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFyYW1ldHJlXF9wYXRpYW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_Article.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_Article.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9BcnRpY2xlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_CreateOrdonnance.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_CreateOrdonnance.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9DcmVhdGVPcmRvbm5hbmNlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_DialogOrdonnance.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_DialogOrdonnance.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9EaWFsb2dPcmRvbm5hbmNlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_DialogSoinsPharmacie.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_DialogSoinsPharmacie.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9EaWFsb2dTb2luc1BoYXJtYWNpZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_Inventaire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_Inventaire.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9JbnZlbnRhaXJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_ListeCreationOrdonnance.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_ListeCreationOrdonnance.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9MaXN0ZUNyZWF0aW9uT3Jkb25uYW5jZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_Ordonnance.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_Ordonnance.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9PcmRvbm5hbmNlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_OrdonnanceOSIET.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_OrdonnanceOSIET.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9PcmRvbm5hbmNlT1NJRVQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_Sortie.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_Sortie.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9Tb3J0aWUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_SortieMedicament.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_SortieMedicament.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9Tb3J0aWVNZWRpY2FtZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Pharmacie/_Stock.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Pharmacie/_Stock.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9TdG9jay5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_Adhesion.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/Component.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_Adhesion.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfQWRoZXNpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_Affiliation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_Affiliation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfQWZmaWxpYXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_ConfirmationAffiliation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_ConfirmationAffiliation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfQ29uZmlybWF0aW9uQWZmaWxpYXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_HistoriqueDocumentEmployer.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_HistoriqueDocumentEmployer.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfSGlzdG9yaXF1ZURvY3VtZW50RW1wbG95ZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_HistoriqueDocumentFamille.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_HistoriqueDocumentFamille.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfSGlzdG9yaXF1ZURvY3VtZW50RmFtaWxsZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_UpdateAffiliation.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_QrcodeEmployer.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfUXJjb2RlRW1wbG95ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_QrcodeFamille.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfUXJjb2RlRmFtaWxsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Secretaire/_UpdateAffiliation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfVXBkYXRlQWZmaWxpYXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Soins/_ConsultationSoins.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Soins/_ConsultationSoins.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU29pbnNcX0NvbnN1bHRhdGlvblNvaW5zLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Soins/_PageSoins.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Soins/_PageSoins.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU29pbnNcX1BhZ2VTb2lucy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Soins/_RapportSoins.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Soins/_RapportSoins.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU29pbnNcX1JhcHBvcnRTb2lucy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Soins/_Soigner.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Soins/_Soigner.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU29pbnNcX1NvaWduZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Soins/_SoinsDepartement.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Soins/_SoinsDepartement.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU29pbnNcX1NvaW5zRGVwYXJ0ZW1lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Vaccin/_DialogVaccinMere.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Vaccin/_DialogVaccinMere.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmFjY2luXF9EaWFsb2dWYWNjaW5NZXJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Vaccin/_VaccinEnfant.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Vaccin/_VaccinEnfant.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmFjY2luXF9WYWNjaW5FbmZhbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Vaccin/_VaccinMereCpm.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Vaccin/_VaccinMereCpm.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVmFjY2luXF9WYWNjaW5NZXJlQ3BtLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Error404.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Error404.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEVycm9yNDA0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Loading.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Loading.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvYWRpbmcucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/LoginLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/LoginLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvZ2luTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/LoginRedirect.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/LoginRedirect.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvZ2luUmVkaXJlY3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/LogoutMenu.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/LogoutMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvZ291dE1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/MyToast.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/MyToast.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE15VG9hc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/_Imports.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Dentiste/DentisteLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Dentiste/DentisteLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXERlbnRpc3RlXERlbnRpc3RlTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-lp2oj5vz5t
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Dentiste/NavMenuDentiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Dentiste/NavMenuDentiste.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXERlbnRpc3RlXE5hdk1lbnVEZW50aXN0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-0nbalr4trv
 
-[C:/Users/Flex/source/repos/LYRA/Shared/EchoEcg/EchoEcgLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/EchoEcg/EchoEcgLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEVjaG9FY2dcRWNob0VjZ0xheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-y8hib1kmxg
 
-[C:/Users/Flex/source/repos/LYRA/Shared/EchoEcg/NavMenuEchoEcg.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/EchoEcg/NavMenuEchoEcg.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEVjaG9FY2dcTmF2TWVudUVjaG9FY2cucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-k6f9dn4qph
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Fichiste/FichisteLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Fichiste/FichisteLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEZpY2hpc3RlXEZpY2hpc3RlTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-5v79hsmr36
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Fichiste/NavMenuFichiste.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Fichiste/NavMenuFichiste.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEZpY2hpc3RlXE5hdk1lbnVGaWNoaXN0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-vbch8jk4vj
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Laboratoire/LaboratoireLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Laboratoire/LaboratoireLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExhYm9yYXRvaXJlXExhYm9yYXRvaXJlTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-rpxx7luvbq
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Laboratoire/NavMenuLaboratoire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Laboratoire/NavMenuLaboratoire.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExhYm9yYXRvaXJlXE5hdk1lbnVMYWJvcmF0b2lyZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-yog5he5v7q
 
-[C:/Users/Flex/source/repos/LYRA/Shared/MainLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-j4ubw0yyvq
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Maternites/MaterniteLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Maternites/MaterniteLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1hdGVybml0ZXNcTWF0ZXJuaXRlTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-mf80s8bx29
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Maternites/NavMenuMaternite.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Maternites/NavMenuMaternite.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1hdGVybml0ZXNcTmF2TWVudU1hdGVybml0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-w0ne2cziag
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Medecin/MedecinLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Medecin/MedecinLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1lZGVjaW5cTWVkZWNpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-nqqw7i9lcn
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Medecin/NavMenuMedecin.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Medecin/NavMenuMedecin.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1lZGVjaW5cTmF2TWVudU1lZGVjaW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-p9fl6wbpys
 
-[C:/Users/Flex/source/repos/LYRA/Shared/NavMenu.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-j2cctbohfa
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Parametre/NavMenuParametre.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Parametre/NavMenuParametre.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBhcmFtZXRyZVxOYXZNZW51UGFyYW1ldHJlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-q41e3robi5
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Parametre/ParametreLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Parametre/ParametreLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBhcmFtZXRyZVxQYXJhbWV0cmVMYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-j5t1wj62mm
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Pharmacie/NavMenuPharmacie.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Pharmacie/NavMenuPharmacie.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBoYXJtYWNpZVxOYXZNZW51UGhhcm1hY2llLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-6d5x5uawqz
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Pharmacie/PharmacieLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Pharmacie/PharmacieLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBoYXJtYWNpZVxQaGFybWFjaWVMYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-tw3j6vwi63
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Secretaire/NavMenuSecretaire.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Secretaire/NavMenuSecretaire.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNlY3JldGFpcmVcTmF2TWVudVNlY3JldGFpcmUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-94g2amqpav
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Secretaire/SecretaireLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Secretaire/SecretaireLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNlY3JldGFpcmVcU2VjcmV0YWlyZUxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-2ih27aenkd
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Soins/NavMenuSoins.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Soins/NavMenuSoins.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNvaW5zXE5hdk1lbnVTb2lucy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-h3a4r6dgxf
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Soins/SoinsLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Soins/SoinsLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNvaW5zXFNvaW5zTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-q2abvzi1ul
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Utilisateur/NavMenuUtilisateur.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Utilisateur/NavMenuUtilisateur.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFV0aWxpc2F0ZXVyXE5hdk1lbnVVdGlsaXNhdGV1ci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-xist830f9f
 
-[C:/Users/Flex/source/repos/LYRA/Shared/Utilisateur/UtilisateurLayout.razor]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Shared/Utilisateur/UtilisateurLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFV0aWxpc2F0ZXVyXFV0aWxpc2F0ZXVyTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-3bokblscwq
 
-[C:/Users/Flex/source/repos/LYRA/Pages/Error.cshtml]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/_Host.cshtml]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Flex/source/repos/LYRA/Pages/_Layout.cshtml]
+[C:/Users/jean.luc.heriniaina/source/repos/plateforme_sanitaire/Pages/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

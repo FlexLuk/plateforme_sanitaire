@@ -30,6 +30,9 @@ using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using LYRA.Models.Maternites;
 using LYRA.Controllers.ControllerMaternite;
 using MudBlazor.Services;
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +114,10 @@ builder.Services.AddScoped<Radzen.DialogService>();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddMudServices();
+builder.Services
+  .AddBlazorise()
+  .AddBootstrap5Providers()
+  .AddFontAwesomeIcons();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

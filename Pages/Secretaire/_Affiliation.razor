@@ -11,7 +11,7 @@
 @using LYRA.Shared.Secretaire
 @using Radzen
 @using Radzen.Blazor
-@inject IToastService toastService
+@inject Blazored.Toast.Services.IToastService toastService
 @inject IAdhesionService adhesionService
 @inject IAffiliationService affiliService
 @inject NavigationManager go
@@ -35,9 +35,9 @@
                                     @if (employeurs != null)
                                     {
                                         <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string"
-                                                            Data="@(employeurs.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
-                                                            TextProperty="Raisonsociale" ValueProperty="Numemployeur"
-                                                            @bind-Value="@employeur.Numemployeur" Placeholder="Etablissement" />
+                                                                Data="@(employeurs.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                                TextProperty="Raisonsociale" ValueProperty="Numemployeur"
+                                                                @bind-Value="@employeur.Numemployeur" Placeholder="Etablissement" />
                                         <ValidationMessage For="@(() => employeur.Raisonsociale)" />
                                     }
                                 </div>
@@ -81,7 +81,7 @@
                                 <div class="input-group-sm mb-2" style="font-size:small">
                                     <span>Sexe : </span>
                                     <RadzenDropDown @bind-Value="@employer.Sexe" Class="form-control" Data=@sexeAdhesion
-                                                    Change="@(args=>OnChange(args))" Placeholder="Sexe" />
+                                                    Change="@(args => OnChange(args))" Placeholder="Sexe" />
                                     <ValidationMessage For="@(() => employer.Sexe)" />
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                 <div class="input-group-sm mb-2" style="font-size:small">
                                     <span>Situation matrimoniale : </span>
                                     <RadzenDropDown @bind-Value="@employer.Situationmatrimoniale" Class="form-control"
-                                                    Data=@situationMatri Change="@(args=>OnChange(args))"
+                                                    Data=@situationMatri Change="@(args => OnChange(args))"
                                                     Placeholder="Choisissez ici" />
                                     <ValidationMessage For="@(() => employer.Situationmatrimoniale)" />
                                 </div>
@@ -168,9 +168,9 @@
                             @if (employeurs != null)
                             {
                                 <RadzenDropDownDataGrid Class="form-control " AllowFiltering="true" TValue="string" AllowClear="true"
-                                                    Data="@(employeursFind.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
-                                                    TextProperty="Raisonsociale" ValueProperty="Numemployeur" Change="@(args => OnChangeEmployeurFind(args))"
-                                                    @bind-Value="@employeurFind.Numemployeur" Placeholder="Etablissement" />
+                                                        Data="@(employeursFind.Select(c=>new {Numemployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                        TextProperty="Raisonsociale" ValueProperty="Numemployeur" Change="@(args => OnChangeEmployeurFind(args))"
+                                                        @bind-Value="@employeurFind.Numemployeur" Placeholder="Etablissement" />
                             }
                         </div>
                     </div>
@@ -182,42 +182,47 @@
                         else
                         {
                             <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
-                                    AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@employers"
-                                    TItem="Employer" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
-                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
-                                    AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
-                                    ApplyFilterText="appliquer" PageSizeText="Page"
-                                    SelectionMode="DataGridSelectionMode.Single">
+                                        AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@employers"
+                                        TItem="Employer" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page"
+                                        SelectionMode="DataGridSelectionMode.Single">
                                 <Columns>
-                                    <RadzenGridColumn TItem="Employer" Property="Numeroosiet" Title="N° OSIET" Width="120px">
+                                    <RadzenGridColumn TItem="Employer" Property="Numeroosiet" Title="N° OSIET" Width="80px">
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="Employer" Property="Nom" Title="Nom">
+                                    <RadzenGridColumn TItem="Employer" Property="Nom" Title="Nom" Width="120px">
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="Employer" Property="Prenom" Title="Prenom">
+                                    <RadzenGridColumn TItem="Employer" Property="Prenom" Title="Prenom" Width="150px">
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="Employer" Property="Email" Title="Email" Width="250px" Sortable=false> </RadzenGridColumn>
+                                    <!--<RadzenGridColumn TItem="Employer" Property="Email" Title="Email" Width="120px" Sortable=false> </RadzenGridColumn>-->
                                     <RadzenGridColumn TItem="Employer" Property="Contact" Title="Contact" Width="110px" Sortable=false Filterable=false>
                                     </RadzenGridColumn>
                                     <RadzenGridColumn TItem="Employer" Sortable=false Filterable=false Property="Statut" Title="Statut" Width="100px">
                                         <Template Context="data">
                                             @if (data.Statut.Trim() == "Ok")
                                             {
-                                                <RadzenButton Click="@(()=>ConfirmAffiliation(data,"Ok"))" Text="Ayant droit" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                                <RadzenButton Click="@(() => ConfirmAffiliation(data, "Ok"))" Text="Ayant droit" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Small" Style="line-height: 15px" />
                                             }
                                             else if (data.Statut.Trim() == "Débauché")
                                             {
-                                                <RadzenButton Click="@(()=>ConfirmAffiliation(data,"Débauché"))" Text="Débauché" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                                <RadzenButton Click="@(() => ConfirmAffiliation(data, "Débauché"))" Text="Débauché" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Style="line-height: 15px" />
                                             }
                                         </Template>
                                     </RadzenGridColumn>
                                     <RadzenGridColumn TItem="Employer" Title="Document" Sortable=false Filterable=false Width="105px">
                                         <Template Context="data">
-                                            <RadzenButton Click="@(()=>GoDocumentEmployer(data))" Text="Historique" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Style="line-height: 15px" />
+                                            <RadzenButton Click="@(() => GoDocumentEmployer(data))" Text="Historique" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Style="line-height: 15px" />
                                         </Template>
                                     </RadzenGridColumn>
-                                    <RadzenGridColumn TItem="Employer" Sortable=false Filterable=false Width="60px">
+                                    <RadzenGridColumn TItem="Employer" Sortable=false Filterable=false Width="55px">
                                         <Template Context="data">
-                                            <RadzenButton Click="@(()=>UpdateAffiliation(data))" Icon="build" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Style="line-height: 15px; padding: 10px" />
+                                            <RadzenButton Click="@(() => UpdateAffiliation(data))" Icon="build" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" Style="line-height: 15px; padding: 10px" />
+                                        </Template>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Employer" Width="55px">
+                                        <Template Context="data">
+                                            <RadzenButton Click="@(() => QrcodeEmployer(data))" Icon="qr_code" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.Small" Style="line-height: 15px; padding: 10px" />
                                         </Template>
                                     </RadzenGridColumn>
                                 </Columns>
@@ -235,9 +240,9 @@
                                     @if (employeurs != null)
                                     {
                                         <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="string"
-                                                            Data="@(employeurs.Select(c=>new {NumEmployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
-                                                            TextProperty="Raisonsociale" ValueProperty="NumEmployeur" Change=@(args => OnChangeEmployeurFind(args))
-                                                            @bind-Value="@employerFindFam.Numemployeur" Placeholder="Etablissement" />
+                                                                Data="@(employeurs.Select(c=>new {NumEmployeur=c.Numemployeur,Raisonsociale=c.Raisonsociale}).Distinct().AsQueryable())"
+                                                                TextProperty="Raisonsociale" ValueProperty="NumEmployeur" Change=@(args => OnChangeEmployeurFind(args))
+                                                                @bind-Value="@employerFindFam.Numemployeur" Placeholder="Etablissement" />
                                     }
                                 </div>
                             </div>
@@ -247,9 +252,9 @@
                                     @if (employers != null)
                                     {
                                         <RadzenDropDownDataGrid Class="form-control" AllowFiltering="true" TValue="Int32"
-                                                            Data="@(employers.Select(c=>new {Num=c.Employerid,Name=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
-                                                            TextProperty="Name" ValueProperty="Num" @bind-Value="@famille.Employerid"
-                                                            Change=@(args => OnChangeEmployer(args)) Placeholder="reglement d'adhesion" />
+                                                                Data="@(employers.Select(c=>new {Num=c.Employerid,Name=c.Nom + " " + c.Prenom}).Distinct().AsQueryable())"
+                                                                TextProperty="Name" ValueProperty="Num" @bind-Value="@famille.Employerid"
+                                                                Change=@(args => OnChangeEmployer(args)) Placeholder="reglement d'adhesion" />
                                     }
                                 </div>
                             </div>
@@ -283,7 +288,7 @@
                                 <div class="input-group-sm mb-2" style="font-size:small">
                                     <span>Sexe : </span>
                                     <RadzenDropDown @bind-Value="@famille.Sexe" Class="form-control" Data=@sexeAdhesion
-                                                    Change="@(args=>OnChange(args))" Placeholder="Sexe" />
+                                                    Change="@(args => OnChange(args))" Placeholder="Sexe" />
                                     <ValidationMessage For="@(() => employer.Sexe)" />
                                 </div>
                             </div>
@@ -331,7 +336,7 @@
                                 <div class="input-group-sm mb-2" style="font-size:small">
                                     <span>Categorie : </span>
                                     <RadzenDropDown @bind-Value="@famille.Categorie" Class="form-control" Data=@categorieFamille
-                                                    Change="@(args=>OnChange(args))" Placeholder="Categorie de la famille" />
+                                                    Change="@(args => OnChange(args))" Placeholder="Categorie de la famille" />
                                 </div>
                             </div>
                         </div>
@@ -352,12 +357,12 @@
                         else
                         {
                             <RadzenGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced"
-                                    AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@familles"
-                                    TItem="Famille" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
-                                    EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
-                                    AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
-                                    ApplyFilterText="appliquer" PageSizeText="Page"
-                                    SelectionMode="DataGridSelectionMode.Single">
+                                        AllowPaging="true" PageSize="5" AllowSorting="true" Responsive="false" Data="@familles"
+                                        TItem="Famille" OrOperatorText="Ou" ContainsText="contient" StartsWithText="commencer par"
+                                        EndsWithText="terminer par" EqualsText="égal à" NotEqualsText="différent de"
+                                        AndOperatorText="et" FilterText="Filtre" ClearFilterText="effacer"
+                                        ApplyFilterText="appliquer" PageSizeText="Page"
+                                        SelectionMode="DataGridSelectionMode.Single">
                                 <Columns>
                                     <RadzenGridColumn TItem="Famille" Property="Numeroosiet" Title="Numero OSIET">
                                     </RadzenGridColumn>
@@ -370,7 +375,12 @@
                                     </RadzenGridColumn>
                                     <RadzenGridColumn TItem="Famille" Title="Document" Sortable=false Filterable=false Width="105px">
                                         <Template Context="data">
-                                            <button class="btn btn-outline-secondary btn-sm" onclick="@(()=>GoDocumentFamille(data))">Historique</button>
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="@(() => GoDocumentFamille(data))">Historique</button>
+                                        </Template>
+                                    </RadzenGridColumn>
+                                    <RadzenGridColumn TItem="Famille" Width="55px">
+                                        <Template Context="data">
+                                            <RadzenButton Click="@(() => QrcodeFamille(data))" Icon="qr_code" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.Small" Style="line-height: 15px; padding: 10px" />
                                         </Template>
                                     </RadzenGridColumn>
                                 </Columns>
@@ -458,14 +468,72 @@
         Employer empl = (Employer)data;
         var parameters = new DialogParameters { ["employer"] = empl };
         var result = await Dialog.Show<_UpdateAffiliation>("Confirmation ?", parameters, topCenter).Result;
-        if(!result.Canceled){
-            if(((bool)result.Data)){
+        if (!result.Canceled)
+        {
+            if (((bool)result.Data))
+            {
                 _toastParameters = new ToastParameters();
                 _toastParameters.Add(nameof(MyToast.Title), "Réussi !");
                 _toastParameters.Add(nameof(MyToast.Level), "Success");
                 _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
                 toastService.ShowToast<MyToast>(_toastParameters);
-            }else{
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async void QrcodeFamille(object data)
+    {
+        Famille fam = (Famille)data;
+        var parameters = new DialogParameters { ["famille"] = fam };
+        var result = await Dialog.Show<_QrcodeFamille>("Confirmation ?", parameters, topCenter).Result;
+        if (!result.Canceled)
+        {
+            if (((bool)result.Data))
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Gestion de QR code");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            else
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
+                _toastParameters.Add(nameof(MyToast.Level), "Error");
+                _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async void QrcodeEmployer(object data)
+    {
+        Employer empl = (Employer)data;
+        var parameters = new DialogParameters { ["employer"] = empl };
+        var result = await Dialog.Show<_QrcodeEmployer>("Confirmation ?", parameters, topCenter).Result;
+        if (!result.Canceled)
+        {
+            if (((bool)result.Data))
+            {
+                _toastParameters = new ToastParameters();
+                _toastParameters.Add(nameof(MyToast.Title), "Gestion de QR code");
+                _toastParameters.Add(nameof(MyToast.Level), "Success");
+                _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
+                toastService.ShowToast<MyToast>(_toastParameters);
+            }
+            else
+            {
                 _toastParameters = new ToastParameters();
                 _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
                 _toastParameters.Add(nameof(MyToast.Level), "Error");
