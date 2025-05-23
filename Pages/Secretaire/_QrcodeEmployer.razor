@@ -1,0 +1,40 @@
+﻿@using Blazored.Toast
+@using LYRA.Controllers.ControllerSecretaire
+@using LYRA.Models
+@* @inject IAffiliationService affiliService *@
+@inject Radzen.NotificationService notificationService
+
+<RadzenNotification />
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @* <MudIcon Class="mr-3 " /> *@
+            Générateur de QR Code.<br />
+            <MudText Typo="Typo.caption" Class="ml-1" Inline="true">
+                <i>Ce code est unique pour @employer.Nom @employer.Prenom</i>
+            </MudText>
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div style="text-align: center;">
+            <QRCode Value="@employer.Prenom" Alt="QRCode image" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Fermer</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public Employer? employer { get; set; }
+    NotificationMessage notification = new();
+    ToastParameters? _toastParameters;
+
+    void Cancel() => MudDialog.Cancel();
+
+    async void SaveAffiliation()
+    {
+        // var result = await affiliService.UpdateEmployer(employer);
+        // MudDialog.Close(DialogResult.Ok(result));
+    }
+}
