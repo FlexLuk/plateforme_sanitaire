@@ -344,3 +344,11 @@ C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\Microsoft.Extensions.Primitives.dll
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\Blazorise.Bootstrap5.dll
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\Blazorise.Icons.FontAwesome.dll
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\web.config
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\appsettings.Development.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\appsettings.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\bundleconfig.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\libman.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\LYRA.deps.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\LYRA.runtimeconfig.json
+C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\bin\Debug\net6.0\myApp\LYRA.staticwebassets.endpoints.json

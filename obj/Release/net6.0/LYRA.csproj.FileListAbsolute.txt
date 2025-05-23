@@ -338,7 +338,6 @@ C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\staticwebassets.build.json.cache
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\staticwebassets.development.json
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\staticwebassets.build.endpoints.json
-C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\staticwebassets.upToDateCheck.txt
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\LYRA.csproj.Up2Date
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\LYRA.dll
 C:\Users\jean.luc.heriniaina\source\repos\plateforme_sanitaire\obj\Release\net6.0\refint\LYRA.dll
