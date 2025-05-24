@@ -1,7 +1,7 @@
 ﻿@using Blazored.Toast
 @using LYRA.Controllers.ControllerSecretaire
 @using LYRA.Models
-@* @inject IAffiliationService affiliService *@
+@inject IAffiliationService affiliService
 @inject Radzen.NotificationService notificationService
 
 <RadzenNotification />
@@ -17,7 +17,7 @@
     </TitleContent>
     <DialogContent>
         <div style="text-align: center;">
-            <QRCode Value="@employer.Prenom" Alt="QRCode image" />
+            <Blazorise.QRCode.QRCode Value="@value" Alt="QRCode image" />
         </div>
     </DialogContent>
     <DialogActions>
@@ -29,12 +29,12 @@
     [Parameter] public Employer? employer { get; set; }
     NotificationMessage notification = new();
     ToastParameters? _toastParameters;
+    private String value = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        value = "e_" + employer.Employerid + "_" + employer.Numeroosiet;
+    }
 
     void Cancel() => MudDialog.Cancel();
-
-    async void SaveAffiliation()
-    {
-        // var result = await affiliService.UpdateEmployer(employer);
-        // MudDialog.Close(DialogResult.Ok(result));
-    }
 }

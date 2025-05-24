@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LYRA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+693e6976151dfd2ebb42a46214c27f5c381c1161")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a01ea58c8138ec524f12c36206e3a94319407dfe")]
 [assembly: System.Reflection.AssemblyProductAttribute("LYRA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LYRA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -3,196 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\dentiste\\_dentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\dentiste\\_dentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\echoecg\\_echoecg.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\echoecg\\_echoecg.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\fichiste\\_fichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\fichiste\\_fichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_medecinconsulte.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_medecinconsulte.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\parametre\\_parametre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\parametre\\_parametre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_sortie.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_sortie.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_ordonnance.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_ordonnance.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_sortiemedicament.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_sortiemedicament.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_qrcodefamille.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_qrcodefamille.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_qrcodeemployer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_qrcodeemployer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_affiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_affiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_adhesion.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_adhesion.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\fichiste\\_rapportfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\fichiste\\_rapportfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\echoecg\\_rapportechoecg.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\echoecg\\_rapportechoecg.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_stock.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_stock.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\soins\\_soigner.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\soins\\_soigner.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_updateaffiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_updateaffiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\laboratoire\\_laboratoire_medecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\laboratoire\\_laboratoire_medecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\echoecg\\_echoecgmedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\echoecg\\_echoecgmedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\dentiste\\_dentistemedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\dentiste\\_dentistemedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\shared\\mytoast.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:shared\\mytoast.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\soins\\_pagesoins.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\soins\\_pagesoins.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_inventaire.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_inventaire.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_createordonnance.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_createordonnance.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\pharmacie\\_article.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\pharmacie\\_article.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\parametre\\_parametre_consultation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\parametre\\_parametre_consultation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\parametre\\rapportparametre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\parametre\\rapportparametre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_medecinmanage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_medecinmanage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\parametre\\_parametremanage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\parametre\\_parametremanage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_pagedentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_pagedentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_docteurprescription.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_docteurprescription.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_docteurprescription - copier.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_docteurprescription - copier.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\medecin\\_dialogmedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\medecin\\_dialogmedecin.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\dentiste\\_consultationdentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\dentiste\\_consultationdentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\laboratoire\\_laboratoire.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\laboratoire\\_laboratoire.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\fichiste\\_dialogfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\fichiste\\_dialogfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\fichiste\\_consultationfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\fichiste\\_consultationfichiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\echoecg\\_echomaternite.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\echoecg\\_echomaternite.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\dentiste\\_ordonnancedentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\dentiste\\_ordonnancedentiste.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\demarrage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\demarrage.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\administration\\_utilisateur.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\administration\\_utilisateur.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\administration\\_role.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\administration\\_role.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\dentiste\\_dentisterapprt.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\dentiste\\_dentisterapprt.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\maternite\\_maternite_rapport.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\maternite\\_maternite_rapport.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_qrcodeemployer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_qrcodeemployer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_qrcodefamille.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_qrcodefamille.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -202,619 +30,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 15,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "_Sortie.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Sortie.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_Sortie.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Sortie.razor*",
-              "RelativeToolTip": "Pages\\Pharmacie\\_Sortie.razor*",
-              "ViewState": "AgIAAGcAAAAAAAAAAADwv2sAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:18.755Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "_Parametre.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_Parametre.razor",
-              "RelativeDocumentMoniker": "Pages\\Parametre\\_Parametre.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_Parametre.razor*",
-              "RelativeToolTip": "Pages\\Parametre\\_Parametre.razor*",
-              "ViewState": "AgIAANIAAAAAAAAAAADwv9YAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:49.849Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "_MedecinConsulte.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_MedecinConsulte.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_MedecinConsulte.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_MedecinConsulte.razor*",
-              "RelativeToolTip": "Pages\\Medecin\\_MedecinConsulte.razor*",
-              "ViewState": "AgIAANMBAAAAAAAAAADwv9cBAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:09.016Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "_Fichiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_Fichiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Fichiste\\_Fichiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_Fichiste.razor*",
-              "RelativeToolTip": "Pages\\Fichiste\\_Fichiste.razor*",
-              "ViewState": "AgIAALkBAAAAAAAAAADwv70BAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:15.995Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "_EchoEcg.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoEcg.razor",
-              "RelativeDocumentMoniker": "Pages\\EchoEcg\\_EchoEcg.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoEcg.razor*",
-              "RelativeToolTip": "Pages\\EchoEcg\\_EchoEcg.razor*",
-              "ViewState": "AgIAABIBAAAAAAAAAADwvxYBAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:57.802Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "_Dentiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_Dentiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Dentiste\\_Dentiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_Dentiste.razor*",
-              "RelativeToolTip": "Pages\\Dentiste\\_Dentiste.razor*",
-              "ViewState": "AgIAAEwBAAAAAAAAAADwv1ABAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:36.894Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "_Ordonnance.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Ordonnance.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_Ordonnance.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Ordonnance.razor*",
-              "RelativeToolTip": "Pages\\Pharmacie\\_Ordonnance.razor*",
-              "ViewState": "AgIAAGUAAAAAAAAAAADwv2kAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:16.135Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "_SortieMedicament.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_SortieMedicament.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_SortieMedicament.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_SortieMedicament.razor*",
-              "RelativeToolTip": "Pages\\Pharmacie\\_SortieMedicament.razor*",
-              "ViewState": "AgIAAHcAAAAAAAAAAADwv3sAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:21.207Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "_QrcodeFamille.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeFamille.razor",
-              "RelativeDocumentMoniker": "Pages\\Secretaire\\_QrcodeFamille.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeFamille.razor",
-              "RelativeToolTip": "Pages\\Secretaire\\_QrcodeFamille.razor",
-              "ViewState": "AgIAABEAAAAAAAAAAAAgwBQAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T14:15:51.312Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "_QrcodeEmployer.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeEmployer.razor",
-              "RelativeDocumentMoniker": "Pages\\Secretaire\\_QrcodeEmployer.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeEmployer.razor",
-              "RelativeToolTip": "Pages\\Secretaire\\_QrcodeEmployer.razor",
-              "ViewState": "AgIAABEAAAAAAAAAAAAgwBQAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T13:21:33.752Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "_Affiliation.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
-              "RelativeDocumentMoniker": "Pages\\Secretaire\\_Affiliation.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
-              "RelativeToolTip": "Pages\\Secretaire\\_Affiliation.razor",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAgwA0AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T12:47:27.588Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "_Adhesion.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Adhesion.razor",
-              "RelativeDocumentMoniker": "Pages\\Secretaire\\_Adhesion.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Adhesion.razor",
-              "RelativeToolTip": "Pages\\Secretaire\\_Adhesion.razor",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAgwAwAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T13:44:43.773Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "_RapportFichiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_RapportFichiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Fichiste\\_RapportFichiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_RapportFichiste.razor",
-              "RelativeToolTip": "Pages\\Fichiste\\_RapportFichiste.razor",
-              "ViewState": "AgIAABEAAAAAAAAAAAAgwBQAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:47.88Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "_RapportEchoEcg.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_RapportEchoEcg.razor",
-              "RelativeDocumentMoniker": "Pages\\EchoEcg\\_RapportEchoEcg.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_RapportEchoEcg.razor",
-              "RelativeToolTip": "Pages\\EchoEcg\\_RapportEchoEcg.razor",
-              "ViewState": "AgIAABEAAAAAAAAAAAAgwBQAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:50.583Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "_Stock.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Stock.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_Stock.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Stock.razor",
-              "RelativeToolTip": "Pages\\Pharmacie\\_Stock.razor",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAgwBEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:28:39.252Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "_Soigner.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Soins\\_Soigner.razor",
-              "RelativeDocumentMoniker": "Pages\\Soins\\_Soigner.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Soins\\_Soigner.razor",
-              "RelativeToolTip": "Pages\\Soins\\_Soigner.razor",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAgwBEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:28:40.278Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Login.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Login.razor",
-              "RelativeDocumentMoniker": "Pages\\Login.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Login.razor",
-              "RelativeToolTip": "Pages\\Login.razor",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:38.82Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "_Laboratoire_Medecin.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Laboratoire\\_Laboratoire_Medecin.razor",
-              "RelativeDocumentMoniker": "Pages\\Laboratoire\\_Laboratoire_Medecin.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Laboratoire\\_Laboratoire_Medecin.razor",
-              "RelativeToolTip": "Pages\\Laboratoire\\_Laboratoire_Medecin.razor",
-              "ViewState": "AgIAABQAAAAAAAAAAAAgwBcAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:45.935Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "_UpdateAffiliation.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_UpdateAffiliation.razor",
-              "RelativeDocumentMoniker": "Pages\\Secretaire\\_UpdateAffiliation.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_UpdateAffiliation.razor",
-              "RelativeToolTip": "Pages\\Secretaire\\_UpdateAffiliation.razor",
-              "ViewState": "AgIAABAAAAAAAAAAAAAgwBMAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T13:21:43.834Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "_EchoEcgMedecin.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoEcgMedecin.razor",
-              "RelativeDocumentMoniker": "Pages\\EchoEcg\\_EchoEcgMedecin.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoEcgMedecin.razor",
-              "RelativeToolTip": "Pages\\EchoEcg\\_EchoEcgMedecin.razor",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:52.629Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "_DentisteMedecin.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_DentisteMedecin.razor",
-              "RelativeDocumentMoniker": "Pages\\Dentiste\\_DentisteMedecin.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_DentisteMedecin.razor",
-              "RelativeToolTip": "Pages\\Dentiste\\_DentisteMedecin.razor",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:54.951Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "MyToast.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Shared\\MyToast.razor",
-              "RelativeDocumentMoniker": "Shared\\MyToast.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Shared\\MyToast.razor",
-              "RelativeToolTip": "Shared\\MyToast.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:30.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "_PageSoins.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Soins\\_PageSoins.razor",
-              "RelativeDocumentMoniker": "Pages\\Soins\\_PageSoins.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Soins\\_PageSoins.razor",
-              "RelativeToolTip": "Pages\\Soins\\_PageSoins.razor",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAgwBEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:26.509Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "_Inventaire.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Inventaire.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_Inventaire.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Inventaire.razor",
-              "RelativeToolTip": "Pages\\Pharmacie\\_Inventaire.razor",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAgwA4AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:12.346Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "_CreateOrdonnance.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_CreateOrdonnance.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_CreateOrdonnance.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_CreateOrdonnance.razor",
-              "RelativeToolTip": "Pages\\Pharmacie\\_CreateOrdonnance.razor",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAgwBIAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:10.15Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "_Article.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Article.razor",
-              "RelativeDocumentMoniker": "Pages\\Pharmacie\\_Article.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Pharmacie\\_Article.razor",
-              "RelativeToolTip": "Pages\\Pharmacie\\_Article.razor",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAgwA4AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:07.829Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "_Parametre_Consultation.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_Parametre_Consultation.razor",
-              "RelativeDocumentMoniker": "Pages\\Parametre\\_Parametre_Consultation.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_Parametre_Consultation.razor",
-              "RelativeToolTip": "Pages\\Parametre\\_Parametre_Consultation.razor",
-              "ViewState": "AgIAABIAAAAAAAAAAAAgwBUAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:27:05.846Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "_ParametreManage.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_ParametreManage.razor",
-              "RelativeDocumentMoniker": "Pages\\Parametre\\_ParametreManage.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\_ParametreManage.razor",
-              "RelativeToolTip": "Pages\\Parametre\\_ParametreManage.razor",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAgwA8AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:59.15Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "_PageDentiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_PageDentiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_PageDentiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_PageDentiste.razor",
-              "RelativeToolTip": "Pages\\Medecin\\_PageDentiste.razor",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAgwBIAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:55.694Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "_MedecinManage.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_MedecinManage.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_MedecinManage.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_MedecinManage.razor",
-              "RelativeToolTip": "Pages\\Medecin\\_MedecinManage.razor",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAgwA0AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:53.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "RapportParametre.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\RapportParametre.razor",
-              "RelativeDocumentMoniker": "Pages\\Parametre\\RapportParametre.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Parametre\\RapportParametre.razor",
-              "RelativeToolTip": "Pages\\Parametre\\RapportParametre.razor",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwBYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:47.184Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "_DocteurPrescription.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DocteurPrescription.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_DocteurPrescription.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DocteurPrescription.razor",
-              "RelativeToolTip": "Pages\\Medecin\\_DocteurPrescription.razor",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:06.293Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "_DocteurPrescription - Copier.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DocteurPrescription - Copier.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_DocteurPrescription - Copier.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DocteurPrescription - Copier.razor",
-              "RelativeToolTip": "Pages\\Medecin\\_DocteurPrescription - Copier.razor",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBAAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:04.316Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "_DialogMedecin.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DialogMedecin.razor",
-              "RelativeDocumentMoniker": "Pages\\Medecin\\_DialogMedecin.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Medecin\\_DialogMedecin.razor",
-              "RelativeToolTip": "Pages\\Medecin\\_DialogMedecin.razor",
-              "ViewState": "AgIAABUAAAAAAAAAAAAgwBgAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:26:01.818Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "_ConsultationDentiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_ConsultationDentiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Dentiste\\_ConsultationDentiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_ConsultationDentiste.razor",
-              "RelativeToolTip": "Pages\\Dentiste\\_ConsultationDentiste.razor",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwBYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:59.231Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "_Laboratoire.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Laboratoire\\_Laboratoire.razor",
-              "RelativeDocumentMoniker": "Pages\\Laboratoire\\_Laboratoire.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Laboratoire\\_Laboratoire.razor",
-              "RelativeToolTip": "Pages\\Laboratoire\\_Laboratoire.razor",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAgwA0AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:34.215Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "_DialogFichiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_DialogFichiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Fichiste\\_DialogFichiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_DialogFichiste.razor",
-              "RelativeToolTip": "Pages\\Fichiste\\_DialogFichiste.razor",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwBYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:10.855Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "_ConsultationFichiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_ConsultationFichiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Fichiste\\_ConsultationFichiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Fichiste\\_ConsultationFichiste.razor",
-              "RelativeToolTip": "Pages\\Fichiste\\_ConsultationFichiste.razor",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAgwBIAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:08.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 38,
-              "Title": "_EchoMaternite.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoMaternite.razor",
-              "RelativeDocumentMoniker": "Pages\\EchoEcg\\_EchoMaternite.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\EchoEcg\\_EchoMaternite.razor",
-              "RelativeToolTip": "Pages\\EchoEcg\\_EchoMaternite.razor",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwBYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:25:04.318Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "_OrdonnanceDentiste.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_OrdonnanceDentiste.razor",
-              "RelativeDocumentMoniker": "Pages\\Dentiste\\_OrdonnanceDentiste.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_OrdonnanceDentiste.razor",
-              "RelativeToolTip": "Pages\\Dentiste\\_OrdonnanceDentiste.razor",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAgwBEAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:55.036Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "Demarrage.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Demarrage.razor",
-              "RelativeDocumentMoniker": "Pages\\Demarrage.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Demarrage.razor",
-              "RelativeToolTip": "Pages\\Demarrage.razor",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAgwAoAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:32.715Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "_Utilisateur.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Administration\\_Utilisateur.razor",
-              "RelativeDocumentMoniker": "Pages\\Administration\\_Utilisateur.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Administration\\_Utilisateur.razor",
-              "RelativeToolTip": "Pages\\Administration\\_Utilisateur.razor",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAgwA4AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:28.444Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "_Role.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Administration\\_Role.razor",
-              "RelativeDocumentMoniker": "Pages\\Administration\\_Role.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Administration\\_Role.razor",
-              "RelativeToolTip": "Pages\\Administration\\_Role.razor",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAgwA8AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:24:23.339Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "_DentisteRapprt.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_DentisteRapprt.razor",
-              "RelativeDocumentMoniker": "Pages\\Dentiste\\_DentisteRapprt.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Dentiste\\_DentisteRapprt.razor",
-              "RelativeToolTip": "Pages\\Dentiste\\_DentisteRapprt.razor",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAwwBQAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:23:44.406Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 44,
-              "Title": "_Maternite_rapport.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Maternite\\_Maternite_rapport.razor",
-              "RelativeDocumentMoniker": "Pages\\Maternite\\_Maternite_rapport.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Maternite\\_Maternite_rapport.razor",
-              "RelativeToolTip": "Pages\\Maternite\\_Maternite_rapport.razor",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T16:22:36.358Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 46,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAAAIcAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T16:04:08.269Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 45,
-              "Title": "_Imports.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_Imports.razor",
-              "RelativeDocumentMoniker": "_Imports.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_Imports.razor",
-              "RelativeToolTip": "_Imports.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T15:15:10.465Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
@@ -864,16 +81,80 @@
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 47,
-              "Title": "App.razor",
-              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\App.razor",
-              "RelativeDocumentMoniker": "App.razor",
-              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\App.razor",
-              "RelativeToolTip": "App.razor",
-              "ViewState": "AgIAAAwAAAAAAAAAAIBJwBcAAAAYAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "_Affiliation.razor",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
+              "RelativeDocumentMoniker": "Pages\\Secretaire\\_Affiliation.razor",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
+              "RelativeToolTip": "Pages\\Secretaire\\_Affiliation.razor",
+              "ViewState": "AgIAAOcBAAAAAAAAAAAAAPkBAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T13:00:04.318Z",
+              "WhenOpened": "2025-05-23T19:30:42.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-23T19:30:06.722Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_Imports.razor",
+              "RelativeDocumentMoniker": "_Imports.razor",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\_Imports.razor",
+              "RelativeToolTip": "_Imports.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T19:28:29.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_QrcodeEmployer.razor",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeEmployer.razor",
+              "RelativeDocumentMoniker": "Pages\\Secretaire\\_QrcodeEmployer.razor",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeEmployer.razor",
+              "RelativeToolTip": "Pages\\Secretaire\\_QrcodeEmployer.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T19:26:28.379Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_QrcodeFamille.razor",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeFamille.razor",
+              "RelativeDocumentMoniker": "Pages\\Secretaire\\_QrcodeFamille.razor",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_QrcodeFamille.razor",
+              "RelativeToolTip": "Pages\\Secretaire\\_QrcodeFamille.razor",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACAAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T19:25:57.203Z",
               "EditorCaption": ""
             }
           ]
