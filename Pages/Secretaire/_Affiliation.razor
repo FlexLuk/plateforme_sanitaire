@@ -495,26 +495,7 @@
         Famille fam = (Famille)data;
         var parameters = new DialogParameters { ["famille"] = fam };
         var result = await Dialog.Show<_QrcodeFamille>("Confirmation ?", parameters, topCenter).Result;
-        if (!result.Canceled)
-        {
-            if (((bool)result.Data))
-            {
-                _toastParameters = new ToastParameters();
-                _toastParameters.Add(nameof(MyToast.Title), "Gestion de QR code");
-                _toastParameters.Add(nameof(MyToast.Level), "Success");
-                _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
-                toastService.ShowToast<MyToast>(_toastParameters);
-            }
-            else
-            {
-                _toastParameters = new ToastParameters();
-                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
-                _toastParameters.Add(nameof(MyToast.Level), "Error");
-                _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
-                toastService.ShowToast<MyToast>(_toastParameters);
-            }
-            StateHasChanged();
-        }
+        
     }
 
     private async void QrcodeEmployer(object data)
@@ -522,26 +503,7 @@
         Employer empl = (Employer)data;
         var parameters = new DialogParameters { ["employer"] = empl };
         var result = await Dialog.Show<_QrcodeEmployer>("Confirmation ?", parameters, topCenter).Result;
-        if (!result.Canceled)
-        {
-            if (((bool)result.Data))
-            {
-                _toastParameters = new ToastParameters();
-                _toastParameters.Add(nameof(MyToast.Title), "Gestion de QR code");
-                _toastParameters.Add(nameof(MyToast.Level), "Success");
-                _toastParameters.Add(nameof(MyToast.Message), "Changement a été fait.");
-                toastService.ShowToast<MyToast>(_toastParameters);
-            }
-            else
-            {
-                _toastParameters = new ToastParameters();
-                _toastParameters.Add(nameof(MyToast.Title), "Erreur !");
-                _toastParameters.Add(nameof(MyToast.Level), "Error");
-                _toastParameters.Add(nameof(MyToast.Message), "Erreur, réessayer plus tard.");
-                toastService.ShowToast<MyToast>(_toastParameters);
-            }
-            StateHasChanged();
-        }
+        
     }
 
     public void OnChange(object args) { }

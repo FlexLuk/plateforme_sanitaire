@@ -118,6 +118,7 @@ builder.Services
   .AddBlazorise()
   .AddBootstrap5Providers()
   .AddFontAwesomeIcons();
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
