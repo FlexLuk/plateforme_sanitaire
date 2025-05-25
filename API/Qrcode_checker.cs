@@ -82,6 +82,7 @@ namespace LYRA.API
                     Categorie = payload.Categorie,
                     Nom = famille?.Nom ?? string.Empty,
                     Prenom = famille?.Prenom ?? string.Empty,
+                    Status = employer.Statut?.Trim() ?? string.Empty
                 };
                 return _qrcode;
             }catch(Exception ex)
