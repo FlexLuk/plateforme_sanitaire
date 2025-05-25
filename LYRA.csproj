@@ -40,7 +40,6 @@
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />
 		<PackageReference Include="MudBlazor" Version="6.1.9" />
 		<PackageReference Include="Radzen.Blazor" Version="3.17.3" />
-		<!--<PackageReference Include="Syncfusion.Blazor.Layouts" Version="20.1.0.48" />-->
 	</ItemGroup>
 
 	<ItemGroup>
