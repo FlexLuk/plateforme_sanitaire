@@ -105,7 +105,7 @@
     List<Ordonnance> ordonnances = new List<Ordonnance>();
     ListOrdonnance listOrdonnance = new();
     List<ListOrdonnance> listOrdonnances = new List<ListOrdonnance>();
-    [CascadingParameter] public IModalService Modal { get; set; } = default!;
+    [CascadingParameter] public Blazored.Modal.Services.IModalService Modal { get; set; } = default!;
     Fichiste fichiste = new();
     Famille famille = new();
     Employeur employeur = new();

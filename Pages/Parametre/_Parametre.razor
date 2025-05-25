@@ -30,7 +30,7 @@
 @inject IPatiantService patiantService
 @inject IExamenService examenService
 @inject IMedecinService medecinService
-@inject IToastService toastService
+@inject Blazored.Toast.Services.IToastService toastService
 @inject IDentisteService dentisteService
 @inject IMaterniteService materniteService
 @inject Radzen.NotificationService notificationService
@@ -212,7 +212,7 @@
     [Parameter]
     public string patiantid { get; set; } = null!;
     [CascadingParameter]
-    public IModalService Modal { get; set; } = default!;
+    public Blazored.Modal.Services.IModalService Modal { get; set; } = default!;
 
     string? tag, tad, poids, temperature, cardiaque, observation;
     Parametre parametre = new();

@@ -1,5 +1,6 @@
 {
   "Version": 1,
+<<<<<<< HEAD
   "WorkspaceRootPath": "C:\\Users\\Flex\\source\\repos\\LYRA\\",
   "Documents": [
     {
@@ -9,6 +10,29 @@
     {
       "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\flex\\source\\repos\\lyra\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+=======
+  "WorkspaceRootPath": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\api\\qrcode_checker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:api\\qrcode_checker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\api\\qrcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:api\\qrcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\controllers\\controllerfichiste\\fichisteexportcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:controllers\\controllerfichiste\\fichisteexportcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\pages\\secretaire\\_affiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:pages\\secretaire\\_affiliation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|c:\\users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\controllers\\controllerfichiste\\fichisteservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D0F0AD5-E97D-4E8F-B322-F2653D72E601}|LYRA.csproj|solutionrelative:controllers\\controllerfichiste\\fichisteservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+>>>>>>> 29daabf749da968a14cb37fd12c4d8210ba5a036
     }
   ],
   "DocumentGroupContainers": [
@@ -18,9 +42,54 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
+<<<<<<< HEAD
           "SelectedChildIndex": 12,
           "Children": [
             {
+=======
+          "SelectedChildIndex": 18,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "QRCode.cs",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\API\\QRCode.cs",
+              "RelativeDocumentMoniker": "API\\QRCode.cs",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\API\\QRCode.cs",
+              "RelativeToolTip": "API\\QRCode.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-24T10:18:09.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Affiliation.razor",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
+              "RelativeDocumentMoniker": "Pages\\Secretaire\\_Affiliation.razor",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Pages\\Secretaire\\_Affiliation.razor",
+              "RelativeToolTip": "Pages\\Secretaire\\_Affiliation.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-24T09:39:44.587Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FichisteExportController.cs",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Controllers\\ControllerFichiste\\FichisteExportController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ControllerFichiste\\FichisteExportController.cs",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Controllers\\ControllerFichiste\\FichisteExportController.cs",
+              "RelativeToolTip": "Controllers\\ControllerFichiste\\FichisteExportController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-24T09:16:55.808Z",
+              "EditorCaption": ""
+            },
+            {
+>>>>>>> 29daabf749da968a14cb37fd12c4d8210ba5a036
               "$type": "Bookmark",
               "Name": "ST:129:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
             },
@@ -69,6 +138,7 @@
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
             },
             {
+<<<<<<< HEAD
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "appsettings.json",
@@ -79,10 +149,35 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2024-07-07T15:02:36.609Z",
+=======
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Qrcode_checker.cs",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\API\\Qrcode_checker.cs",
+              "RelativeDocumentMoniker": "API\\Qrcode_checker.cs",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\API\\Qrcode_checker.cs",
+              "RelativeToolTip": "API\\Qrcode_checker.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAwBUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-24T06:21:58.862Z",
+>>>>>>> 29daabf749da968a14cb37fd12c4d8210ba5a036
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+<<<<<<< HEAD
               "DocumentIndex": 1,
               "Title": "App.razor",
               "DocumentMoniker": "C:\\Users\\Flex\\source\\repos\\LYRA\\App.razor",
@@ -92,6 +187,18 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-07-07T15:02:35.619Z"
+=======
+              "DocumentIndex": 4,
+              "Title": "FichisteService.cs",
+              "DocumentMoniker": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Controllers\\ControllerFichiste\\FichisteService.cs",
+              "RelativeDocumentMoniker": "Controllers\\ControllerFichiste\\FichisteService.cs",
+              "ToolTip": "C:\\Users\\jean.luc.heriniaina\\source\\repos\\plateforme_sanitaire\\Controllers\\ControllerFichiste\\FichisteService.cs",
+              "RelativeToolTip": "Controllers\\ControllerFichiste\\FichisteService.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-24T07:00:14.815Z",
+              "EditorCaption": ""
+>>>>>>> 29daabf749da968a14cb37fd12c4d8210ba5a036
             }
           ]
         }

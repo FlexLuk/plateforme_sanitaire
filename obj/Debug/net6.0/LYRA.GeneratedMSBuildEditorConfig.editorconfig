@@ -17,6 +17,8 @@ build_property.SupportLocalizedComponentNames =
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = C:\Users\Flex\source\repos\LYRA
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 6.0
+build_property.EnableCodeStyleSeverity = 
 
 [C:/Users/Flex/source/repos/LYRA/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
@@ -274,6 +276,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGhhcm1hY2llXF9TdG9jay5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/Component.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_Adhesion.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfQWRoZXNpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -292,6 +298,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_HistoriqueDocumentFamille.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfSGlzdG9yaXF1ZURvY3VtZW50RmFtaWxsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_QrcodeEmployer.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfUXJjb2RlRW1wbG95ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_QrcodeFamille.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2VjcmV0YWlyZVxfUXJjb2RlRmFtaWxsZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Flex/source/repos/LYRA/Pages/Secretaire/_UpdateAffiliation.razor]
