@@ -118,6 +118,7 @@ namespace LYRA.API
                     Categorie = payload.Categorie,
                     Nom = employer?.Nom ?? string.Empty,
                     Prenom = employer?.Prenom ?? string.Empty,
+                    Status = employer.Statut?.Trim() ?? string.Empty
                 };
                 return _qrcode;
             }
